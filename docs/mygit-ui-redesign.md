@@ -5,7 +5,7 @@
 ## Scope implemented
 
 - Persistent **Workspace Home** action in the application title bar. It displays the existing Welcome/Repositories page and preserves open repository tabs and working changes.
-- Adjacent **Quick Switch** menu, showing all configured workspaces and all currently opened repositories. The existing searchable tabs/repositories command palette remains available for finding managed repositories that are not opened.
+- The adjacent **Workspace** menu lists configured workspaces and their settings. A separate **Repositories** button now opens a searchable list of recent and managed repositories; the original keyboard command palette remains available.
 - Workspace home refresh: active workspace name, managed repository count, workspace count, repository tree and existing Clone/Open/Search actions; drag/drop and repository context menus remain intact.
 - A calmer light/dark color palette, rounded navigation buttons, new-install light default, and MyGIt-facing window/product text. The existing SourceGit command/backend structure and extensible theme overrides remain unchanged.
 
@@ -14,15 +14,13 @@
 ```mermaid
 flowchart TD
     A[Global title bar] --> B[Workspace Home]
-    A --> C[Quick Switch]
-    B --> D[Existing Welcome repository tree]
-    C --> E[Workspaces]
-    C --> F[Opened repositories]
-    C --> G[Search managed repositories]
-    E --> H[Existing SwitchWorkspace]
-    F --> I[Select existing LauncherPage]
-    G --> J[Existing LauncherPagesCommandPalette]
-    D --> K[Existing OpenRepositoryInTab]
+    A --> C[Workspace switcher]
+    A --> D[Repositories button]
+    B --> E[Existing Welcome repository tree]
+    C --> F[Existing SwitchWorkspace]
+    D --> G[Recent repositories and live search]
+    G --> H[Existing OpenRepositoryInTab]
+    E --> H
 ```
 
 **Safety invariants:** Home navigation only selects or creates a Welcome page; it must not close repository tabs, mutate Git state, checkout branches, or discard local changes. Selecting an opened repository simply selects its existing tab. Switching workspaces intentionally continues to use the existing SourceGit workspace lifecycle.

@@ -26,9 +26,9 @@
     </Grid.RowDefinitions>
 
     <!-- Custom TitleBar -->
-    <Grid Grid.Row="0" ColumnDefinitions="Auto,Auto,Auto,32,*,Auto,Auto">
+    <Grid Grid.Row="0" ColumnDefinitions="Auto,Auto,Auto,Auto,32,*,Auto,Auto">
       <!-- Bottom border -->
-      <Border Grid.Column="0" Grid.ColumnSpan="7"
+      <Border Grid.Column="0" Grid.ColumnSpan="8"
               BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Border0}"
               Background="{DynamicResource Brush.TitleBar}"
               DoubleTapped="MaximizeOrRestoreWindow"
@@ -120,8 +120,26 @@
         </StackPanel>
       </Button>
 
+      <!-- One-click recent repository switcher with search in the popup itself. -->
+      <Button Grid.Column="3"
+              Classes="flat workspace_switch"
+              Height="28" Margin="0,0,5,1" Padding="10,0"
+              CornerRadius="8" VerticalAlignment="Bottom"
+              Click="OnOpenRecentRepositories"
+              ToolTip.Tip="{DynamicResource Text.QuickRepo.Title}">
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="7">
+          <Path Width="13" Height="13" Data="{StaticResource Icons.Repositories}" Fill="{DynamicResource Brush.Accent}"/>
+          <TextBlock Text="{DynamicResource Text.QuickRepo.Button}" FontWeight="SemiBold"/>
+          <TextBlock Text="{Binding ActivePage.Node.Name}" MaxWidth="130"
+                     TextTrimming="CharacterEllipsis"
+                     Foreground="{DynamicResource Brush.FG2}"
+                     IsVisible="{Binding ActivePage.Node.IsRepository}"/>
+          <Path Width="9" Height="9" Data="{StaticResource Icons.Down}" Fill="{DynamicResource Brush.FG2}"/>
+        </StackPanel>
+      </Button>
+
       <!-- Pages Switcher Toggle Button -->
-      <Button Grid.Column="3" Classes="icon_button" VerticalAlignment="Bottom" Margin="0,0,0,1" Click="OnOpenPagesCommandPalette" HotKey="{OnPlatform Ctrl+P, macOS=⌘+P}">
+      <Button Grid.Column="4" Classes="icon_button" VerticalAlignment="Bottom" Margin="0,0,0,1" Click="OnOpenPagesCommandPalette" HotKey="{OnPlatform Ctrl+P, macOS=⌘+P}">
         <ToolTip.Tip>
           <StackPanel Orientation="Horizontal">
             <TextBlock Text="{DynamicResource Text.Launcher.Pages}"
@@ -137,10 +155,10 @@
       </Button>
 
       <!-- Pages Tabs -->
-      <v:LauncherTabBar Grid.Column="4" Height="30" Margin="0,0,16,0" VerticalAlignment="Bottom"/>
+      <v:LauncherTabBar Grid.Column="5" Height="30" Margin="0,0,16,0" VerticalAlignment="Bottom"/>
 
       <!-- Update Available Button -->
-      <Button Grid.Column="5"
+      <Button Grid.Column="6"
               Classes="icon_button"
               Height="30"
               Margin="0,0,4,0"
@@ -152,7 +170,7 @@
       </Button>
 
       <!-- Caption Buttons (Windows/Linux) -->
-      <Border Grid.Column="6" IsVisible="{Binding #ThisControl.HasRightCaptionButton}">
+      <Border Grid.Column="7" IsVisible="{Binding #ThisControl.HasRightCaptionButton}">
         <v:CaptionButtons Height="30" VerticalAlignment="Top"/>
       </Border>
     </Grid>

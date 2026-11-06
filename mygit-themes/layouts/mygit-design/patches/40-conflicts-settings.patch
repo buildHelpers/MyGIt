@@ -1,0 +1,206 @@
+diff --git a/src/Views/Conflict.axaml b/src/Views/Conflict.axaml
+--- a/src/Views/Conflict.axaml
++++ b/src/Views/Conflict.axaml
+@@ -9,7 +9,7 @@
+              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+              x:Class="SourceGit.Views.Conflict"
+              x:DataType="vm:Conflict">
+-  <Border CornerRadius="4" Background="{DynamicResource Brush.Window}" BorderThickness="1" BorderBrush="{DynamicResource Brush.Border2}">
++  <Border CornerRadius="12" Background="{DynamicResource Brush.Mygit.Card}" BorderThickness="1" BorderBrush="{DynamicResource Brush.Mygit.Hairline}" Padding="10">
+     <Grid VerticalAlignment="Center">
+       <StackPanel Orientation="Vertical" IsVisible="{Binding State, Mode=OneWay, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static m:ConflictFileState.Resolved}}">
+         <Path Width="64" Height="64" Data="{StaticResource Icons.Conflict}" Fill="{DynamicResource Brush.FG2}" HorizontalAlignment="Center"/>
+@@ -23,7 +23,7 @@
+           <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Text="{Binding Description}"/>
+         </StackPanel>
+ 
+-        <Border Margin="16,0" Padding="8" CornerRadius="4" BorderThickness="1" BorderBrush="{DynamicResource Brush.Border2}">
++        <Border Margin="16,0" Padding="8" CornerRadius="9" BorderThickness="1" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
+           <Border.DataTemplates>
+             <DataTemplate DataType="m:Commit">
+               <StackPanel Orientation="Horizontal">
+diff --git a/src/Views/MergeConflictEditor.axaml b/src/Views/MergeConflictEditor.axaml
+--- a/src/Views/MergeConflictEditor.axaml
++++ b/src/Views/MergeConflictEditor.axaml
+@@ -13,7 +13,7 @@
+                     Icon="/App.ico"
+                     Title="{DynamicResource Text.MergeConflictEditor.Title}"
+                     MinWidth="1024" MinHeight="600">
+-  <Grid RowDefinitions="Auto,32,*,32">
++  <Grid RowDefinitions="Auto,42,*,42" Background="{DynamicResource Brush.Mygit.Surface}">
+     <!-- TitleBar -->
+     <Grid Grid.Row="0" Height="28" IsVisible="{Binding !#ThisControl.UseSystemWindowFrame}">
+       <Border Background="{DynamicResource Brush.TitleBar}"
+@@ -36,7 +36,7 @@
+     </Grid>
+ 
+     <!-- Toolbar -->
+-    <Border Grid.Row="1" Padding="8,0" Background="{DynamicResource Brush.ToolBar}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Border2}">
++    <Border Grid.Row="1" Padding="16,0" Background="{DynamicResource Brush.Mygit.Surface}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
+       <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto">
+         <Path Grid.Column="0" Width="14" Height="14" Data="{StaticResource Icons.File}"/>
+ 
+@@ -74,13 +74,13 @@
+     </Border>
+ 
+     <!-- Main Content -->
+-    <Grid Grid.Row="2" RowDefinitions="*,*" ColumnDefinitions="*,20">
++    <Grid Grid.Row="2" RowDefinitions="5*,4*" ColumnDefinitions="*,22" Margin="12,10,12,8">
+       <!-- Mine and Theirs Panels (Side-by-Side) -->
+-      <Grid Grid.Row="0" Grid.Column="0" ColumnDefinitions="*,*" Margin="4,4,4,2">
++      <Grid Grid.Row="0" Grid.Column="0" ColumnDefinitions="*,*" Margin="0,0,0,7">
+         <!-- Mine (Ours) Panel -->
+-        <Border Grid.Column="0" Margin="0,0,2,0">
+-          <Grid RowDefinitions="26,*">
+-            <Border Grid.Row="0" Padding="8,0" Background="{DynamicResource Brush.Popup}" BorderThickness="1,1,1,0" BorderBrush="{DynamicResource Brush.Border2}">
++        <Border Grid.Column="0" Classes="mygit_surface" ClipToBounds="True" Margin="0,0,5,0">
++          <Grid RowDefinitions="36,*">
++            <Border Grid.Row="0" Padding="8,0" Background="{DynamicResource Brush.Mygit.Sidebar}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
+               <Grid ColumnDefinitions="Auto,*">
+                 <TextBlock Grid.Column="0"
+                            Text="{DynamicResource Text.MergeConflictEditor.Mine}"
+@@ -145,9 +145,9 @@
+         </Border>
+ 
+         <!-- Theirs Panel -->
+-        <Border Grid.Column="1" Margin="2,0,0,0">
+-          <Grid RowDefinitions="26,*">
+-            <Border Grid.Row="0" Padding="8,0" Background="{DynamicResource Brush.Popup}" BorderThickness="1,1,1,0" BorderBrush="{DynamicResource Brush.Border2}">
++        <Border Grid.Column="1" Classes="mygit_surface" ClipToBounds="True" Margin="5,0,0,0">
++          <Grid RowDefinitions="36,*">
++            <Border Grid.Row="0" Padding="8,0" Background="{DynamicResource Brush.Mygit.Sidebar}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
+               <Grid ColumnDefinitions="Auto,*">
+                 <TextBlock Grid.Column="0"
+                            Text="{DynamicResource Text.MergeConflictEditor.Theirs}"
+@@ -213,9 +213,9 @@
+       </Grid>
+ 
+       <!-- Result Panel -->
+-      <Border Grid.Row="1" Grid.Column="0" Margin="4,2,4,4">
+-        <Grid RowDefinitions="26,*">
+-          <Border Grid.Row="0" Padding="8,0" Background="{DynamicResource Brush.Popup}" BorderThickness="1,1,1,0" BorderBrush="{DynamicResource Brush.Border2}">
++      <Border Grid.Row="1" Grid.Column="0" Classes="mygit_surface" ClipToBounds="True" Margin="0,7,0,0">
++        <Grid RowDefinitions="36,*">
++          <Border Grid.Row="0" Padding="8,0" Background="{DynamicResource Brush.Mygit.Sidebar}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
+             <TextBlock Text="{DynamicResource Text.MergeConflictEditor.Result}" FontWeight="Bold" VerticalAlignment="Center"/>
+           </Border>
+           <Grid Grid.Row="1" Background="{DynamicResource Brush.Contents}">
+diff --git a/src/Views/Preferences.axaml b/src/Views/Preferences.axaml
+--- a/src/Views/Preferences.axaml
++++ b/src/Views/Preferences.axaml
+@@ -14,10 +14,11 @@
+                     x:Name="ThisControl"
+                     Icon="/App.ico"
+                     Title="{DynamicResource Text.Preferences}"
+-                    SizeToContent="WidthAndHeight"
+-                    CanResize="False"
+-                    WindowStartupLocation="CenterScreen">
+-  <Grid RowDefinitions="Auto,Auto" MinWidth="600">
++                    SizeToContent="Manual"
++                    CanResize="True"
++                    WindowStartupLocation="CenterScreen"
++                    Width="1160" Height="760" MinWidth="950" MinHeight="640">
++  <Grid RowDefinitions="Auto,*" MinWidth="900" Background="{DynamicResource Brush.Window}">
+     <!-- TitleBar -->
+     <Grid Grid.Row="0" Height="28" IsVisible="{Binding !#ThisControl.UseSystemWindowFrame}">
+       <Border Background="{DynamicResource Brush.TitleBar}"
+@@ -41,13 +42,14 @@
+     </Grid>
+ 
+     <!-- Body -->
+-    <Border Grid.Row="1">
+-      <TabControl>
++    <Border Grid.Row="1" Padding="14" Background="{DynamicResource Brush.Window}" ClipToBounds="True">
++      <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
++        <TabControl Classes="mygit_settings" TabStripPlacement="Left" MinWidth="890">
+         <TabItem>
+           <TabItem.Header>
+             <TextBlock Classes="tab_header" Text="{DynamicResource Text.Preferences.General}"/>
+           </TabItem.Header>
+-          <Grid Margin="8" RowDefinitions="32,32,32,32,32,32,32,32,32,32,32,32,Auto" ColumnDefinitions="Auto,*">
++          <Grid Margin="22" RowDefinitions="32,32,32,32,32,32,32,32,32,32,32,32,Auto" ColumnDefinitions="Auto,*">
+             <TextBlock Grid.Row="0" Grid.Column="0"
+                        Text="{DynamicResource Text.Preferences.General.Locale}"
+                        HorizontalAlignment="Right"
+@@ -188,7 +190,7 @@
+           <TabItem.Header>
+             <TextBlock Classes="tab_header" Text="{DynamicResource Text.Preferences.Appearance}"/>
+           </TabItem.Header>
+-          <Grid Margin="8" RowDefinitions="32,32,32,32,32,32,32,32,Auto" ColumnDefinitions="Auto,*">
++          <Grid Margin="22" RowDefinitions="32,32,32,32,32,32,32,32,Auto" ColumnDefinitions="Auto,*">
+             <TextBlock Grid.Row="0" Grid.Column="0"
+                        Text="{DynamicResource Text.Preferences.Appearance.Theme}"
+                        HorizontalAlignment="Right"
+@@ -315,7 +317,7 @@
+             <TextBlock Classes="tab_header" Text="{DynamicResource Text.Preferences.Git}"/>
+           </TabItem.Header>
+ 
+-          <Grid Margin="8" RowDefinitions="32,32,32,32,32,32,32,32,Auto,32,32" ColumnDefinitions="Auto,*">
++          <Grid Margin="22" RowDefinitions="32,32,32,32,32,32,32,32,Auto,32,32" ColumnDefinitions="Auto,*">
+             <TextBlock Grid.Row="0" Grid.Column="0"
+                        Text="{DynamicResource Text.Preferences.Git.Path}"
+                        HorizontalAlignment="Right"
+@@ -444,7 +446,7 @@
+             <TextBlock Classes="tab_header" Text="{DynamicResource Text.Preferences.GPG}"/>
+           </TabItem.Header>
+ 
+-          <Grid Margin="8" RowDefinitions="32,Auto,32,32,32" ColumnDefinitions="Auto,*">
++          <Grid Margin="22" RowDefinitions="32,Auto,32,32,32" ColumnDefinitions="Auto,*">
+             <TextBlock Grid.Row="0" Grid.Column="0"
+                        Text="{DynamicResource Text.Preferences.GPG.Format}"
+                        HorizontalAlignment="Right"
+@@ -824,7 +826,7 @@
+             <TextBlock Classes="tab_header" Text="{DynamicResource Text.Preferences.AI}"/>
+           </TabItem.Header>
+ 
+-          <Grid Margin="0,8,0,16" MinHeight="400">
++          <Grid Margin="16,10,16,18" MinHeight="400">
+             <Grid.ColumnDefinitions>
+               <ColumnDefinition Width="200"/>
+               <ColumnDefinition Width="*"/>
+@@ -967,7 +969,8 @@
+             </ContentControl>
+           </Grid>
+         </TabItem>
+-      </TabControl>
++        </TabControl>
++      </ScrollViewer>
+     </Border>
+   </Grid>
+ </v:ChromelessWindow>
+diff --git a/src/Views/RepositoryConfigure.axaml b/src/Views/RepositoryConfigure.axaml
+--- a/src/Views/RepositoryConfigure.axaml
++++ b/src/Views/RepositoryConfigure.axaml
+@@ -11,10 +11,10 @@
+                     x:Name="ThisControl"
+                     Icon="/App.ico"
+                     Title="{DynamicResource Text.Configure}"
+-                    Width="600" SizeToContent="Height"
+-                    CanResize="False"
++                    Width="1010" Height="720" MinWidth="820" MinHeight="610" SizeToContent="Manual"
++                    CanResize="True"
+                     WindowStartupLocation="CenterOwner">
+-  <Grid RowDefinitions="Auto,Auto">
++  <Grid RowDefinitions="Auto,*" Background="{DynamicResource Brush.Window}">
+     <!-- TitleBar -->
+     <Grid Grid.Row="0" Height="28" IsVisible="{Binding !#ThisControl.UseSystemWindowFrame}">
+       <Border Background="{DynamicResource Brush.TitleBar}"
+@@ -38,7 +38,8 @@
+     </Grid>
+ 
+     <!-- Body -->
+-    <TabControl Grid.Row="1">
++    <ScrollViewer Grid.Row="1" Margin="14" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
++      <TabControl Classes="mygit_settings" TabStripPlacement="Left">
+       <TabItem>
+         <TabItem.Header>
+           <TextBlock Classes="tab_header" Text="{DynamicResource Text.Configure.Git}"/>
+@@ -552,6 +553,7 @@
+                      Foreground="{DynamicResource Brush.FG2}"/>
+         </Grid>
+       </TabItem>
+-    </TabControl>
++      </TabControl>
++    </ScrollViewer>
+   </Grid>
+ </v:ChromelessWindow>

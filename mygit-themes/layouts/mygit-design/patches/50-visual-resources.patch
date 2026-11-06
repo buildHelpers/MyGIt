@@ -1,0 +1,546 @@
+diff --git a/src/Resources/Locales/ca_ES.axaml b/src/Resources/Locales/ca_ES.axaml
+--- a/src/Resources/Locales/ca_ES.axaml
++++ b/src/Resources/Locales/ca_ES.axaml
+@@ -770,6 +770,14 @@
+   <x:String x:Key="Text.PushToNewBranch" xml:space="preserve">Puja a una branca NOVA</x:String>
+   <x:String x:Key="Text.PushToNewBranch.Title" xml:space="preserve">Introduïu el nom de la nova branca remota:</x:String>
+   <x:String x:Key="Text.Quit" xml:space="preserve">Surt</x:String>
++  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">Repositoris</x:String>
++  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">Recents primer</x:String>
++  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ Selecciona · Retorn Obre · Esc Tanca</x:String>
++  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">No s'han trobat repositoris</x:String>
++  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">Obert</x:String>
++  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">Recent</x:String>
++  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">Cerca per nom o ruta...</x:String>
++  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">Canvi ràpid de repositori</x:String>
+   <x:String x:Key="Text.Rebase" xml:space="preserve">Fes rebase de la branca actual</x:String>
+   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">Fes «stash» i torna a aplicar els canvis locals</x:String>
+   <x:String x:Key="Text.Rebase.NoVerify" xml:space="preserve">Omet el lligam pre-rebase</x:String>
+diff --git a/src/Resources/Locales/de_DE.axaml b/src/Resources/Locales/de_DE.axaml
+--- a/src/Resources/Locales/de_DE.axaml
++++ b/src/Resources/Locales/de_DE.axaml
+@@ -743,6 +743,14 @@ $1, $2, … Werte der Eingabe-Steuerelemente</x:String>
+   <x:String x:Key="Text.PushToNewBranch" xml:space="preserve">Push zu einem NEUEN Branch</x:String>
+   <x:String x:Key="Text.PushToNewBranch.Title" xml:space="preserve">Name des neuen Remote-Branches:</x:String>
+   <x:String x:Key="Text.Quit" xml:space="preserve">Schließen</x:String>
++  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">Repositories</x:String>
++  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">Zuletzt verwendet zuerst</x:String>
++  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ Auswahl · Enter Öffnen · Esc Schließen</x:String>
++  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">Keine passenden Repositories</x:String>
++  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">Geöffnet</x:String>
++  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">Zuletzt</x:String>
++  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">Nach Name oder Pfad suchen...</x:String>
++  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">Repository schnell wechseln</x:String>
+   <x:String x:Key="Text.Rebase" xml:space="preserve">Aktuellen Branch rebasen</x:String>
+   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">Lokale Änderungen stashen &amp; wieder anwenden</x:String>
+   <x:String x:Key="Text.Rebase.NoVerify" xml:space="preserve">pre-rebase Hook überspringen</x:String>
+diff --git a/src/Resources/Locales/el_GR.axaml b/src/Resources/Locales/el_GR.axaml
+--- a/src/Resources/Locales/el_GR.axaml
++++ b/src/Resources/Locales/el_GR.axaml
+@@ -742,6 +742,14 @@
+   <x:String x:Key="Text.PushToNewBranch" xml:space="preserve">Push σε ΝΕΟ κλάδο</x:String>
+   <x:String x:Key="Text.PushToNewBranch.Title" xml:space="preserve">Εισαγάγετε το όνομα του νέου απομακρυσμένου κλάδου:</x:String>
+   <x:String x:Key="Text.Quit" xml:space="preserve">Έξοδος</x:String>
++  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">Repositories</x:String>
++  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">Recent first</x:String>
++  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ Navigate · Enter Open · Esc Close</x:String>
++  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">No matching repositories</x:String>
++  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">Open</x:String>
++  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">Recent</x:String>
++  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">Search name or path...</x:String>
++  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">Quick switch repositories</x:String>
+   <x:String x:Key="Text.Rebase" xml:space="preserve">Rebase τρέχοντος κλάδου</x:String>
+   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">Stash &amp; επανεφαρμογή τοπικών αλλαγών</x:String>
+   <x:String x:Key="Text.Rebase.NoVerify" xml:space="preserve">Παράκαμψη του pre-rebase hook</x:String>
+diff --git a/src/Resources/Locales/en_US.axaml b/src/Resources/Locales/en_US.axaml
+--- a/src/Resources/Locales/en_US.axaml
++++ b/src/Resources/Locales/en_US.axaml
+@@ -776,6 +776,14 @@
+   <x:String x:Key="Text.PushToNewBranch" xml:space="preserve">Push to a NEW branch</x:String>
+   <x:String x:Key="Text.PushToNewBranch.Title" xml:space="preserve">Input name of the new remote branch:</x:String>
+   <x:String x:Key="Text.Quit" xml:space="preserve">Quit</x:String>
++  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">Repositories</x:String>
++  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">Recent first</x:String>
++  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ Navigate · Enter Open · Esc Close</x:String>
++  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">No matching repositories</x:String>
++  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">Open</x:String>
++  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">Recent</x:String>
++  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">Search name or path...</x:String>
++  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">Quick switch repositories</x:String>
+   <x:String x:Key="Text.Rebase" xml:space="preserve">Rebase Current Branch</x:String>
+   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">Stash &amp; reapply local changes</x:String>
+   <x:String x:Key="Text.Rebase.NoVerify" xml:space="preserve">Bypass the pre-rebase hook</x:String>
+diff --git a/src/Resources/Locales/es_ES.axaml b/src/Resources/Locales/es_ES.axaml
+--- a/src/Resources/Locales/es_ES.axaml
++++ b/src/Resources/Locales/es_ES.axaml
+@@ -777,6 +777,14 @@
+   <x:String x:Key="Text.PushToNewBranch" xml:space="preserve">Push a una NUEVA rama</x:String>
+   <x:String x:Key="Text.PushToNewBranch.Title" xml:space="preserve">Nombre de entrada de la nueva rama remota:</x:String>
+   <x:String x:Key="Text.Quit" xml:space="preserve">Salir</x:String>
++  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">Repositorios</x:String>
++  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">Recientes primero</x:String>
++  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ Elegir · Enter Abrir · Esc Cerrar</x:String>
++  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">No hay repositorios coincidentes</x:String>
++  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">Abierto</x:String>
++  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">Reciente</x:String>
++  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">Buscar por nombre o ruta...</x:String>
++  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">Cambiar de repositorio</x:String>
+   <x:String x:Key="Text.Rebase" xml:space="preserve">Rebase Rama Actual</x:String>
+   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">Stash y volver a aplicar cambios locales</x:String>
+   <x:String x:Key="Text.Rebase.NoVerify" xml:space="preserve">Saltar el hook de pre-rebase</x:String>
+diff --git a/src/Resources/Locales/fr_FR.axaml b/src/Resources/Locales/fr_FR.axaml
+--- a/src/Resources/Locales/fr_FR.axaml
++++ b/src/Resources/Locales/fr_FR.axaml
+@@ -710,6 +710,14 @@
+   <x:String x:Key="Text.PushToNewBranch" xml:space="preserve">Pousser vers une NOUVELLE branche</x:String>
+   <x:String x:Key="Text.PushToNewBranch.Title" xml:space="preserve">Saisir le nom de la nouvelle branche distante :</x:String>
+   <x:String x:Key="Text.Quit" xml:space="preserve">Quitter</x:String>
++  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">Dépôts</x:String>
++  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">Récents en premier</x:String>
++  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ Choisir · Entrée Ouvrir · Échap Fermer</x:String>
++  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">Aucun dépôt correspondant</x:String>
++  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">Ouvert</x:String>
++  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">Récent</x:String>
++  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">Rechercher par nom ou chemin...</x:String>
++  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">Changer rapidement de dépôt</x:String>
+   <x:String x:Key="Text.Rebase" xml:space="preserve">Rebase la branche actuelle</x:String>
+   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">Stash &amp; réappliquer changements locaux</x:String>
+   <x:String x:Key="Text.Rebase.NoVerify" xml:space="preserve">Contourner le hook de pre-rebase</x:String>
+diff --git a/src/Resources/Locales/he_IL.axaml b/src/Resources/Locales/he_IL.axaml
+--- a/src/Resources/Locales/he_IL.axaml
++++ b/src/Resources/Locales/he_IL.axaml
+@@ -710,6 +710,14 @@
+   <x:String x:Key="Text.PushToNewBranch" xml:space="preserve">Push ל־branch חדש</x:String>
+   <x:String x:Key="Text.PushToNewBranch.Title" xml:space="preserve">הזן שם ל־branch המרוחק החדש:</x:String>
+   <x:String x:Key="Text.Quit" xml:space="preserve">יציאה</x:String>
++  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">Repositories</x:String>
++  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">Recent first</x:String>
++  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ Navigate · Enter Open · Esc Close</x:String>
++  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">No matching repositories</x:String>
++  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">Open</x:String>
++  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">Recent</x:String>
++  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">Search name or path...</x:String>
++  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">Quick switch repositories</x:String>
+   <x:String x:Key="Text.Rebase" xml:space="preserve">Rebase של ה־Branch הנוכחי</x:String>
+   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">Stash והחלה מחדש של שינויים מקומיים</x:String>
+   <x:String x:Key="Text.Rebase.NoVerify" xml:space="preserve">דלג על pre-rebase hook</x:String>
+diff --git a/src/Resources/Locales/id_ID.axaml b/src/Resources/Locales/id_ID.axaml
+--- a/src/Resources/Locales/id_ID.axaml
++++ b/src/Resources/Locales/id_ID.axaml
+@@ -744,6 +744,14 @@
+   <x:String x:Key="Text.PushToNewBranch" xml:space="preserve">Push ke branch BARU</x:String>
+   <x:String x:Key="Text.PushToNewBranch.Title" xml:space="preserve">Masukkan nama remote branch baru:</x:String>
+   <x:String x:Key="Text.Quit" xml:space="preserve">Keluar</x:String>
++  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">Repositori</x:String>
++  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">Terbaru lebih dahulu</x:String>
++  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ Pilih · Enter Buka · Esc Tutup</x:String>
++  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">Repositori tidak ditemukan</x:String>
++  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">Terbuka</x:String>
++  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">Terbaru</x:String>
++  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">Cari nama atau lokasi...</x:String>
++  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">Beralih repositori dengan cepat</x:String>
+   <x:String x:Key="Text.Rebase" xml:space="preserve">Rebase Branch Saat Ini</x:String>
+   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">Stash &amp; terapkan ulang perubahan lokal</x:String>
+   <x:String x:Key="Text.Rebase.NoVerify" xml:space="preserve">Lewati hook pre-rebase</x:String>
+diff --git a/src/Resources/Locales/it_IT.axaml b/src/Resources/Locales/it_IT.axaml
+--- a/src/Resources/Locales/it_IT.axaml
++++ b/src/Resources/Locales/it_IT.axaml
+@@ -657,6 +657,14 @@ ${pure_files:N} Come ${files:N}, ma senza cartelle</x:String>
+   <x:String x:Key="Text.PushToNewBranch" xml:space="preserve">Push su un NUOVO branch</x:String>
+   <x:String x:Key="Text.PushToNewBranch.Title" xml:space="preserve">Inserisci il nome del nuovo branch remoto:</x:String>
+   <x:String x:Key="Text.Quit" xml:space="preserve">Esci</x:String>
++  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">Repository</x:String>
++  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">Recenti per primi</x:String>
++  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ Seleziona · Invio Apri · Esc Chiudi</x:String>
++  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">Nessun repository corrispondente</x:String>
++  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">Aperto</x:String>
++  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">Recente</x:String>
++  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">Cerca nome o percorso...</x:String>
++  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">Passa rapidamente a un repository</x:String>
+   <x:String x:Key="Text.Rebase" xml:space="preserve">Riallinea Branch Corrente</x:String>
+   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">Stasha e Riapplica modifiche locali</x:String>
+   <x:String x:Key="Text.Rebase.On" xml:space="preserve">Su:</x:String>
+diff --git a/src/Resources/Locales/ja_JP.axaml b/src/Resources/Locales/ja_JP.axaml
+--- a/src/Resources/Locales/ja_JP.axaml
++++ b/src/Resources/Locales/ja_JP.axaml
+@@ -759,6 +759,14 @@
+   <x:String x:Key="Text.PushToNewBranch" xml:space="preserve">新しいブランチにプッシュ</x:String>
+   <x:String x:Key="Text.PushToNewBranch.Title" xml:space="preserve">新しいリモートブランチ名を入力:</x:String>
+   <x:String x:Key="Text.Quit" xml:space="preserve">終了</x:String>
++  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">リポジトリ</x:String>
++  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">最近使用した順</x:String>
++  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ 選択 · Enter 開く · Esc 閉じる</x:String>
++  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">該当するリポジトリがありません</x:String>
++  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">開いている</x:String>
++  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">最近</x:String>
++  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">名前またはパスで検索...</x:String>
++  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">リポジトリをすばやく切り替え</x:String>
+   <x:String x:Key="Text.Rebase" xml:space="preserve">現在のブランチをリベース</x:String>
+   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">ローカルの変更をスタッシュして再適用</x:String>
+   <x:String x:Key="Text.Rebase.NoVerify" xml:space="preserve">リベース前のフックを実行しない</x:String>
+diff --git a/src/Resources/Locales/ko_KR.axaml b/src/Resources/Locales/ko_KR.axaml
+--- a/src/Resources/Locales/ko_KR.axaml
++++ b/src/Resources/Locales/ko_KR.axaml
+@@ -714,6 +714,14 @@
+   <x:String x:Key="Text.PushToNewBranch" xml:space="preserve">새 브랜치로 푸시</x:String>
+   <x:String x:Key="Text.PushToNewBranch.Title" xml:space="preserve">새 원격 브랜치 이름을 입력하세요:</x:String>
+   <x:String x:Key="Text.Quit" xml:space="preserve">종료</x:String>
++  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">저장소</x:String>
++  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">최근 사용 순</x:String>
++  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ 선택 · Enter 열기 · Esc 닫기</x:String>
++  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">일치하는 저장소가 없습니다</x:String>
++  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">열림</x:String>
++  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">최근</x:String>
++  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">이름 또는 경로 검색...</x:String>
++  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">저장소 빠르게 전환</x:String>
+   <x:String x:Key="Text.Rebase" xml:space="preserve">현재 브랜치 리베이스</x:String>
+   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">로컬 변경 사항 스태시 &amp; 재적용</x:String>
+   <x:String x:Key="Text.Rebase.NoVerify" xml:space="preserve">pre-rebase 훅 건너뛰기</x:String>
+diff --git a/src/Resources/Locales/pt_BR.axaml b/src/Resources/Locales/pt_BR.axaml
+--- a/src/Resources/Locales/pt_BR.axaml
++++ b/src/Resources/Locales/pt_BR.axaml
+@@ -466,6 +466,14 @@
+   <x:String x:Key="Text.PushTag.Remote" xml:space="preserve">Remoto:</x:String>
+   <x:String x:Key="Text.PushTag.Tag" xml:space="preserve">Tag:</x:String>
+   <x:String x:Key="Text.Quit" xml:space="preserve">Sair</x:String>
++  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">Repositórios</x:String>
++  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">Recentes primeiro</x:String>
++  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ Selecionar · Enter Abrir · Esc Fechar</x:String>
++  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">Nenhum repositório encontrado</x:String>
++  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">Aberto</x:String>
++  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">Recente</x:String>
++  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">Buscar por nome ou caminho...</x:String>
++  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">Alternar repositório rapidamente</x:String>
+   <x:String x:Key="Text.Rebase" xml:space="preserve">Rebase da Branch Atual</x:String>
+   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">Guardar &amp; reaplicar alterações locais</x:String>
+   <x:String x:Key="Text.Rebase.On" xml:space="preserve">Em:</x:String>
+diff --git a/src/Resources/Locales/ru_RU.axaml b/src/Resources/Locales/ru_RU.axaml
+--- a/src/Resources/Locales/ru_RU.axaml
++++ b/src/Resources/Locales/ru_RU.axaml
+@@ -780,6 +780,14 @@
+   <x:String x:Key="Text.PushToNewBranch" xml:space="preserve">Отправить к НОВОЙ ветке</x:String>
+   <x:String x:Key="Text.PushToNewBranch.Title" xml:space="preserve">Введите имя для новой удалённой ветки:</x:String>
+   <x:String x:Key="Text.Quit" xml:space="preserve">Выйти</x:String>
++  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">Репозитории</x:String>
++  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">Недавние сначала</x:String>
++  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ Выбор · Enter Открыть · Esc Закрыть</x:String>
++  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">Репозитории не найдены</x:String>
++  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">Открыт</x:String>
++  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">Недавний</x:String>
++  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">Поиск по имени или пути...</x:String>
++  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">Быстрое переключение репозиториев</x:String>
+   <x:String x:Key="Text.Rebase" xml:space="preserve">Перемещение текущей ветки</x:String>
+   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">Отложить и применить повторно локальные изменения</x:String>
+   <x:String x:Key="Text.Rebase.NoVerify" xml:space="preserve">Обходной зацеп предварительного перемещения</x:String>
+diff --git a/src/Resources/Locales/ta_IN.axaml b/src/Resources/Locales/ta_IN.axaml
+--- a/src/Resources/Locales/ta_IN.axaml
++++ b/src/Resources/Locales/ta_IN.axaml
+@@ -465,6 +465,14 @@
+   <x:String x:Key="Text.PushTag.Remote" xml:space="preserve">தொலை:</x:String>
+   <x:String x:Key="Text.PushTag.Tag" xml:space="preserve">குறிச்சொல்:</x:String>
+   <x:String x:Key="Text.Quit" xml:space="preserve">வெளியேறு</x:String>
++  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">Repositories</x:String>
++  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">Recent first</x:String>
++  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ Navigate · Enter Open · Esc Close</x:String>
++  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">No matching repositories</x:String>
++  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">Open</x:String>
++  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">Recent</x:String>
++  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">Search name or path...</x:String>
++  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">Quick switch repositories</x:String>
+   <x:String x:Key="Text.Rebase" xml:space="preserve">தற்போதைய கிளையை மறுதளம் செய்</x:String>
+   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">உள்ளக மாற்றங்களை பதுக்கிவை &amp; மீண்டும் இடு</x:String>
+   <x:String x:Key="Text.Rebase.On" xml:space="preserve">மேல்:</x:String>
+diff --git a/src/Resources/Locales/uk_UA.axaml b/src/Resources/Locales/uk_UA.axaml
+--- a/src/Resources/Locales/uk_UA.axaml
++++ b/src/Resources/Locales/uk_UA.axaml
+@@ -469,6 +469,14 @@
+   <x:String x:Key="Text.PushTag.Remote" xml:space="preserve">Віддалене сховище:</x:String>
+   <x:String x:Key="Text.PushTag.Tag" xml:space="preserve">Тег:</x:String>
+   <x:String x:Key="Text.Quit" xml:space="preserve">Вийти</x:String>
++  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">Репозиторії</x:String>
++  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">Нещодавні спочатку</x:String>
++  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ Вибір · Enter Відкрити · Esc Закрити</x:String>
++  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">Репозиторії не знайдено</x:String>
++  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">Відкритий</x:String>
++  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">Нещодавній</x:String>
++  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">Пошук за назвою або шляхом...</x:String>
++  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">Швидке перемикання репозиторіїв</x:String>
+   <x:String x:Key="Text.Rebase" xml:space="preserve">Перебазувати поточну гілку</x:String>
+   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">Сховати та застосувати локальні зміни</x:String>
+   <x:String x:Key="Text.Rebase.On" xml:space="preserve">На:</x:String>
+diff --git a/src/Resources/Locales/zh_CN.axaml b/src/Resources/Locales/zh_CN.axaml
+--- a/src/Resources/Locales/zh_CN.axaml
++++ b/src/Resources/Locales/zh_CN.axaml
+@@ -780,6 +780,14 @@
+   <x:String x:Key="Text.PushToNewBranch" xml:space="preserve">推送到新的分支</x:String>
+   <x:String x:Key="Text.PushToNewBranch.Title" xml:space="preserve">输入新的远端分支名</x:String>
+   <x:String x:Key="Text.Quit" xml:space="preserve">退出</x:String>
++  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">仓库</x:String>
++  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">最近使用优先</x:String>
++  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ 选择 · Enter 打开 · Esc 关闭</x:String>
++  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">没有匹配的仓库</x:String>
++  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">已打开</x:String>
++  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">最近</x:String>
++  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">搜索名称或路径…</x:String>
++  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">快速切换仓库</x:String>
+   <x:String x:Key="Text.Rebase" xml:space="preserve">变基(rebase)操作</x:String>
+   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">自动贮藏并恢复本地变更</x:String>
+   <x:String x:Key="Text.Rebase.NoVerify" xml:space="preserve">绕过 pre-rebase 钩子</x:String>
+diff --git a/src/Resources/Locales/zh_TW.axaml b/src/Resources/Locales/zh_TW.axaml
+--- a/src/Resources/Locales/zh_TW.axaml
++++ b/src/Resources/Locales/zh_TW.axaml
+@@ -770,6 +770,14 @@
+   <x:String x:Key="Text.PushToNewBranch" xml:space="preserve">推送到新的分支</x:String>
+   <x:String x:Key="Text.PushToNewBranch.Title" xml:space="preserve">輸入新的遠端分支名稱:</x:String>
+   <x:String x:Key="Text.Quit" xml:space="preserve">結束</x:String>
++  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">儲存庫</x:String>
++  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">最近使用優先</x:String>
++  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ 選擇 · Enter 開啟 · Esc 關閉</x:String>
++  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">沒有符合的儲存庫</x:String>
++  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">已開啟</x:String>
++  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">最近</x:String>
++  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">搜尋名稱或路徑…</x:String>
++  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">快速切換儲存庫</x:String>
+   <x:String x:Key="Text.Rebase" xml:space="preserve">重定基底 (rebase) 操作</x:String>
+   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">自動擱置變更並復原本機變更</x:String>
+   <x:String x:Key="Text.Rebase.NoVerify" xml:space="preserve">繞過 pre-rebase hook</x:String>
+diff --git a/src/Resources/Styles.axaml b/src/Resources/Styles.axaml
+--- a/src/Resources/Styles.axaml
++++ b/src/Resources/Styles.axaml
+@@ -712,6 +712,22 @@
+     <Setter Property="Foreground" Value="{DynamicResource Brush.FG1}"/>
+   </Style>
+ 
++  <!-- MyGIt header navigation: quiet macOS-like controls. -->
++  <Style Selector="Button.flat.workspace_home">
++    <Setter Property="Background" Value="{DynamicResource Brush.SubPanel}"/>
++    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border2}"/>
++    <Setter Property="BorderThickness" Value="1"/>
++  </Style>
++  <Style Selector="Button.flat.workspace_switch">
++    <Setter Property="Background" Value="{DynamicResource Brush.Contents}"/>
++    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border2}"/>
++    <Setter Property="BorderThickness" Value="1"/>
++  </Style>
++  <Style Selector="Button.flat.workspace_home:pointerover /template/ Border#PART_Border, Button.flat.workspace_switch:pointerover /template/ Border#PART_Border">
++    <Setter Property="Background" Value="{DynamicResource Brush.ToolBar}"/>
++    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Accent}"/>
++  </Style>
++
+   <Style Selector="ListBox.repo_left_content_list">
+     <Setter Property="Background" Value="Transparent"/>
+     <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+@@ -1545,5 +1561,75 @@
+       </ControlTemplate>
+     </Setter>
+   </Style>
++
++  <!-- MyGIt: shared layout primitives. Keep the existing Git command templates. -->
++  <Style Selector="Border.mygit_card">
++    <Setter Property="Background" Value="{DynamicResource Brush.Mygit.Card}"/>
++    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Mygit.Hairline}"/>
++    <Setter Property="BorderThickness" Value="1"/>
++    <Setter Property="CornerRadius" Value="12"/>
++    <Setter Property="Padding" Value="16"/>
++  </Style>
++  <Style Selector="Border.mygit_surface">
++    <Setter Property="Background" Value="{DynamicResource Brush.Mygit.Surface}"/>
++    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Mygit.Hairline}"/>
++    <Setter Property="BorderThickness" Value="1"/>
++    <Setter Property="CornerRadius" Value="10"/>
++  </Style>
++  <Style Selector="Border.mygit_sidebar">
++    <Setter Property="Background" Value="{DynamicResource Brush.Mygit.Sidebar}"/>
++    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Mygit.Hairline}"/>
++    <Setter Property="BorderThickness" Value="0,0,1,0"/>
++  </Style>
++  <Style Selector="TextBlock.mygit_heading">
++    <Setter Property="FontSize" Value="19"/>
++    <Setter Property="FontWeight" Value="Bold"/>
++    <Setter Property="Foreground" Value="{DynamicResource Brush.FG1}"/>
++  </Style>
++  <Style Selector="TextBlock.mygit_section_label">
++    <Setter Property="FontSize" Value="11"/>
++    <Setter Property="FontWeight" Value="SemiBold"/>
++    <Setter Property="Foreground" Value="{DynamicResource Brush.Mygit.Muted}"/>
++  </Style>
++  <Style Selector="Button.flat.mygit_action">
++    <Setter Property="CornerRadius" Value="8"/>
++    <Setter Property="Padding" Value="12,0"/>
++    <Setter Property="MinHeight" Value="30"/>
++  </Style>
++  <Style Selector="TextBox.mygit_search">
++    <Setter Property="MinHeight" Value="30"/>
++    <Setter Property="CornerRadius" Value="9"/>
++    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Mygit.Hairline}"/>
++    <Setter Property="Background" Value="{DynamicResource Brush.Mygit.Surface}"/>
++  </Style>
++  <Style Selector="ListBoxItem.mygit_nav">
++    <Setter Property="MinHeight" Value="38"/>
++    <Setter Property="Padding" Value="8,0"/>
++    <Setter Property="Margin" Value="5,2"/>
++    <Setter Property="CornerRadius" Value="8"/>
++  </Style>
++
++  <!-- Preferences: sidebar tabs retain the original content and bindings. -->
++  <Style Selector="TabControl.mygit_settings">
++    <Setter Property="Background" Value="{DynamicResource Brush.Mygit.Surface}"/>
++    <Setter Property="BorderThickness" Value="0"/>
++  </Style>
++  <Style Selector="TabControl.mygit_settings TabItem">
++    <Setter Property="MinWidth" Value="192"/>
++    <Setter Property="MinHeight" Value="44"/>
++    <Setter Property="Margin" Value="2,2,12,2"/>
++    <Setter Property="Padding" Value="14,0"/>
++    <Setter Property="CornerRadius" Value="9"/>
++    <Setter Property="HorizontalContentAlignment" Value="Left"/>
++  </Style>
++  <Style Selector="TabControl.mygit_settings TabItem:selected">
++    <Setter Property="Background" Value="{DynamicResource Brush.Mygit.Selected}"/>
++  </Style>
++  <Style Selector="TabControl.mygit_settings TextBlock.tab_header">
++    <Setter Property="FontSize" Value="13"/>
++    <Setter Property="FontWeight" Value="SemiBold"/>
++    <Setter Property="Opacity" Value="1"/>
++    <Setter Property="Foreground" Value="{DynamicResource Brush.FG1}"/>
++  </Style>
+ </Styles>
+diff --git a/src/Resources/Themes.axaml b/src/Resources/Themes.axaml
+--- a/src/Resources/Themes.axaml
++++ b/src/Resources/Themes.axaml
+@@ -2,27 +2,37 @@
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+   <ResourceDictionary.ThemeDictionaries>
+     <ResourceDictionary x:Key="Light">
+-      <Color x:Key="Color.Window">#FFF4F4F4</Color>
+-      <Color x:Key="Color.WindowBorder">#FF999999</Color>
+-      <Color x:Key="Color.TitleBar">#FFF2F0F0</Color>
+-      <Color x:Key="Color.ToolBar">#FFF0F3F5</Color>
+-      <Color x:Key="Color.Popup">#FFFAFAFA</Color>
++      <!-- MyGIt design system: understated macOS surfaces -->
++      <Color x:Key="Color.Mygit.Sidebar">#FFF5F7FC</Color>
++      <Color x:Key="Color.Mygit.Surface">#FFFFFFFF</Color>
++      <Color x:Key="Color.Mygit.Card">#FFFFFFFF</Color>
++      <Color x:Key="Color.Mygit.Selected">#FFE9EEFF</Color>
++      <Color x:Key="Color.Mygit.Hairline">#FFE1E7F1</Color>
++      <Color x:Key="Color.Mygit.Muted">#FF7583A0</Color>
++      <Color x:Key="Color.Mygit.Success">#FF1A9B74</Color>
++      <Color x:Key="Color.Mygit.Warning">#FFDD9735</Color>
++
++      <Color x:Key="Color.Window">#FFF8FAFD</Color>
++      <Color x:Key="Color.WindowBorder">#FFCFD7E6</Color>
++      <Color x:Key="Color.TitleBar">#FFF9FBFE</Color>
++      <Color x:Key="Color.ToolBar">#FFF5F7FC</Color>
++      <Color x:Key="Color.Popup">#FFFFFFFF</Color>
+       <Color x:Key="Color.PopupBorder">#FFFFFFFF</Color>
+       <Color x:Key="Color.Contents">#FFFFFFFF</Color>
+-      <Color x:Key="Color.Badge">#FFB0CEE8</Color>
+-      <Color x:Key="Color.BadgeFG">#FF1F1F1F</Color>
++      <Color x:Key="Color.Badge">#FFE9EEFF</Color>
++      <Color x:Key="Color.BadgeFG">#FF202E4A</Color>
+       <Color x:Key="Color.Conflict">#FF836C2E</Color>
+       <Color x:Key="Color.Conflict.Foreground">#FFFFFFFF</Color>
+       <Color x:Key="Color.Conflict.MineBG">#400078D7</Color>
+       <Color x:Key="Color.Conflict.TheirsBG">#40FF8C00</Color>
+-      <Color x:Key="Color.Border0">#FFCFCFCF</Color>
+-      <Color x:Key="Color.Border1">#FF898989</Color>
+-      <Color x:Key="Color.Border2">#FFCFCFCF</Color>
+-      <Color x:Key="Color.FlatButton.Background">#FFF8F8F8</Color>
++      <Color x:Key="Color.Border0">#FFE0E6F1</Color>
++      <Color x:Key="Color.Border1">#FFB5C2D5</Color>
++      <Color x:Key="Color.Border2">#FFE0E6F1</Color>
++      <Color x:Key="Color.FlatButton.Background">#FFF7F9FE</Color>
+       <Color x:Key="Color.FlatButton.BackgroundHovered">White</Color>
+-      <Color x:Key="Color.FlatButton.FloatingBorder">#FF898989</Color>
+-      <Color x:Key="Color.FG1">#FF1F1F1F</Color>
+-      <Color x:Key="Color.FG2">#FF6F6F6F</Color>
++      <Color x:Key="Color.FlatButton.FloatingBorder">#FFB5C2D5</Color>
++      <Color x:Key="Color.FG1">#FF202E4A</Color>
++      <Color x:Key="Color.FG2">#FF71809A</Color>
+       <Color x:Key="Color.Diff.EmptyBG">#10000000</Color>
+       <Color x:Key="Color.Diff.AddedBG">#80BFE6C1</Color>
+       <Color x:Key="Color.Diff.DeletedBG">#80FF9797</Color>
+@@ -32,31 +42,40 @@
+       <Color x:Key="Color.Link">#0000EE</Color>
+       <Color x:Key="Color.InlineCode">#FFE4E4E4</Color>
+       <Color x:Key="Color.InlineCodeFG">Black</Color>
+-      <Color x:Key="Color.SubPanel">#FFFBFBFB</Color>
++      <Color x:Key="Color.SubPanel">#FFF2F5FA</Color>
+     </ResourceDictionary>
+ 
+     <ResourceDictionary x:Key="Dark">
+-      <Color x:Key="Color.Window">#FF252525</Color>
+-      <Color x:Key="Color.WindowBorder">#FF606060</Color>
+-      <Color x:Key="Color.TitleBar">#FF1F1F1F</Color>
+-      <Color x:Key="Color.ToolBar">#FF2F2F2F</Color>
+-      <Color x:Key="Color.Popup">#FF2B2B2B</Color>
+-      <Color x:Key="Color.PopupBorder">#FF393939</Color>
+-      <Color x:Key="Color.Contents">#FF1C1C1C</Color>
+-      <Color x:Key="Color.Badge">#FF8F8F8F</Color>
+-      <Color x:Key="Color.BadgeFG">#FFE0E0E0</Color>
++      <Color x:Key="Color.Mygit.Sidebar">#FF151F30</Color>
++      <Color x:Key="Color.Mygit.Surface">#FF192537</Color>
++      <Color x:Key="Color.Mygit.Card">#FF202E44</Color>
++      <Color x:Key="Color.Mygit.Selected">#FF313F67</Color>
++      <Color x:Key="Color.Mygit.Hairline">#FF344359</Color>
++      <Color x:Key="Color.Mygit.Muted">#FF9BA9C2</Color>
++      <Color x:Key="Color.Mygit.Success">#FF50C9A2</Color>
++      <Color x:Key="Color.Mygit.Warning">#FFF3B96B</Color>
++
++      <Color x:Key="Color.Window">#FF182234</Color>
++      <Color x:Key="Color.WindowBorder">#FF33435C</Color>
++      <Color x:Key="Color.TitleBar">#FF202E4A</Color>
++      <Color x:Key="Color.ToolBar">#FF1B2940</Color>
++      <Color x:Key="Color.Popup">#FF202D44</Color>
++      <Color x:Key="Color.PopupBorder">#FF34445C</Color>
++      <Color x:Key="Color.Contents">#FF111B2B</Color>
++      <Color x:Key="Color.Badge">#FF3B4B68</Color>
++      <Color x:Key="Color.BadgeFG">#FFE4EBFA</Color>
+       <Color x:Key="Color.Conflict">#FFFAFAD2</Color>
+-      <Color x:Key="Color.Conflict.Foreground">#FF252525</Color>
++      <Color x:Key="Color.Conflict.Foreground">#FF182234</Color>
+       <Color x:Key="Color.Conflict.MineBG">#400078D7</Color>
+       <Color x:Key="Color.Conflict.TheirsBG">#40FF8C00</Color>
+-      <Color x:Key="Color.Border0">#FF181818</Color>
+-      <Color x:Key="Color.Border1">#FF7C7C7C</Color>
+-      <Color x:Key="Color.Border2">#FF404040</Color>
+-      <Color x:Key="Color.FlatButton.Background">#FF303030</Color>
+-      <Color x:Key="Color.FlatButton.BackgroundHovered">#FF333333</Color>
+-      <Color x:Key="Color.FlatButton.FloatingBorder">#FF4F4F4F</Color>
+-      <Color x:Key="Color.FG1">#FFDFDFDF</Color>
+-      <Color x:Key="Color.FG2">#FF9F9F9F</Color>
++      <Color x:Key="Color.Border0">#FF0F192A</Color>
++      <Color x:Key="Color.Border1">#FF52617A</Color>
++      <Color x:Key="Color.Border2">#FF35455D</Color>
++      <Color x:Key="Color.FlatButton.Background">#FF22314A</Color>
++      <Color x:Key="Color.FlatButton.BackgroundHovered">#FF2A3A55</Color>
++      <Color x:Key="Color.FlatButton.FloatingBorder">#FF465874</Color>
++      <Color x:Key="Color.FG1">#FFE5ECFA</Color>
++      <Color x:Key="Color.FG2">#FF9DAAC3</Color>
+       <Color x:Key="Color.Diff.EmptyBG">#3C000000</Color>
+       <Color x:Key="Color.Diff.AddedBG">#C03A5C3F</Color>
+       <Color x:Key="Color.Diff.DeletedBG">#C0633F3E</Color>
+@@ -66,10 +85,22 @@
+       <Color x:Key="Color.Link">#4DAAFC</Color>
+       <Color x:Key="Color.InlineCode">#FF383838</Color>
+       <Color x:Key="Color.InlineCodeFG">#FFF0F0F0</Color>
+-      <Color x:Key="Color.SubPanel">#FF272727</Color>
++      <Color x:Key="Color.SubPanel">#FF1B2940</Color>
+     </ResourceDictionary>
+   </ResourceDictionary.ThemeDictionaries>
+ 
++  <!-- Default MyGIt accent; user theme overrides still take precedence. -->
++  <Color x:Key="SystemAccentColor">#FF606FF0</Color>
++
++
++  <SolidColorBrush x:Key="Brush.Mygit.Sidebar" Color="{DynamicResource Color.Mygit.Sidebar}"/>
++  <SolidColorBrush x:Key="Brush.Mygit.Surface" Color="{DynamicResource Color.Mygit.Surface}"/>
++  <SolidColorBrush x:Key="Brush.Mygit.Card" Color="{DynamicResource Color.Mygit.Card}"/>
++  <SolidColorBrush x:Key="Brush.Mygit.Selected" Color="{DynamicResource Color.Mygit.Selected}"/>
++  <SolidColorBrush x:Key="Brush.Mygit.Hairline" Color="{DynamicResource Color.Mygit.Hairline}"/>
++  <SolidColorBrush x:Key="Brush.Mygit.Muted" Color="{DynamicResource Color.Mygit.Muted}"/>
++  <SolidColorBrush x:Key="Brush.Mygit.Success" Color="{DynamicResource Color.Mygit.Success}"/>
++  <SolidColorBrush x:Key="Brush.Mygit.Warning" Color="{DynamicResource Color.Mygit.Warning}"/>
+   <SolidColorBrush x:Key="Brush.Window" Color="{DynamicResource Color.Window}"/>
+   <SolidColorBrush x:Key="Brush.WindowBorder" Color="{DynamicResource Color.WindowBorder}"/>
+   <SolidColorBrush x:Key="Brush.TitleBar" Color="{DynamicResource Color.TitleBar}"/>

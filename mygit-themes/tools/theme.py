@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Validate and install MyGIt appearance-only SourceGit theme overrides.
+"""Manage MyGIt complete design themes: layout plus appearance.
 
-This tool never alters SourceGit binaries, Git repositories or preference.json.
-The final selection is made in SourceGit > Preferences > Appearance.
+Light/dark appearance presets use native SourceGit JSON. The complete design
+layout is prepared in a separate detached Git worktree by layout.py; this never
+patches the upstream-tracking checkout or edits preference.json.
 """
 
 from __future__ import annotations
@@ -123,19 +124,44 @@ def install(preset: dict, target: Path, force: bool) -> Path:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="MyGIt native SourceGit theme pack")
-    parser.add_argument("command", choices=["list", "validate", "install"])
-    parser.add_argument("preset", nargs="?", help="Preset id: light or dark (install only)")
+    parser = argparse.ArgumentParser(description="MyGIt design theme system: appearance + layout")
+    parser.add_argument("command", choices=["list", "validate", "install", "layouts", "check", "prepare", "build"])
+    parser.add_argument("preset", nargs="?", help="Appearance id (light/dark) or layout id (mygit-design/upstream-classic)")
     parser.add_argument("--target-dir", type=Path,
                         help="SourceGit config directory (otherwise detected by OS)")
     parser.add_argument("--force", action="store_true",
                         help="Overwrite an existing copied preset; never edits preferences")
+    parser.add_argument("--source", type=Path, default=REPOSITORY,
+                        help="Clean SourceGit/MyGIt checkout root for preparing a layout")
+    parser.add_argument("--output", type=Path,
+                        help="New output directory (must be outside source) for prepare/build")
     args = parser.parse_args()
     try:
         presets = validate()
+        from layout import validate as validate_layout
         if args.command == "list":
             for p in presets:
                 print(f"{p['id']}: {p['name']} — Appearance > Theme: {p['baseTheme']}")
+        elif args.command == "validate":
+            validate_layout()
+        elif args.command == "layouts":
+            profiles = validate_layout()
+            for name in profiles:
+                print(f"{name}{' [default]' if load_manifest().get('defaultLayout') == name else ''}")
+        elif args.command == "check":
+            # Invoke the dedicated layout CLI's temporary-worktree compatibility
+            # check without rewriting this checkout or application preferences.
+            import subprocess
+            command = [sys.executable, str(PACK / "tools" / "layout.py"), "check",
+                       args.preset or load_manifest().get("defaultLayout", "mygit-design"),
+                       "--source", str(args.source)]
+            subprocess.run(command, check=True)
+        elif args.command in ("prepare", "build"):
+            from layout import prepare as prepare_layout
+            if args.output is None:
+                parser.error(f"{args.command} requires --output outside source checkout")
+            profile = args.preset or load_manifest().get("defaultLayout", "mygit-design")
+            prepare_layout(profile, args.output, args.source, build=args.command == "build")
         elif args.command == "install":
             match = next((p for p in presets if p["id"] == args.preset), None)
             if match is None:
@@ -147,7 +173,9 @@ def main() -> int:
             print(f"  Theme = {match['baseTheme']}")
             print(f"  Theme Overrides = {dest}")
         return 0
-    except (OSError, ValueError, KeyError, json.JSONDecodeError) as exc:
+    except Exception as exc:
+        # Return a non-zero result for compatibility/patch errors, never swallow
+        # a failed layout build as a successful theme installation.
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
 

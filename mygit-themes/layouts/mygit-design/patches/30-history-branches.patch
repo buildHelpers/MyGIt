@@ -1,0 +1,491 @@
+diff --git a/src/Views/BranchesOverview.axaml b/src/Views/BranchesOverview.axaml
+new file mode 100644
+--- /dev/null
++++ b/src/Views/BranchesOverview.axaml
+@@ -0,0 +1,159 @@
++<UserControl xmlns="https://github.com/avaloniaui"
++             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
++             xmlns:vm="using:SourceGit.ViewModels"
++             xmlns:m="using:SourceGit.Models"
++             x:Class="SourceGit.Views.BranchesOverview"
++             x:DataType="vm:Repository">
++  <Grid ColumnDefinitions="*,264" Background="{DynamicResource Brush.Mygit.Surface}">
++    <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
++      <StackPanel Margin="28,24" Spacing="18">
++        <Grid ColumnDefinitions="*,Auto">
++          <StackPanel Grid.Column="0" Spacing="6">
++            <TextBlock Text="{DynamicResource Text.Repository.LocalBranches}" Classes="mygit_heading"/>
++            <TextBlock Text="{DynamicResource Text.Repository.BranchSort}"
++                       Classes="mygit_section_label"/>
++          </StackPanel>
++          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
++            <Button Classes="flat mygit_action"
++                    Content="Refresh"
++                    Click="OnRefreshRepository"/>
++            <Button Classes="flat mygit_action primary"
++                    Content="{DynamicResource Text.Repository.NewBranch}"
++                    Command="{Binding CreateNewBranch}"/>
++          </StackPanel>
++        </Grid>
++
++        <!-- A complete branch table; double-click a local branch to use SourceGit checkout. -->
++        <Border Classes="mygit_surface" ClipToBounds="True">
++          <Grid RowDefinitions="36,Auto">
++            <Grid Grid.Row="0" ColumnDefinitions="*,*,140,82"
++                  Background="{DynamicResource Brush.Mygit.Sidebar}">
++              <TextBlock Grid.Column="0" Text="{DynamicResource Text.Repository.LocalBranches}"
++                         Margin="16,0" Classes="mygit_section_label"/>
++              <TextBlock Grid.Column="1" Text="{DynamicResource Text.Repository.Remotes}"
++                         Margin="8,0" Classes="mygit_section_label"/>
++              <TextBlock Grid.Column="2" Text="HEAD"
++                         Margin="8,0" Classes="mygit_section_label"/>
++              <TextBlock Grid.Column="3" Text="Status"
++                         Margin="4,0" Classes="mygit_section_label"/>
++            </Grid>
++            <ListBox Grid.Row="1" x:Name="BranchesList"
++                     ItemsSource="{Binding Branches, Mode=OneWay}"
++                     Background="Transparent" BorderThickness="0"
++                     MaxHeight="360">
++              <ListBox.Styles>
++                <Style Selector="ListBoxItem">
++                  <Setter Property="MinHeight" Value="52"/>
++                  <Setter Property="Padding" Value="0"/>
++                  <Setter Property="Margin" Value="0"/>
++                  <Setter Property="BorderThickness" Value="0"/>
++                </Style>
++              </ListBox.Styles>
++              <ListBox.ItemTemplate>
++                <DataTemplate DataType="m:Branch">
++                  <Grid ColumnDefinitions="*,*,140,82"
++                        Background="Transparent" DoubleTapped="OnBranchDoubleTapped"
++                        ToolTip.Tip="{Binding FullName}">
++                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" Margin="16,0">
++                      <Path Width="13" Height="13" Data="{StaticResource Icons.Branch}"
++                            Fill="{DynamicResource Brush.Accent}"/>
++                      <TextBlock Text="{Binding FriendlyName}" FontWeight="SemiBold"
++                                 TextTrimming="CharacterEllipsis"/>
++                    </StackPanel>
++                    <TextBlock Grid.Column="1" Margin="8,0"
++                               Text="{Binding Upstream}" Foreground="{DynamicResource Brush.Mygit.Muted}"
++                               TextTrimming="CharacterEllipsis"/>
++                    <TextBlock Grid.Column="2" Margin="8,0"
++                               Text="{Binding Head}" FontFamily="{DynamicResource Fonts.Monospace}"
++                               Foreground="{DynamicResource Brush.Mygit.Muted}"
++                               TextTrimming="CharacterEllipsis"/>
++                    <Border Grid.Column="3" IsVisible="{Binding IsCurrent}"
++                            Margin="2,10,10,10" Padding="5,2"
++                            Background="{DynamicResource Brush.Mygit.Selected}"
++                            CornerRadius="7">
++                      <TextBlock Text="HEAD" FontWeight="SemiBold" FontSize="11"
++                                 Foreground="{DynamicResource Brush.Accent}"
++                                 HorizontalAlignment="Center"/>
++                    </Border>
++                  </Grid>
++                </DataTemplate>
++              </ListBox.ItemTemplate>
++            </ListBox>
++          </Grid>
++        </Border>
++
++        <Grid ColumnDefinitions="*,Auto">
++          <StackPanel Spacing="5">
++            <TextBlock Text="{DynamicResource Text.Repository.Worktrees}" FontSize="16" FontWeight="SemiBold"/>
++            <TextBlock Text="{DynamicResource Text.AddWorktree}" Classes="mygit_section_label"/>
++          </StackPanel>
++          <Button Grid.Column="1" Classes="flat mygit_action"
++                  Content="{DynamicResource Text.Repository.Worktrees.Add}"
++                  Click="OnAddWorktree"/>
++        </Grid>
++        <ItemsControl ItemsSource="{Binding Worktrees, Mode=OneWay}">
++          <ItemsControl.ItemsPanel>
++            <ItemsPanelTemplate>
++              <WrapPanel Orientation="Horizontal"/>
++            </ItemsPanelTemplate>
++          </ItemsControl.ItemsPanel>
++          <ItemsControl.ItemTemplate>
++            <DataTemplate DataType="vm:Worktree">
++              <Border Classes="mygit_card" Width="260" Margin="0,0,12,12"
++                      DoubleTapped="OnWorktreeDoubleTapped"
++                      ToolTip.Tip="{Binding FullPath}">
++                <StackPanel Spacing="8">
++                  <StackPanel Orientation="Horizontal" Spacing="8">
++                    <Path Width="14" Height="14" Data="{StaticResource Icons.Worktree}"
++                          Fill="{DynamicResource Brush.Accent}"/>
++                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold"
++                               TextTrimming="CharacterEllipsis"/>
++                  </StackPanel>
++                  <TextBlock Text="{Binding Branch}" FontSize="11"
++                             Foreground="{DynamicResource Brush.Mygit.Muted}"
++                             TextTrimming="CharacterEllipsis"/>
++                  <TextBlock Text="{Binding DisplayPath}" FontSize="11"
++                             Foreground="{DynamicResource Brush.Mygit.Muted}"
++                             TextTrimming="CharacterEllipsis"/>
++                  <TextBlock Text="{DynamicResource Text.Worktree.Open}"
++                             IsVisible="{Binding IsCurrent}" FontSize="11"
++                             Foreground="{DynamicResource Brush.Mygit.Success}"/>
++                </StackPanel>
++              </Border>
++            </DataTemplate>
++          </ItemsControl.ItemTemplate>
++        </ItemsControl>
++      </StackPanel>
++    </ScrollViewer>
++
++    <Border Grid.Column="1" Classes="mygit_sidebar" Padding="20,24">
++      <StackPanel Spacing="15">
++        <TextBlock Text="{DynamicResource Text.Repository.LocalBranches}"
++                   Classes="mygit_section_label"/>
++        <Path Width="30" Height="30" Data="{StaticResource Icons.Branch}"
++              Fill="{DynamicResource Brush.Accent}"
++              HorizontalAlignment="Left"/>
++        <TextBlock Text="{Binding CurrentBranch.Name, TargetNullValue='--'}"
++                   FontSize="21" FontWeight="Bold"
++                   TextTrimming="CharacterEllipsis"/>
++        <TextBlock Text="{DynamicResource Text.Repository.LocalBranches}"
++                   Classes="mygit_section_label"/>
++        <Border Height="1" Background="{DynamicResource Brush.Mygit.Hairline}"/>
++        <TextBlock Text="{DynamicResource Text.Repository.Remotes}"
++                   Classes="mygit_section_label"/>
++        <TextBlock Text="{Binding CurrentBranch.Upstream}"
++                   TextTrimming="CharacterEllipsis"/>
++        <TextBlock Text="HEAD" Classes="mygit_section_label"/>
++        <TextBlock Text="{Binding CurrentBranch.Head}"
++                   FontFamily="{DynamicResource Fonts.Monospace}"
++                   TextTrimming="CharacterEllipsis"/>
++        <Border Height="1" Background="{DynamicResource Brush.Mygit.Hairline}"/>
++        <Button Classes="flat mygit_action primary" Height="34"
++                Content="{DynamicResource Text.Repository.NavigateToCurrentHead}"
++                Click="OnViewCurrentHead"/>
++        <TextBlock Text="{DynamicResource Text.Repository.Filter}"
++                   Classes="mygit_section_label" TextWrapping="Wrap"/>
++      </StackPanel>
++    </Border>
++  </Grid>
++</UserControl>
+diff --git a/src/Views/BranchesOverview.axaml.cs b/src/Views/BranchesOverview.axaml.cs
+new file mode 100644
+--- /dev/null
++++ b/src/Views/BranchesOverview.axaml.cs
+@@ -0,0 +1,66 @@
++using Avalonia.Controls;
++using Avalonia.Input;
++using Avalonia.Interactivity;
++
++namespace SourceGit.Views
++{
++    /// <summary>
++    /// Branch management surface. Delegates all Git operations to the existing
++    /// Repository view model and SourceGit popup classes.
++    /// </summary>
++    public partial class BranchesOverview : UserControl
++    {
++        public BranchesOverview()
++        {
++            InitializeComponent();
++        }
++
++        private void OnRefreshRepository(object sender, RoutedEventArgs e)
++        {
++            if (DataContext is ViewModels.Repository repository)
++                repository.RefreshAll();
++
++            e.Handled = true;
++        }
++
++        private void OnAddWorktree(object sender, RoutedEventArgs e)
++        {
++            if (DataContext is ViewModels.Repository repository && repository.CanCreatePopup())
++                repository.AddWorktree();
++
++            e.Handled = true;
++        }
++
++        private void OnViewCurrentHead(object sender, RoutedEventArgs e)
++        {
++            if (DataContext is ViewModels.Repository repository && repository.CurrentBranch is { } branch)
++            {
++                repository.SelectedViewIndex = 0;
++                repository.NavigateToCommit(branch.Head);
++            }
++
++            e.Handled = true;
++        }
++
++        private void OnBranchDoubleTapped(object sender, TappedEventArgs e)
++        {
++            if (DataContext is ViewModels.Repository repository &&
++                repository.CanCreatePopup() &&
++                sender is Grid { DataContext: Models.Branch branch } &&
++                branch is { IsLocal: true, IsCurrent: false, HasWorktree: false })
++            {
++                repository.ShowPopup(new ViewModels.Checkout(repository, branch));
++                e.Handled = true;
++            }
++        }
++
++        private void OnWorktreeDoubleTapped(object sender, TappedEventArgs e)
++        {
++            if (sender is Border { DataContext: ViewModels.Worktree tree })
++            {
++                App.GetLauncher().OpenRepositoryInTab(tree.FullPath, null);
++                e.Handled = true;
++            }
++        }
++    }
++}
+diff --git a/src/Views/Histories.axaml b/src/Views/Histories.axaml
+--- a/src/Views/Histories.axaml
++++ b/src/Views/Histories.axaml
+@@ -18,21 +18,21 @@
+     </v:HistoriesLayout.RowDefinitions>
+ 
+     <v:HistoriesLayout.ColumnDefinitions>
+-      <ColumnDefinition Width="{Binding LeftArea, Mode=TwoWay}" MinWidth="100"/>
++      <ColumnDefinition Width="{Binding LeftArea, Mode=TwoWay}" MinWidth="280"/>
+       <ColumnDefinition Width="3"/>
+-      <ColumnDefinition Width="{Binding RightArea, Mode=TwoWay}" MinWidth="100"/>
++      <ColumnDefinition Width="{Binding RightArea, Mode=TwoWay}" MinWidth="260"/>
+     </v:HistoriesLayout.ColumnDefinitions>
+ 
+     <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
+       <v:HistoriesCommitList x:Name="CommitListContainer"
+                              Classes="static_scrollbar"
+                              ScrollViewer.AllowAutoHide="False"
+-                             Background="Transparent"
++                             Background="{DynamicResource Brush.Mygit.Surface}"
+                              ItemsSource="{Binding Commits, Mode=OneWay}"
+                              TotalCommits="{Binding Commits.Count, Mode=OneWay}"
+                              SelectedCommits="{Binding SelectedCommits, Mode=TwoWay}"
+-                             ColumnHeaderHeight="24"
+-                             RowHeight="26"
++                             ColumnHeaderHeight="32"
++                             RowHeight="34"
+                              LayoutUpdated="OnCommitListLayoutUpdated"
+                              ContextRequested="OnCommitListContextRequested"
+                              DoubleTapped="OnCommitListDoubleTapped">
+@@ -56,8 +56,8 @@
+           </Style>
+ 
+           <Style Selector="DataGridColumnHeader">
+-            <Setter Property="MinHeight" Value="24"/>
+-            <Setter Property="Background" Value="Transparent"/>
++            <Setter Property="MinHeight" Value="32"/>
++            <Setter Property="Background" Value="{DynamicResource Brush.Mygit.Card}"/>
+             <Setter Property="Template">
+               <ControlTemplate>
+                 <Border x:Name="HeaderBorder"
+@@ -309,7 +309,7 @@
+                   Focusable="False"
+                   IsEnabled="{Binding #ThisControl.IsDetailsPanelExpanded, Mode=OneWay}"/>
+ 
+-    <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" >
++    <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Background="{DynamicResource Brush.Mygit.Card}">
+       <ContentControl Content="{Binding DetailContext, Mode=OneWay}">
+         <ContentControl.DataTemplates>
+           <DataTemplate DataType="m:Null">
+diff --git a/src/Views/Repository.axaml b/src/Views/Repository.axaml
+--- a/src/Views/Repository.axaml
++++ b/src/Views/Repository.axaml
+@@ -12,13 +12,17 @@
+              x:Name="ThisControl">  
+   <Grid>
+     <Grid.ColumnDefinitions>
+-      <ColumnDefinition Width="49"/>
++      <ColumnDefinition Width="190"/>
+       <ColumnDefinition Width="*"/>
+     </Grid.ColumnDefinitions>
+ 
+     <!-- Page Switcher -->
+-    <Grid Grid.Column="0" Width="49" RowDefinitions="Auto,*,Auto,12">
+-      <ListBox Background="Transparent" SelectedIndex="{Binding SelectedViewIndex, Mode=TwoWay}" SelectionMode="AlwaysSelected">
++    <Grid Grid.Column="0" Width="190" RowDefinitions="Auto,*,Auto,12"
++          Background="{DynamicResource Brush.Mygit.Sidebar}">
++      <TextBlock Grid.Row="0" Margin="16,20,8,10"
++                 Classes="mygit_section_label"
++                 Text="{DynamicResource Text.Launcher.OpenRepository}"/>
++      <ListBox Grid.Row="1" Background="Transparent" SelectedIndex="{Binding SelectedViewIndex, Mode=TwoWay}" SelectionMode="AlwaysSelected">
+         <ListBox.Styles>
+           <Style Selector="Path.icon">
+             <Setter Property="Width" Value="18"/>
+@@ -29,16 +33,16 @@
+           </Style>
+           <Style Selector="ListBoxItem">
+             <Setter Property="Height" Value="42"/>
+-            <Setter Property="Margin" Value="4"/>
++            <Setter Property="Margin" Value="8,3"/>
+             <Setter Property="Padding" Value="0"/>
+             <Setter Property="BorderThickness" Value="0"/>
+-            <Setter Property="CornerRadius" Value="4"/>
++            <Setter Property="CornerRadius" Value="9"/>
+           </Style>
+           <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+             <Setter Property="Background" Value="#18888888"/>
+           </Style>
+           <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+-            <Setter Property="Background" Value="{DynamicResource Brush.AccentHovered}"/>
++            <Setter Property="Background" Value="{DynamicResource Brush.Mygit.Selected}"/>
+           </Style>
+         </ListBox.Styles>
+ 
+@@ -56,7 +60,10 @@
+               <Run Text="{OnPlatform Ctrl+1, macOS=⌘+1}" FontSize="11" Foreground="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForeground}"/>
+             </TextBlock>
+           </ToolTip.Tip>
+-          <Path Classes="icon" Data="{StaticResource Icons.Dashboard}"/>
++          <StackPanel Orientation="Horizontal" Spacing="11" Margin="10,0">
++            <Path Classes="icon" Data="{StaticResource Icons.Dashboard}"/>
++            <TextBlock Text="{DynamicResource Text.Dashboard}" FontWeight="SemiBold"/>
++          </StackPanel>
+         </ListBoxItem>
+ 
+         <ListBoxItem IsVisible="{Binding !IsBare}" ToolTip.Placement="Right">
+@@ -68,7 +75,10 @@
+             </TextBlock>
+           </ToolTip.Tip>
+           <Grid>
+-            <Path Classes="icon" Data="{StaticResource Icons.Changes}"/>
++            <StackPanel Orientation="Horizontal" Spacing="11" Margin="10,0">
++              <Path Classes="icon" Data="{StaticResource Icons.Changes}"/>
++              <TextBlock Text="{DynamicResource Text.WorkingCopy}" FontWeight="SemiBold"/>
++            </StackPanel>
+             <Border Height="14"
+                     Margin="0,4,4,0" Padding="5,0"
+                     CornerRadius="7"
+@@ -98,7 +108,10 @@
+             </TextBlock>
+           </ToolTip.Tip>
+           <Grid>
+-            <Path Classes="icon" Data="{StaticResource Icons.Stashes}"/>
++            <StackPanel Orientation="Horizontal" Spacing="11" Margin="10,0">
++              <Path Classes="icon" Data="{StaticResource Icons.Stashes}"/>
++              <TextBlock Text="{DynamicResource Text.Stashes}" FontWeight="SemiBold"/>
++            </StackPanel>
+             <Border Height="14"
+                     Margin="0,4,4,0" Padding="5,0"
+                     CornerRadius="7"
+@@ -112,27 +125,36 @@
+             </Border>
+           </Grid>
+         </ListBoxItem>
++
++        <ListBoxItem ToolTip.Placement="Right">
++          <StackPanel Orientation="Horizontal" Spacing="11" Margin="10,0">
++            <Path Classes="icon" Data="{StaticResource Icons.Branch}"/>
++            <TextBlock Text="{DynamicResource Text.Repository.LocalBranches}" FontWeight="SemiBold"/>
++          </StackPanel>
++        </ListBoxItem>
+       </ListBox>
+       
+       <Button Grid.Row="2"
+-              Classes="icon_button"
+-              Width="40" Height="40"
+-              Margin="4,0"
++              Classes="flat mygit_action"
++              Height="36" Margin="10,0,10,6"
+               Click="OnOpenConfigure"
+               ToolTip.Tip="{DynamicResource Text.Repository.Configure}"
+               ToolTip.Placement="Right">
+-        <Path Width="18" Height="18" Data="{StaticResource Icons.Settings}"/>
++        <StackPanel Orientation="Horizontal" Spacing="10" Margin="5,0">
++          <Path Width="16" Height="16" Data="{StaticResource Icons.Settings}"/>
++          <TextBlock Text="{DynamicResource Text.Configure}"/>
++        </StackPanel>
+       </Button>
+     </Grid>
+ 
+     <!-- Body -->
+     <Border Grid.Column="1"
+-            Margin="0,0,4,4"
++            Margin="4,0,8,7"
+             BorderThickness="1"
+             BorderBrush="{DynamicResource Brush.Border0}"
+-            CornerRadius="8">
+-      <Border CornerRadius="8" ClipToBounds="True">
+-        <Grid RowDefinitions="Auto,*">
++            CornerRadius="12">
++      <Border CornerRadius="12" ClipToBounds="True">
++        <Grid RowDefinitions="Auto,44,*">
+           <!-- In-Progress Information Bar -->
+           <Grid Grid.Row="0" Height="28" ColumnDefinitions="*,Auto,Auto,Auto" Background="{DynamicResource Brush.Conflict}" IsVisible="{Binding InProgressContext, Converter={x:Static ObjectConverters.IsNotNull}}">
+             <ContentControl Grid.Column="0" Margin="8,0" Content="{Binding InProgressContext}">
+@@ -266,23 +288,63 @@
+                     Click="OnAbortInProgress"/>
+           </Grid>
+ 
++          <!-- Mirror the main navigation as clear repository tabs. Both lists share
++               SelectedViewIndex and therefore reuse the existing view model. -->
++          <Border Grid.Row="1" Background="{DynamicResource Brush.Mygit.Surface}"
++                  BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
++            <ListBox SelectedIndex="{Binding SelectedViewIndex, Mode=TwoWay}"
++                     Background="Transparent" SelectionMode="AlwaysSelected">
++              <ListBox.ItemsPanel>
++                <ItemsPanelTemplate>
++                  <StackPanel Orientation="Horizontal"/>
++                </ItemsPanelTemplate>
++              </ListBox.ItemsPanel>
++              <ListBox.Styles>
++                <Style Selector="ListBoxItem">
++                  <Setter Property="Margin" Value="10,5,0,5"/>
++                  <Setter Property="Padding" Value="16,0"/>
++                  <Setter Property="CornerRadius" Value="8"/>
++                  <Setter Property="MinHeight" Value="32"/>
++                </Style>
++                <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
++                  <Setter Property="Background" Value="{DynamicResource Brush.Mygit.Selected}"/>
++                </Style>
++              </ListBox.Styles>
++              <ListBoxItem>
++                <TextBlock Text="{DynamicResource Text.Dashboard}" FontWeight="SemiBold"/>
++              </ListBoxItem>
++              <ListBoxItem IsVisible="{Binding !IsBare}">
++                <TextBlock Text="{DynamicResource Text.WorkingCopy}" FontWeight="SemiBold"/>
++              </ListBoxItem>
++              <ListBoxItem IsVisible="{Binding !IsBare}">
++                <TextBlock Text="{DynamicResource Text.Stashes}" FontWeight="SemiBold"/>
++              </ListBoxItem>
++              <ListBoxItem>
++                <TextBlock Text="{DynamicResource Text.Repository.LocalBranches}" FontWeight="SemiBold"/>
++              </ListBoxItem>
++            </ListBox>
++          </Border>
++
+           <!-- Main Body -->
+-          <Grid Grid.Row="1" Background="{DynamicResource Brush.Window}">
++          <Grid Grid.Row="2" Background="{DynamicResource Brush.Mygit.Surface}">
+             <Grid.ColumnDefinitions>
+               <ColumnDefinition Width="{Binding #ThisControl.SidebarWidth, Mode=TwoWay}" MinWidth="{Binding #ThisControl.SidebarMinWidth, Mode=OneWay}"/>
+               <ColumnDefinition Width="Auto"/>
+               <ColumnDefinition Width="*" MinWidth="100"/>
+             </Grid.ColumnDefinitions>
+ 
+             <!-- Sidebar (Branches/Remotes/Tags/Submodules/Worktrees) -->
+-            <Grid Grid.Column="0" RowDefinitions="Auto,*" IsVisible="{Binding #ThisControl.IsNormalSidebarVisible, Mode=OneWay}">              
++            <Grid Grid.Column="0" RowDefinitions="Auto,*"
++                  Background="{DynamicResource Brush.Mygit.Sidebar}"
++                  IsVisible="{Binding #ThisControl.IsNormalSidebarVisible, Mode=OneWay}">              
+               <!-- Filter Branches/Tags/Submodules -->
+               <TextBox Grid.Row="0"
+                        x:Name="FilterBox"
+-                       Height="24"
+-                       Margin="6,6,4,0"
++                       Classes="mygit_search"
++                       Height="30"
++                       Margin="10,10,8,4"
+                        BorderThickness="1"
+-                       CornerRadius="13"
++                       CornerRadius="9"
+                        BorderBrush="{DynamicResource Brush.Border2}"
+                        Watermark="{DynamicResource Text.Repository.Filter}"
+                        Text="{Binding Filter, Mode=TwoWay}"
+@@ -831,6 +893,11 @@
+                 <v:StashesPage DataContext="{Binding StashesPage, Mode=OneWay}"/>
+               </Border>
+ 
++              <!-- Branches and worktrees overview. Uses the existing repository state. -->
++              <Border IsVisible="{Binding IsBranchesVisible, Mode=OneWay}">
++                <v:BranchesOverview/>
++              </Border>
++
+               <!-- Auto-Fetch Notification -->
+               <Border Padding="12" HorizontalAlignment="Center" VerticalAlignment="Center" Effect="drop-shadow(0 0 12 #A0000000)" IsVisible="{Binding IsAutoFetching}">
+                 <Border Background="{DynamicResource Brush.Popup}" CornerRadius="6" BorderThickness="1" BorderBrush="{DynamicResource Brush.PopupBorder}">

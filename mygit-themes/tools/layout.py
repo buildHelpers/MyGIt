@@ -15,6 +15,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 THEMES_DIR = Path(__file__).resolve().parents[1]
@@ -147,7 +148,7 @@ def prepare(profile_id: str, dest: Path, source: Path = ROOT, build: bool = Fals
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="MyGIt complete design layout theme composer")
-    parser.add_argument("action", choices=["layouts", "validate", "prepare", "build"])
+    parser.add_argument("action", choices=["layouts", "validate", "check", "prepare", "build"])
     parser.add_argument("layout", nargs="?", default=None, help="mygit-design or upstream-classic")
     parser.add_argument("--source", type=Path, default=ROOT, help="Clean SourceGit/MyGIt checkout root")
     parser.add_argument("--output", type=Path, help="New, nonexistent directory outside the source")
@@ -160,6 +161,19 @@ def main() -> int:
                     print(f"  {name}  {'(default)' if manifest().get('defaultLayout') == name else ''}")
             return 0
         profile_id = args.layout or manifest()["defaultLayout"]
+        if args.action == "check":
+            # A temporary detached worktree checks whether the selected layout
+            # still applies after upstream changes. It is always unregistered.
+            with tempfile.TemporaryDirectory(prefix="mygit-layout-check-") as temp:
+                output = Path(temp) / "checkout"
+                try:
+                    prepare(profile_id, output, args.source, build=False)
+                finally:
+                    if output.exists() and (output / ".git").exists():
+                        git(args.source.expanduser().resolve(), "worktree", "remove",
+                            "--force", str(output))
+            print(f"PASS layout {profile_id} applies to this upstream checkout")
+            return 0
         if args.output is None:
             parser.error("prepare/build requires --output (outside the source checkout)")
         prepare(profile_id, args.output, args.source, build=args.action == "build")

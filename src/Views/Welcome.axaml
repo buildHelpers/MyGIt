@@ -75,7 +75,7 @@
     </Border>
 
     <!-- Managed Repositories -->
-    <Grid Grid.Row="0" Grid.Column="1" RowDefinitions="Auto,*">
+    <Grid Grid.Row="0" Grid.Column="1" RowDefinitions="Auto,Auto,*">
       <!-- Search Box -->
       <TextBox Grid.Row="0"
                x:Name="SearchBox"
@@ -116,8 +116,48 @@
         </TextBox.InnerRightContent>
       </TextBox>
 
+      <!-- Most recently used repositories; same validated open action as the tree. -->
+      <StackPanel Grid.Row="1" Margin="0,16,0,12" Spacing="9">
+        <StackPanel Orientation="Horizontal" Spacing="10">
+          <TextBlock Text="{DynamicResource Text.QuickRepo.Recent}" FontSize="15" FontWeight="SemiBold"/>
+          <TextBlock Text="{DynamicResource Text.PageTabBar.Welcome.Title}"
+                     Classes="mygit_section_label"/>
+        </StackPanel>
+        <ItemsControl ItemsSource="{Binding RecentRepositories, Mode=OneWay}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <WrapPanel Orientation="Horizontal"/>
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="vm:RepositoryNode">
+              <Border Classes="mygit_card"
+                      Width="240" Margin="0,0,10,10"
+                      Tapped="OnRecentRepositoryTapped"
+                      ToolTip.Tip="{Binding Id}">
+                <StackPanel Spacing="9">
+                  <StackPanel Orientation="Horizontal" Spacing="9">
+                    <Border Width="32" Height="32" CornerRadius="9"
+                            Background="{DynamicResource Brush.Mygit.Selected}">
+                      <Path Width="16" Height="16"
+                            Data="{StaticResource Icons.Repositories}"
+                            Fill="{DynamicResource Brush.Accent}"/>
+                    </Border>
+                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold"
+                               FontSize="14" TextTrimming="CharacterEllipsis"/>
+                  </StackPanel>
+                  <TextBlock Text="{Binding Id}" FontSize="11"
+                             Foreground="{DynamicResource Brush.Mygit.Muted}"
+                             TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </StackPanel>
+
       <!-- Repository Tree -->
-      <v:RepositoryListBox Grid.Row="1"
+      <v:RepositoryListBox Grid.Row="2"
                            x:Name="TreeContainer"
                            Margin="0,12,8,0"
                            Focusable="True"

@@ -423,46 +423,7 @@ namespace SourceGit.Views
                     menu.Items.Add(item);
                 }
 
-                // Switching an opened repository only selects its existing page.
-                // It never checks out a branch, reloads a repository or discards changes.
-                menu.Items.Add(new MenuItem { Header = "-" });
-                menu.Items.Add(new MenuItem
-                {
-                    Header = new TextBlock
-                    {
-                        Text = App.Text("Launcher.Pages"),
-                        FontWeight = FontWeight.Bold,
-                    },
-                    IsEnabled = false,
-                });
-
-                foreach (var page in launcher.Pages)
-                {
-                    if (page.Data is not ViewModels.Repository)
-                        continue;
-
-                    var icon = this.CreateMenuIcon(page == launcher.ActivePage ? "Icons.Check" : "Icons.Repositories");
-                    var item = new MenuItem { Header = page.Node.Name, Icon = icon };
-                    item.Click += (_, ev) =>
-                    {
-                        launcher.ActivePage = page;
-                        ev.Handled = true;
-                    };
-                    menu.Items.Add(item);
-                }
-
-                // The existing searchable palette also includes managed, not-yet-opened repos.
-                var search = new MenuItem
-                {
-                    Header = App.Text("Welcome.Search"),
-                    Icon = this.CreateMenuIcon("Icons.Search"),
-                };
-                search.Click += (_, ev) =>
-                {
-                    launcher.CommandPalette = new ViewModels.LauncherPagesCommandPalette(launcher);
-                    ev.Handled = true;
-                };
-                menu.Items.Add(search);
+                // Repository search and recent lists live in the separate top-bar repository button.
                 menu.Items.Add(new MenuItem { Header = "-" });
 
                 var configure = new MenuItem { Header = App.Text("Workspace.Configure") };

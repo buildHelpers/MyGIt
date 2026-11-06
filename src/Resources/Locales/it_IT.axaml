@@ -657,6 +657,14 @@ ${pure_files:N} Come ${files:N}, ma senza cartelle</x:String>
   <x:String x:Key="Text.PushToNewBranch" xml:space="preserve">Push su un NUOVO branch</x:String>
   <x:String x:Key="Text.PushToNewBranch.Title" xml:space="preserve">Inserisci il nome del nuovo branch remoto:</x:String>
   <x:String x:Key="Text.Quit" xml:space="preserve">Esci</x:String>
+  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">Repository</x:String>
+  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">Recenti per primi</x:String>
+  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ Seleziona · Invio Apri · Esc Chiudi</x:String>
+  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">Nessun repository corrispondente</x:String>
+  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">Aperto</x:String>
+  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">Recente</x:String>
+  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">Cerca nome o percorso...</x:String>
+  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">Passa rapidamente a un repository</x:String>
   <x:String x:Key="Text.Rebase" xml:space="preserve">Riallinea Branch Corrente</x:String>
   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">Stasha e Riapplica modifiche locali</x:String>
   <x:String x:Key="Text.Rebase.On" xml:space="preserve">Su:</x:String>

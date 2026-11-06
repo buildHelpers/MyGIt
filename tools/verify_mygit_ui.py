@@ -35,6 +35,19 @@ def check_xml() -> None:
         "src/Views/Launcher.axaml",
         "src/Views/Welcome.axaml",
         "src/Views/QuickRepositorySwitcher.axaml",
+        "src/Views/Repository.axaml",
+        "src/Views/WorkingCopy.axaml",
+        "src/Views/Histories.axaml",
+        "src/Views/BranchesOverview.axaml",
+        "src/Views/MergeConflictEditor.axaml",
+        "src/Views/Conflict.axaml",
+        "src/Views/Preferences.axaml",
+        "src/Views/RepositoryConfigure.axaml",
+        "src/Views/StashesPage.axaml",
+        "src/Views/DiffView.axaml",
+        "src/Views/CommitDetail.axaml",
+        "src/Views/RepositoryToolbar.axaml",
+        "src/Views/LauncherPage.axaml",
         "src/Resources/Styles.axaml",
         "src/Resources/Themes.axaml",
         "src/SourceGit.csproj",
@@ -73,6 +86,19 @@ def check_ui_handlers() -> None:
             "src/Views/QuickRepositorySwitcher.axaml",
             "src/Views/QuickRepositorySwitcher.axaml.cs",
             {"Tapped": ("OnRepositoryTapped",)},
+        ),
+        (
+            "src/Views/BranchesOverview.axaml",
+            "src/Views/BranchesOverview.axaml.cs",
+            {
+                "Click": ("OnRefreshRepository", "OnAddWorktree", "OnViewCurrentHead"),
+                "DoubleTapped": ("OnBranchDoubleTapped", "OnWorktreeDoubleTapped"),
+            },
+        ),
+        (
+            "src/Views/Welcome.axaml",
+            "src/Views/Welcome.axaml.cs",
+            {"Tapped": ("OnRecentRepositoryTapped",)},
         ),
     ):
         markup = read(view)
@@ -121,12 +147,47 @@ def check_safe_navigation() -> None:
     print("PASS non-destructive home, persisted recency and searchable switcher")
 
 
+def check_design_surfaces() -> None:
+    repository = read("src/Views/Repository.axaml")
+    view_model = read("src/ViewModels/Repository.cs")
+    working_copy = read("src/Views/WorkingCopy.axaml")
+    settings = read("src/Views/Preferences.axaml")
+    branches = read("src/Views/BranchesOverview.axaml")
+    history = read("src/Views/Histories.axaml")
+
+    assert "IsBranchesVisible" in repository and "IsBranchesVisible" in view_model
+    assert "BranchesOverview" in repository
+    assert 'Grid.Column="4"' in working_copy  # permanent right commit pane
+    assert "CommitMessageToolBox" in working_copy
+    assert "UseTwoColumnsLayoutInHistories" in history
+    assert 'TabStripPlacement="Left"' in settings
+    assert "OnBranchDoubleTapped" in branches
+    assert "OnWorktreeDoubleTapped" in branches
+    assert "RecentRepositories" in read("src/Views/Welcome.axaml")
+
+    english = read("src/Resources/Locales/en_US.axaml")
+    views = (
+        "src/Views/Repository.axaml",
+        "src/Views/WorkingCopy.axaml",
+        "src/Views/BranchesOverview.axaml",
+        "src/Views/MergeConflictEditor.axaml",
+        "src/Views/Preferences.axaml",
+        "src/Views/Welcome.axaml",
+    )
+    for view in views:
+        for key in re.findall(r"\\{DynamicResource (Text\\.[\\w.]+)\\}", read(view)):
+            assert f'x:Key="{key}"' in english, (view, key)
+
+    print("PASS design surface and localization links")
+
+
 def main() -> int:
     try:
         check_xml()
         check_localization()
         check_ui_handlers()
         check_safe_navigation()
+        check_design_surfaces()
     except (AssertionError, ET.ParseError, OSError) as exc:
         print(f"FAIL: {exc}", file=sys.stderr)
         return 1

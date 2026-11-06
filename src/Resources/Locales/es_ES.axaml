@@ -777,6 +777,14 @@
   <x:String x:Key="Text.PushToNewBranch" xml:space="preserve">Push a una NUEVA rama</x:String>
   <x:String x:Key="Text.PushToNewBranch.Title" xml:space="preserve">Nombre de entrada de la nueva rama remota:</x:String>
   <x:String x:Key="Text.Quit" xml:space="preserve">Salir</x:String>
+  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">Repositorios</x:String>
+  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">Recientes primero</x:String>
+  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ Elegir · Enter Abrir · Esc Cerrar</x:String>
+  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">No hay repositorios coincidentes</x:String>
+  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">Abierto</x:String>
+  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">Reciente</x:String>
+  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">Buscar por nombre o ruta...</x:String>
+  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">Cambiar de repositorio</x:String>
   <x:String x:Key="Text.Rebase" xml:space="preserve">Rebase Rama Actual</x:String>
   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">Stash y volver a aplicar cambios locales</x:String>
   <x:String x:Key="Text.Rebase.NoVerify" xml:space="preserve">Saltar el hook de pre-rebase</x:String>

@@ -1,0 +1,206 @@
+diff --git a/src/Views/Launcher.axaml b/src/Views/Launcher.axaml
+--- a/src/Views/Launcher.axaml
++++ b/src/Views/Launcher.axaml
+@@ -26,9 +26,9 @@
+     </Grid.RowDefinitions>
+ 
+     <!-- Custom TitleBar -->
+-    <Grid Grid.Row="0" ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,32,*,Auto,Auto">
++    <Grid Grid.Row="0" ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto,Auto">
+       <!-- Bottom border -->
+-      <Border Grid.Column="0" Grid.ColumnSpan="9"
++      <Border Grid.Column="0" Grid.ColumnSpan="8"
+               BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Border0}"
+               Background="{DynamicResource Brush.TitleBar}"
+               DoubleTapped="MaximizeOrRestoreWindow"
+@@ -119,25 +119,26 @@
+         </StackPanel>
+       </Button>
+ 
+-      <!-- Quick switch: other workspaces, opened repositories, and searchable repositories. -->
++      <!-- Workspace selection is distinct from repository selection. -->
+       <Button Grid.Column="3"
+               Classes="flat workspace_switch"
+               Height="28" Margin="0,0,5,1" Padding="10,0"
+               CornerRadius="8" VerticalAlignment="Bottom"
+               Click="OnOpenWorkspaceMenu" HotKey="{OnPlatform Ctrl+Alt+P, macOS=⌘+Alt+P}"
+-              ToolTip.Tip="{DynamicResource Text.Welcome.Search}">
++              ToolTip.Tip="{DynamicResource Text.Launcher.Workspaces}">
+         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="7">
+           <TextBlock Text="{Binding ActiveWorkspace.Name}" MaxWidth="130" TextTrimming="CharacterEllipsis"/>
+           <Path Width="9" Height="9" Data="{StaticResource Icons.Down}" Fill="{DynamicResource Brush.FG2}"/>
+         </StackPanel>
+       </Button>
+ 
+-      <!-- One-click recent repository switcher with search in the popup itself. -->
+-      <Button Grid.Column="4"
++      <!-- One repository switcher: original shortcut and handler, themed recent/search panel. -->
++      <Button x:Name="RepositorySwitcherButton" Grid.Column="4"
+               Classes="flat workspace_switch"
+               Height="28" Margin="0,0,5,1" Padding="10,0"
+               CornerRadius="8" VerticalAlignment="Bottom"
+-              Click="OnOpenRecentRepositories"
++              Click="OnOpenPagesCommandPalette"
++              HotKey="{OnPlatform Ctrl+P, macOS=⌘+P}"
+               ToolTip.Tip="{DynamicResource Text.QuickRepo.Title}">
+         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="7">
+           <Path Width="13" Height="13" Data="{StaticResource Icons.Repositories}" Fill="{DynamicResource Brush.Accent}"/>
+@@ -150,27 +151,11 @@
+         </StackPanel>
+       </Button>
+ 
+-      <!-- Pages Switcher Toggle Button -->
+-      <Button Grid.Column="5" Classes="icon_button" VerticalAlignment="Bottom" Margin="0,0,0,1" Click="OnOpenPagesCommandPalette" HotKey="{OnPlatform Ctrl+P, macOS=⌘+P}">
+-        <ToolTip.Tip>
+-          <StackPanel Orientation="Horizontal">
+-            <TextBlock Text="{DynamicResource Text.Launcher.Pages}"
+-                       VerticalAlignment="Center"/>
+-            <TextBlock Margin="8,0,0,0"
+-                       Text="{OnPlatform Ctrl+P, macOS=⌘+P}"
+-                       FontSize="11"
+-                       Foreground="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForeground}"
+-                       VerticalAlignment="Center"/>
+-          </StackPanel>
+-        </ToolTip.Tip>
+-        <Path Width="13" Height="13" Margin="0,2,0,0" Data="{StaticResource Icons.Tabs}"/>
+-      </Button>
+-
+       <!-- Pages Tabs -->
+-      <v:LauncherTabBar Grid.Column="6" Height="30" Margin="0,0,16,0" VerticalAlignment="Bottom"/>
++      <v:LauncherTabBar Grid.Column="5" Height="30" Margin="0,0,16,0" VerticalAlignment="Bottom"/>
+ 
+       <!-- Update Available Button -->
+-      <Button Grid.Column="7"
++      <Button Grid.Column="6"
+               Classes="icon_button"
+               Height="30"
+               Margin="0,0,4,0"
+@@ -182,7 +167,7 @@
+       </Button>
+ 
+       <!-- Caption Buttons (Windows/Linux) -->
+-      <Border Grid.Column="8" IsVisible="{Binding #ThisControl.HasRightCaptionButton}">
++      <Border Grid.Column="7" IsVisible="{Binding #ThisControl.HasRightCaptionButton}">
+         <v:CaptionButtons Height="30" VerticalAlignment="Top"/>
+       </Border>
+     </Grid>
+diff --git a/src/Views/Launcher.axaml.cs b/src/Views/Launcher.axaml.cs
+--- a/src/Views/Launcher.axaml.cs
++++ b/src/Views/Launcher.axaml.cs
+@@ -476,9 +476,8 @@
+ 
+         private void OnOpenPagesCommandPalette(object sender, RoutedEventArgs e)
+         {
+-            if (DataContext is ViewModels.Launcher vm)
+-                vm.CommandPalette = new ViewModels.LauncherPagesCommandPalette(vm);
+-            e.Handled = true;
++            // Click and Ctrl/Cmd+P must reach the same repository picker.
++            OnOpenRecentRepositories(sender, e);
+         }
+ 
+         private void OnCloseCommandPalette(object sender, PointerPressedEventArgs e)
+diff --git a/src/Views/Repository.axaml b/src/Views/Repository.axaml
+--- a/src/Views/Repository.axaml
++++ b/src/Views/Repository.axaml
+@@ -154,7 +154,7 @@
+             BorderBrush="{DynamicResource Brush.Border0}"
+             CornerRadius="12">
+       <Border CornerRadius="12" ClipToBounds="True">
+-        <Grid RowDefinitions="Auto,44,*">
++        <Grid RowDefinitions="Auto,Auto,*">
+           <!-- In-Progress Information Bar -->
+           <Grid Grid.Row="0" Height="28" ColumnDefinitions="*,Auto,Auto,Auto" Background="{DynamicResource Brush.Conflict}" IsVisible="{Binding InProgressContext, Converter={x:Static ObjectConverters.IsNotNull}}">
+             <ContentControl Grid.Column="0" Margin="8,0" Content="{Binding InProgressContext}">
+@@ -288,42 +288,7 @@
+                     Click="OnAbortInProgress"/>
+           </Grid>
+ 
+-          <!-- Mirror the main navigation as clear repository tabs. Both lists share
+-               SelectedViewIndex and therefore reuse the existing view model. -->
+-          <Border Grid.Row="1" Background="{DynamicResource Brush.Mygit.Surface}"
+-                  BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
+-            <ListBox SelectedIndex="{Binding SelectedViewIndex, Mode=TwoWay}"
+-                     Background="Transparent" SelectionMode="AlwaysSelected">
+-              <ListBox.ItemsPanel>
+-                <ItemsPanelTemplate>
+-                  <StackPanel Orientation="Horizontal"/>
+-                </ItemsPanelTemplate>
+-              </ListBox.ItemsPanel>
+-              <ListBox.Styles>
+-                <Style Selector="ListBoxItem">
+-                  <Setter Property="Margin" Value="10,5,0,5"/>
+-                  <Setter Property="Padding" Value="16,0"/>
+-                  <Setter Property="CornerRadius" Value="8"/>
+-                  <Setter Property="MinHeight" Value="32"/>
+-                </Style>
+-                <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+-                  <Setter Property="Background" Value="{DynamicResource Brush.Mygit.Selected}"/>
+-                </Style>
+-              </ListBox.Styles>
+-              <ListBoxItem>
+-                <TextBlock Text="{DynamicResource Text.Dashboard}" FontWeight="SemiBold"/>
+-              </ListBoxItem>
+-              <ListBoxItem IsVisible="{Binding !IsBare}">
+-                <TextBlock Text="{DynamicResource Text.WorkingCopy}" FontWeight="SemiBold"/>
+-              </ListBoxItem>
+-              <ListBoxItem IsVisible="{Binding !IsBare}">
+-                <TextBlock Text="{DynamicResource Text.Stashes}" FontWeight="SemiBold"/>
+-              </ListBoxItem>
+-              <ListBoxItem>
+-                <TextBlock Text="{DynamicResource Text.Repository.LocalBranches}" FontWeight="SemiBold"/>
+-              </ListBoxItem>
+-            </ListBox>
+-          </Border>
++          <!-- Section navigation lives only in the left sidebar. -->
+ 
+           <!-- Main Body -->
+           <Grid Grid.Row="2" Background="{DynamicResource Brush.Mygit.Surface}">
+diff --git a/src/Views/Histories.axaml b/src/Views/Histories.axaml
+--- a/src/Views/Histories.axaml
++++ b/src/Views/Histories.axaml
+@@ -243,7 +243,7 @@
+       </v:HistoriesCommitList>
+ 
+       <Border Background="Transparent"
+-              Height="24"
++              Height="32"
+               HorizontalAlignment="Stretch" VerticalAlignment="Top"
+               PointerMoved="OnCommitListHeaderPointerMoved"
+               PointerPressed="OnCommitListHeaderPointerPressed"
+@@ -276,7 +276,7 @@
+       </Border>
+ 
+       <v:CommitGraph x:Name="CommitGraph"
+-                     Margin="0,24,0,0"
++                     Margin="0,32,0,0"
+                      Graph="{Binding Graph}"
+                      DotBrush="{DynamicResource Brush.Contents}"
+                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+diff --git a/src/Views/WorkingCopy.axaml.cs b/src/Views/WorkingCopy.axaml.cs
+--- a/src/Views/WorkingCopy.axaml.cs
++++ b/src/Views/WorkingCopy.axaml.cs
+@@ -24,10 +24,21 @@
+                 return;
+ 
+             var layout = ViewModels.Preferences.Instance.Layout;
+-            var width = grid.Bounds.Width;
+-            var leftWidth = Math.Max(width - 304, 300);
++            // Reserve the diff, both splitters and the right-side commit composer.
++            // The upstream two-pane formula does not include the composer width.
++            var columns = grid.ColumnDefinitions;
++            if (columns.Count != 5)
++                return;
+ 
+-            if (layout.WorkingCopyLeftWidth.Value - leftWidth > 1.0)
++            var reserved = columns[1].Width.Value + columns[2].MinWidth +
++                           columns[3].Width.Value + Math.Max(columns[4].Width.Value, columns[4].MinWidth);
++            var maximum = Math.Max(columns[0].MinWidth, grid.Bounds.Width - reserved);
++            var requested = layout.WorkingCopyLeftWidth.IsAbsolute
++                ? layout.WorkingCopyLeftWidth.Value : columns[0].MinWidth;
++            var leftWidth = Math.Clamp(requested, columns[0].MinWidth, maximum);
++
++            if (!layout.WorkingCopyLeftWidth.IsAbsolute ||
++                Math.Abs(layout.WorkingCopyLeftWidth.Value - leftWidth) > 1.0)
+                 layout.WorkingCopyLeftWidth = new GridLength(leftWidth, GridUnitType.Pixel);
+         }
+ 

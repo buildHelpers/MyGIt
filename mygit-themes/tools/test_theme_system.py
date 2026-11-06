@@ -1,67 +1,55 @@
 #!/usr/bin/env python3
-"""Dependency-free tests for the two-layer MyGIt theme contract.
-
-Run from the repository root:
-    python3 -m unittest discover -s mygit-themes/tools -p 'test_*.py'
-"""
-
-import importlib.util
+"""Package-contract tests; these do not claim desktop rendering validation."""
 import json
-import pathlib
 import sys
 import unittest
+from pathlib import Path
 
-TOOLS = pathlib.Path(__file__).resolve().parent
-PACK = TOOLS.parent
+TOOLS = Path(__file__).resolve().parent
 sys.path.insert(0, str(TOOLS))
-
-import layout  # noqa: E402
-import theme   # noqa: E402
+import layout
+import theme
 
 
 class MyGItThemeTests(unittest.TestCase):
-    def test_manifest_has_complete_design_and_classic(self):
+    def test_manifest_has_design_and_classic(self):
         data = layout.manifest()
-        self.assertEqual(data["defaultLayout"], "mygit-design")
-        profiles = {profile["id"]: profile for profile in data["layouts"]}
-        self.assertEqual(set(profiles), {"mygit-design", "upstream-classic"})
-        self.assertTrue(profiles["mygit-design"]["requiresRebuild"])
-        self.assertEqual(len(profiles["mygit-design"]["screens"]), 6)
-        self.assertEqual(profiles["upstream-classic"]["patches"], [])
+        self.assertEqual(data['defaultLayout'], 'mygit-design')
+        profiles = {p['id']: p for p in data['layouts']}
+        self.assertEqual(set(profiles), {'mygit-design', 'upstream-classic'})
+        self.assertTrue(profiles['mygit-design']['requiresRebuild'])
+        self.assertEqual(len(profiles['mygit-design']['screens']), 6)
+        self.assertEqual(profiles['upstream-classic']['patches'], [])
 
-    def test_all_six_patch_modules_are_present_and_do_not_overlap(self):
+    def test_ordered_integration_targets_are_declared(self):
+        profile = layout.find_profile('mygit-design')
         profiles = layout.validate()
-        self.assertEqual(len(profiles["mygit-design"]), 6)
-        self.assertEqual(profiles["upstream-classic"], [])
-        paths = set()
-        for file in profiles["mygit-design"]:
-            headers = layout.PATCH_HEADER.findall(file.read_text(encoding="utf-8"))
-            for path in headers:
-                self.assertNotIn(path, paths)
-                self.assertTrue(path.startswith("src/"))
-                self.assertFalse(path.startswith(("src/Commands/", "src/Models/")))
-                paths.add(path)
-        self.assertEqual(len(paths), 48)
+        self.assertEqual(len(profiles['mygit-design']), 7)
+        self.assertEqual(profiles['upstream-classic'], [])
+        targets = layout.validate_patch_sequence(profile, profiles['mygit-design'])
+        self.assertEqual(len(targets), 49)
+        self.assertIn('src/Views/WorkingCopy.axaml.cs', targets)
+        last = profiles['mygit-design'][-1].relative_to(layout.THEMES_DIR).as_posix()
+        self.assertEqual(set(profile['revisions'][last]), {
+            'src/Views/Launcher.axaml', 'src/Views/Launcher.axaml.cs',
+            'src/Views/Repository.axaml', 'src/Views/Histories.axaml',
+        })
+        self.assertFalse(any(p.startswith(('src/Commands/', 'src/Models/')) for p in targets))
 
-    def test_native_light_and_dark_appearance_presets(self):
+    def test_native_appearance_presets(self):
         entries = theme.validate()
-        self.assertEqual({preset["id"] for preset in entries}, {"light", "dark"})
-        for item in entries:
-            path = theme.preset_path(item)
-            data = json.loads(path.read_text(encoding="utf-8"))
-            self.assertIn("BasicColors", data)
-            self.assertGreaterEqual(len(data["BasicColors"]), 30)
-            self.assertGreaterEqual(len(data["GraphColors"]), 6)
+        self.assertEqual({p['id'] for p in entries}, {'light', 'dark'})
+        for entry in entries:
+            data = json.loads(theme.preset_path(entry).read_text(encoding='utf-8'))
+            self.assertGreaterEqual(len(data['BasicColors']), 30)
+            self.assertGreaterEqual(len(data['GraphColors']), 6)
 
-    def test_layout_paths_cannot_escape_theme_directory(self):
-        malicious = {
-            "id": "mygit-design",
-            "type": "isolated-source-overlay",
-            "patches": ["layouts/mygit-design/patches/../../../../src/App.axaml"],
-        }
+    def test_layout_path_cannot_escape_theme_directory(self):
+        malicious = {'id': 'mygit-design', 'type': 'isolated-source-overlay',
+                     'patches': ['layouts/mygit-design/patches/../../../../src/App.axaml']}
         with self.assertRaises(layout.LayoutError):
             layout.profile_patches(malicious)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

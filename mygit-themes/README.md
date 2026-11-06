@@ -1,108 +1,57 @@
-# MyGIt · Complete Design Theme System
+# MyGIt Design Theme System — work in progress
 
-**A theme is the complete visual experience: layouts, navigation, controls and palettes.**
+**Goal: layouts, navigation, control styles and Light/Dark palettes together. The current UI implementation is partial and does not yet reproduce all six approved mockups.**
 
-This pack makes the originally approved six-screen MyGIt design available as a **buildable layout theme**, alongside SourceGit's unchanged classic interface and native Light/Dark appearance presets. No MyGIt-specific code is committed to the upstream-tracking `src/` tree on the `mygit` branch.
+[UI corrections and remaining gaps](UI_AUDIT.md) · [中文](README_cn.md)
 
-[中文说明](README_cn.md) · [SourceGit upstream](https://github.com/sourcegit-scm/sourcegit) · [Official appearance override specification](https://github.com/sourcegit-scm/sourcegit-theme)
+## Architecture
 
-## Theme architecture
+`mygit-design` composes six initial UI overlays and an integration correction in a detached Git worktree, then builds there. `upstream-classic` keeps the original SourceGit layout. Light/Dark JSON files use the native Theme Overrides feature.
 
-| Layer | What it changes | When it switches |
-|---|---|---|
-| **Layout · MyGIt Design** | Workspace home, global navigation, 3-pane working copy, history, branch/worktree view, conflict editor and settings | Applies six versioned UI overlays in an **isolated Git worktree**, then rebuilds |
-| **Layout · SourceGit Classic** | The original unmodified upstream interface | Use ordinary SourceGit or prepare an unmodified checkout |
-| **Appearance · Light / Dark** | Window colors, controls, diff highlights, conflict colors, commit graph palette | SourceGit's native **Preferences → Appearance → Theme Overrides**, no rebuild |
+All custom assets stay in `mygit-themes/`; product `src/` remains upstream code. However, layout patches depend on upstream XAML and ViewModel structure and can need adaptation. This is **not maintenance-free and not runtime layout switching**.
 
-**Technical limitation:** SourceGit's native `ThemeOverrides` JSON does not support replacing layouts or adding controls. The complete design is therefore a **build-time layout theme**, not a runtime layout hot-swap. A future upstream extension point could make layout switching native.
+The integration correction provides one repository picker and one Ctrl/Cmd+P binding, removes duplicated section navigation, aligns history headers/graph offsets, and updates three-pane working-copy sizing. Read the audit for remaining screen and icon work.
 
-## Six design surfaces
+## Local use
 
-1. Workspace dashboard with recent repository cards, tree, search and clone/open actions.
-2. Global toolbar with workspace home, workspace dropdown and searchable recent-repository dropdown.
-3. Working copy with separate changes, Diff, and persistent commit composer columns.
-4. History graph with adjacent commit details, plus the dedicated branches/worktrees page.
-5. Three-way conflict resolution with distinct compare and result panels.
-6. Resizable settings with left-hand categories.
-
-The overlay is extracted from the earlier dedicated UI implementation branch into six auditable patch groups. SourceGit Git commands, storage and backend implementations remain upstream-owned. **Visual pixel parity and macOS compilation have not yet been verified.**
-
-## Build the complete design
-
-Requires Git and Python 3.9+. Building and running SourceGit requires the upstream toolchain (including .NET 10).
+Requires Git and Python 3.9+. Building requires .NET 10 and the upstream SourceGit dependencies. Run on a clean `mygit` checkout:
 
 ```bash
-# In buildHelpers/MyGIt checked out on the mygit branch:
 python3 mygit-themes/tools/theme.py layouts
 python3 mygit-themes/tools/theme.py validate
-
-# Check upstream compatibility in a disposable detached worktree:
+python3 -m unittest discover -s mygit-themes/tools -p 'test_*.py'
 python3 mygit-themes/tools/theme.py check mygit-design
+python3 mygit-themes/tools/theme.py build mygit-design --output ../MyGIt-Design-Fixed
+```
 
-# Prepare a new detached worktree without changing this checkout:
-python3 mygit-themes/tools/theme.py prepare mygit-design --output ../MyGIt-Design
+Output must be a new directory outside the source repository. To prepare without compiling:
 
-# Build and launch from the separate output:
-cd ../MyGIt-Design
+```bash
+python3 mygit-themes/tools/theme.py prepare mygit-design --output ../MyGIt-Design-Source
+cd ../MyGIt-Design-Source
 git submodule update --init --recursive
 dotnet run --project src/SourceGit.csproj
 ```
 
-Or prepare and build in one command:
-
-```bash
-python3 mygit-themes/tools/theme.py build mygit-design --output ../MyGIt-Design-Build
-```
-
-The output directory must not already exist, and it must be outside the source checkout. All patches are checked before applying, and a failed patch aborts the operation. The source checkout, upstream-tracking branches, native Git configuration, credentials and `preference.json` are not rewritten by the composer.
-
-To use the upstream classic layout:
+For the original layout:
 
 ```bash
 python3 mygit-themes/tools/theme.py prepare upstream-classic --output ../SourceGit-Classic
 ```
 
-## Apply a light/dark palette
+Pulling this branch does not update an existing generated worktree or installed application; generate and build a fresh one.
 
-Select [MyGIt Light](presets/MyGIt-Light.json) or [MyGIt Dark](presets/MyGIt-Dark.json) under **Preferences → Appearance**: set the matching base Light/Dark theme and then select the JSON in **Theme Overrides**. No rebuild is required for color-only changes.
+## Appearance and upstream updates
 
-The optional installer copies the JSON to a stable local config directory but does not modify preferences:
+Select [MyGIt Light](presets/MyGIt-Light.json) or [MyGIt Dark](presets/MyGIt-Dark.json) in Preferences → Appearance, using the matching base theme and the JSON as Theme Overrides. Optional copying tool:
 
 ```bash
 python3 mygit-themes/tools/theme.py install light
 python3 mygit-themes/tools/theme.py install dark
 ```
 
-## Upstream sync and compatibility
+The installer does not edit preferences or credentials. Color changes work at runtime; layout changes require rebuilding.
 
-```mermaid
-flowchart TD
-    A[SourceGit develop] --> B[MyGIt develop: upstream tracking]
-    B --> C[MyGIt mygit: upstream + independent theme assets]
-    C --> D[Classic upstream layout]
-    C --> E[Isolated design worktree]
-    E --> F[Six versioned UI patches]
-    F --> G[Custom MyGIt design build]
-```
+Keep `develop` aligned with upstream, merge into `mygit`, then run `check mygit-design`. Compatibility failures stop rather than overwrite. The seventh patch's revisions of earlier UI files must be declared precisely in the manifest.
 
-To sync: fast-forward the fork's `develop` from the upstream `develop` branch, merge those updates into `mygit`, then run `python3 mygit-themes/tools/theme.py check mygit-design` on your clean checkout. A failed patch signals that the **theme's UI adaptation needs attention**, not that Git behavior may be silently overwritten.
-
-All MyGIt-specific assets are in this directory, but the six layout patches remain coupled to upstream XAML/ViewModel structure. Consequently, **this is easier to maintain than a permanently modified upstream branch, but not maintenance-free**.
-
-## Layout package inventory
-
-```text
-mygit-themes/
-├── manifest.json
-├── presets/MyGIt-{Light,Dark}.json
-├── layouts/mygit-design/patches/
-│   ├── 00-adapters.patch
-│   ├── 10-shell-home.patch
-│   ├── 20-working-copy.patch
-│   ├── 30-history-branches.patch
-│   ├── 40-conflicts-settings.patch
-│   └── 50-visual-resources.patch
-└── tools/{theme.py,layout.py}
-```
-
-**Acceptance status:** Packaged implementation, GitHub review and static checks are in progress; full build, launch and screenshots remain for owner validation.
+**Validation:** New guard tests and patch application on retrieved source fixtures passed. Complete seven-patch assembly, .NET compilation, desktop launch and visual comparison are unverified. The new application icon is still a concept, not integrated platform assets.

@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
-"""Prepare an isolated SourceGit build with the complete MyGIt design theme.
+"""Compose the MyGIt layout in an isolated detached worktree.
 
-A layout theme is a versioned source overlay, not an Avalonia runtime skin.
-This script NEVER patches the upstream-tracking checkout. It creates a new
-detached Git worktree and applies the selected layout profile there. Native
-light/dark colors remain available via SourceGit's Theme Overrides setting.
+Ordered integration patches may revise earlier UI patches only when the exact
+revisited paths are declared in the manifest. Upstream checkouts stay unchanged.
 """
-
 from __future__ import annotations
 
 import argparse
@@ -16,7 +13,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 THEMES_DIR = Path(__file__).resolve().parents[1]
 ROOT = THEMES_DIR.parent
@@ -62,28 +59,48 @@ def profile_patches(profile: dict) -> list[Path]:
         headers = PATCH_HEADER.findall(body)
         if not headers or len(headers) != body.count("diff --git "):
             raise LayoutError(f"Invalid Git diff headers in {rel}")
-        if not all(name.startswith("src/") and not name.startswith(("src/Commands/", "src/Models/"))
-                   for name in headers):
-            raise LayoutError(f"Theme may not replace SourceGit Git command/model implementations: {rel}")
+        if not all(name.startswith("src/") and ".." not in PurePosixPath(name).parts and
+                   not name.startswith(("src/Commands/", "src/Models/")) for name in headers):
+            raise LayoutError(f"Theme may only patch UI source paths: {rel}")
         output.append(file)
     if profile.get("type") == "upstream-unchanged" and output:
         raise LayoutError("The upstream-classic layout must have no patches")
     return output
 
 
+def validate_patch_sequence(profile: dict, files: list[Path]) -> set[str]:
+    """Allow only explicitly declared revisions of previously patched UI files."""
+    revisions = profile.get("revisions", {})
+    if not isinstance(revisions, dict):
+        raise LayoutError("Layout revisions must map patch paths to revised source paths")
+    names = [file.relative_to(THEMES_DIR).as_posix() for file in files]
+    if len(set(names)) != len(names) or set(revisions) - set(names):
+        raise LayoutError("Duplicate patch or unknown revision patch")
+    seen: set[str] = set()
+    for name, file in zip(names, files):
+        targets = PATCH_HEADER.findall(file.read_text(encoding="utf-8"))
+        if len(set(targets)) != len(targets):
+            raise LayoutError(f"Duplicate source entry inside patch: {name}")
+        declared = revisions.get(name, [])
+        if not isinstance(declared, list) or not all(isinstance(x, str) for x in declared):
+            raise LayoutError(f"Invalid revision list for {name}")
+        if len(set(declared)) != len(declared):
+            raise LayoutError(f"Duplicate revision declaration for {name}")
+        overlap = seen.intersection(targets)
+        if overlap != set(declared):
+            raise LayoutError(f"Unexpected or missing revised paths in {name}: {sorted(overlap ^ set(declared))}")
+        seen.update(targets)
+    return seen
+
+
 def validate() -> dict[str, list[Path]]:
     data = manifest()
     profiles: dict[str, list[Path]] = {}
-    all_paths: set[str] = set()
     for item in data["layouts"]:
         files = profile_patches(item)
+        targets = validate_patch_sequence(item, files)
         profiles[item["id"]] = files
-        print(f"OK layout {item['id']}: {len(files)} patch files")
-        for file in files:
-            for target in PATCH_HEADER.findall(file.read_text(encoding="utf-8")):
-                if target in all_paths:
-                    raise LayoutError(f"File modified by multiple layout patch groups: {target}")
-                all_paths.add(target)
+        print(f"OK layout {item['id']}: {len(files)} ordered patches, {len(targets)} source paths")
     default = data.get("defaultLayout")
     if default not in profiles:
         raise LayoutError(f"Unknown default layout {default!r}")
@@ -92,9 +109,7 @@ def validate() -> dict[str, list[Path]]:
 
 def git(cwd: Path, *args: str, capture: bool = False) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
-        ["git", "-C", str(cwd), *args],
-        check=True,
-        text=True,
+        ["git", "-C", str(cwd), *args], check=True, text=True,
         stdout=subprocess.PIPE if capture else None,
         stderr=subprocess.PIPE if capture else None,
     )
@@ -104,7 +119,6 @@ def prepare(profile_id: str, dest: Path, source: Path = ROOT, build: bool = Fals
     profiles = validate()
     if profile_id not in profiles:
         raise LayoutError(f"Unknown layout {profile_id!r}")
-
     source = source.expanduser().resolve()
     dest = dest.expanduser().resolve()
     actual = Path(git(source, "rev-parse", "--show-toplevel", capture=True).stdout.strip()).resolve()
@@ -118,8 +132,6 @@ def prepare(profile_id: str, dest: Path, source: Path = ROOT, build: bool = Fals
         raise LayoutError(f"Output already exists; refusing to overwrite: {dest}")
     if git(source, "status", "--porcelain", capture=True).stdout.strip():
         raise LayoutError("Source checkout has uncommitted changes; commit or stash first")
-
-    # Isolated: not a checkout reset and not a modified upstream branch.
     created = False
     try:
         git(source, "worktree", "add", "--detach", str(dest), "HEAD")
@@ -129,29 +141,20 @@ def prepare(profile_id: str, dest: Path, source: Path = ROOT, build: bool = Fals
             git(dest, "apply", "--whitespace=nowarn", str(patch))
             print(f"APPLIED {patch.relative_to(THEMES_DIR)}")
         if profile_id == "mygit-design":
-            # The theme verification script reads the generated working tree.
-            # It never modifies the source repository or app settings.
-            subprocess.run(
-                [sys.executable, str(THEMES_DIR / "tools" / "verify_design.py"), str(dest)],
-                check=True,
-            )
+            subprocess.run([sys.executable, str(THEMES_DIR / "tools" / "verify_design.py"), str(dest)], check=True)
     except (OSError, subprocess.CalledProcessError):
         if created:
-            # Only remove the detached worktree created by THIS invocation.
+            # Only remove the detached worktree created by this invocation.
             git(source, "worktree", "remove", "--force", str(dest))
         raise
-
     print(f"Prepared layout {profile_id} at {dest}")
     print("The upstream-tracking branch and checkout were not modified.")
     if build:
         dotnet = shutil.which("dotnet")
         if not dotnet:
             raise LayoutError(f".NET SDK not found. Prepared source remains at {dest}")
-        print("Initializing upstream submodules in the isolated worktree")
         git(dest, "submodule", "update", "--init", "--recursive")
-        print("Running: dotnet build -c Release src/SourceGit.csproj")
-        subprocess.run([dotnet, "build", "-c", "Release", "src/SourceGit.csproj"],
-                       cwd=dest, check=True)
+        subprocess.run([dotnet, "build", "-c", "Release", "src/SourceGit.csproj"], cwd=dest, check=True)
     return dest
 
 
@@ -171,23 +174,20 @@ def main() -> int:
             return 0
         profile_id = args.layout or manifest()["defaultLayout"]
         if args.action == "check":
-            # A temporary detached worktree checks whether the selected layout
-            # still applies after upstream changes. It is always unregistered.
             with tempfile.TemporaryDirectory(prefix="mygit-layout-check-") as temp:
                 output = Path(temp) / "checkout"
                 try:
                     prepare(profile_id, output, args.source, build=False)
                 finally:
                     if output.exists() and (output / ".git").exists():
-                        git(args.source.expanduser().resolve(), "worktree", "remove",
-                            "--force", str(output))
+                        git(args.source.expanduser().resolve(), "worktree", "remove", "--force", str(output))
             print(f"PASS layout {profile_id} applies to this upstream checkout")
             return 0
         if args.output is None:
             parser.error("prepare/build requires --output (outside the source checkout)")
         prepare(profile_id, args.output, args.source, build=args.action == "build")
         return 0
-    except (LayoutError, FileNotFoundError, subprocess.CalledProcessError, ValueError, OSError) as error:
+    except (LayoutError, subprocess.CalledProcessError, ValueError, OSError) as error:
         print(f"ERROR: {error}", file=sys.stderr)
         return 1
 

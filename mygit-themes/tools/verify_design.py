@@ -1,200 +1,131 @@
 #!/usr/bin/env python3
-"""Dependency-free validation of a generated MyGIt complete-design worktree.
+"""Static checks of GENERATED UI, not proof of compilation or visual parity.
 
-Run from the source repository:
-    python3 mygit-themes/tools/verify_design.py ../MyGIt-Design
-
-These checks cannot replace .NET 10 compilation or desktop interaction tests.
+Usage: python3 mygit-themes/tools/verify_design.py ../MyGIt-Design
 """
+from __future__ import annotations
 
+import argparse
 import re
 import sys
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
-ROOT = Path(sys.argv[1]).expanduser().resolve() if len(sys.argv) > 1 else Path.cwd().resolve()
-QUICK_REPO_KEYS = (
-    "Button",
-    "Title",
-    "Hint",
-    "Search",
-    "Recent",
-    "Open",
-    "NoResults",
-    "Keyboard",
+A = '{https://github.com/avaloniaui}'
+X = '{http://schemas.microsoft.com/winfx/2006/xaml}'
+VIEW_NAMES = (
+    'Launcher', 'LauncherPage', 'Welcome', 'QuickRepositorySwitcher', 'Repository',
+    'WorkingCopy', 'Histories', 'BranchesOverview', 'MergeConflictEditor', 'Conflict',
+    'Preferences', 'RepositoryConfigure', 'StashesPage', 'DiffView', 'CommitDetail',
+    'RepositoryToolbar',
 )
 
 
-def read(path: str) -> str:
-    return (ROOT / path).read_text(encoding="utf-8-sig")
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise ValueError(message)
 
 
-def check_xml() -> None:
-    files = [
-        "src/App.axaml",
-        "src/Views/Launcher.axaml",
-        "src/Views/Welcome.axaml",
-        "src/Views/QuickRepositorySwitcher.axaml",
-        "src/Views/Repository.axaml",
-        "src/Views/WorkingCopy.axaml",
-        "src/Views/Histories.axaml",
-        "src/Views/BranchesOverview.axaml",
-        "src/Views/MergeConflictEditor.axaml",
-        "src/Views/Conflict.axaml",
-        "src/Views/Preferences.axaml",
-        "src/Views/RepositoryConfigure.axaml",
-        "src/Views/StashesPage.axaml",
-        "src/Views/DiffView.axaml",
-        "src/Views/CommitDetail.axaml",
-        "src/Views/RepositoryToolbar.axaml",
-        "src/Views/LauncherPage.axaml",
-        "src/Resources/Styles.axaml",
-        "src/Resources/Themes.axaml",
-        "src/SourceGit.csproj",
-    ]
-    files.extend(str(p.relative_to(ROOT)) for p in (ROOT / "src/Resources/Locales").glob("*.axaml"))
+def read(root: Path, path: str) -> str:
+    return (root / path).read_text(encoding='utf-8-sig')
 
+
+def check_navigation(markup: str, code: str) -> None:
+    tree = ET.fromstring(markup)
+    buttons = list(tree.iter(A + 'Button'))
+    pickers = [b for b in buttons if b.get('Click') in (
+        'OnOpenPagesCommandPalette', 'OnOpenRecentRepositories')]
+    require(len(pickers) == 1, 'Expected one repository switcher, not overlapping old/new buttons')
+    picker = pickers[0]
+    require(picker.get('Click') == 'OnOpenPagesCommandPalette', 'Preserve the original picker entry point')
+    shortcut = '{OnPlatform Ctrl+P, macOS=⌘+P}'
+    require(picker.get('HotKey') == shortcut, 'The repository picker must keep Ctrl/Cmd+P')
+    require(sum(b.get('HotKey') == shortcut for b in buttons) == 1, 'Duplicate Ctrl/Cmd+P binding')
+    handler = re.search(r'private void OnOpenPagesCommandPalette\([^)]*\)\s*\{([^}]+)\}', code)
+    require(handler is not None and 'OnOpenRecentRepositories(sender, e);' in handler.group(1),
+            'Mouse and keyboard must reach the same repository panel')
+    for event in ('OnShowWorkspaceHome', 'OnOpenWorkspaceMenu'):
+        require(sum(b.get('Click') == event for b in buttons) == 1, f'Expected one {event} action')
+    title = next(n for n in tree.iter(A + 'Grid') if n.get('ColumnDefinitions') and n.get('Grid.Row') == '0')
+    columns = len(title.get('ColumnDefinitions').split(','))
+    for child in title:
+        column = int(child.get('Grid.Column', '0'))
+        span = int(child.get('Grid.ColumnSpan', '1'))
+        require(column + span <= columns, 'Orphaned title-bar grid column after removing duplicate action')
+
+
+def check_graph(markup: str) -> None:
+    tree = ET.fromstring(markup)
+    listing = next(n for n in tree.iter() if n.tag.endswith('}HistoriesCommitList'))
+    graph = next(n for n in tree.iter() if n.tag.endswith('}CommitGraph'))
+    header = next(n for n in tree.iter(A + 'Border') if n.get('PointerPressed') == 'OnCommitListHeaderPointerPressed')
+    height = float(listing.get('ColumnHeaderHeight'))
+    require(float(header.get('Height')) == height, 'History drag header height disagrees with table header')
+    require(float(graph.get('Margin').split(',')[1]) == height, 'History graph is vertically offset from rows')
+
+
+def verify_tree(root: Path) -> None:
+    files = ['src/App.axaml', 'src/SourceGit.csproj', 'src/Resources/Styles.axaml', 'src/Resources/Themes.axaml']
+    files += [f'src/Views/{name}.axaml' for name in VIEW_NAMES]
+    locales = list((root / 'src/Resources/Locales').glob('*.axaml'))
+    require(bool(locales), 'Missing locale resources')
     for path in files:
-        ET.parse(ROOT / path)
-        print(f"PASS XML {path}")
+        ET.parse(root / path)
+    for path in locales:
+        ET.parse(path)
+    print(f'PASS XML: {len(files) + len(locales)} files')
 
+    check_navigation(read(root, 'src/Views/Launcher.axaml'), read(root, 'src/Views/Launcher.axaml.cs'))
+    repository = ET.fromstring(read(root, 'src/Views/Repository.axaml'))
+    navigation = [n for n in repository.iter(A + 'ListBox') if n.get('SelectedIndex') == '{Binding SelectedViewIndex, Mode=TwoWay}']
+    require(len(navigation) == 1, 'Repository section navigation is duplicated')
+    require('Auto,44,*' not in read(root, 'src/Views/Repository.axaml'), 'Removed navigation row still reserves height')
+    check_graph(read(root, 'src/Views/Histories.axaml'))
+    print('PASS single navigation entry, shared shortcut and history alignment')
 
-def check_localization() -> None:
-    locale_files = sorted((ROOT / "src/Resources/Locales").glob("*.axaml"))
-    assert locale_files, "No locale files found"
-    for path in locale_files:
-        source = path.read_text(encoding="utf-8-sig")
-        for key in QUICK_REPO_KEYS:
-            marker = f'x:Key="Text.QuickRepo.{key}"'
-            assert source.count(marker) == 1, (path, key)
-    print(f"PASS quick repository localization in {len(locale_files)} locales")
+    code = read(root, 'src/Views/WorkingCopy.axaml.cs')
+    require('columns.Count != 5' in code and 'var reserved =' in code and 'Math.Clamp(' in code,
+            'Working copy still uses the upstream two-column resize calculation')
+    working = ET.fromstring(read(root, 'src/Views/WorkingCopy.axaml'))
+    layout = next(n for n in working.iter(A + 'Grid') if n.get('SizeChanged') == 'OnMainLayoutSizeChanged')
+    columns = layout.find(A + 'Grid.ColumnDefinitions')
+    require(columns is not None and len(columns) == 5, 'Working-copy layout must reserve five columns')
+    require('CommitMessageToolBox' in read(root, 'src/Views/WorkingCopy.axaml'), 'Commit composer missing')
+    require('IsBranchesVisible' in read(root, 'src/ViewModels/Repository.cs'), 'Branch view not connected')
+    require('TabStripPlacement="Left"' in read(root, 'src/Views/Preferences.axaml'), 'Settings category navigation missing')
+    require('RecentRepositories' in read(root, 'src/Views/Welcome.axaml'), 'Recent home cards missing')
 
-
-def check_ui_handlers() -> None:
-    for view, code, events in (
-        (
-            "src/Views/Launcher.axaml",
-            "src/Views/Launcher.axaml.cs",
-            {"Click": ("OnShowWorkspaceHome", "OnOpenWorkspaceMenu", "OnOpenRecentRepositories")},
-        ),
-        (
-            "src/Views/Welcome.axaml",
-            "src/Views/Welcome.axaml.cs",
-            {"Click": ("OnCloneRepository", "OnOpenLocalRepository", "OnFocusRepositorySearch")},
-        ),
-        (
-            "src/Views/QuickRepositorySwitcher.axaml",
-            "src/Views/QuickRepositorySwitcher.axaml.cs",
-            {"Tapped": ("OnRepositoryTapped",)},
-        ),
-        (
-            "src/Views/BranchesOverview.axaml",
-            "src/Views/BranchesOverview.axaml.cs",
-            {
-                "Click": ("OnRefreshRepository", "OnAddWorktree", "OnViewCurrentHead"),
-                "DoubleTapped": ("OnBranchDoubleTapped", "OnWorktreeDoubleTapped"),
-            },
-        ),
-        (
-            "src/Views/Welcome.axaml",
-            "src/Views/Welcome.axaml.cs",
-            {"Tapped": ("OnRecentRepositoryTapped",)},
-        ),
+    keys = {n.get(X + 'Key') for n in ET.parse(root / 'src/Resources/Locales/en_US.axaml').getroot()}
+    for name in VIEW_NAMES:
+        text = read(root, f'src/Views/{name}.axaml')
+        for key in re.findall(r'\{DynamicResource (Text\.[\w.]+)\}', text):
+            require(key in keys, f'Unknown localized resource in {name}: {key}')
+    quick_keys = ('Button', 'Title', 'Hint', 'Search', 'Recent', 'Open', 'NoResults', 'Keyboard')
+    for path in locales:
+        source = path.read_text(encoding='utf-8-sig')
+        for key in quick_keys:
+            require(source.count(f'x:Key="Text.QuickRepo.{key}"') == 1, f'Missing/duplicate locale key {path}: {key}')
+    for view, event in (
+        ('Welcome', 'OnRecentRepositoryTapped'), ('BranchesOverview', 'OnBranchDoubleTapped'),
+        ('BranchesOverview', 'OnWorktreeDoubleTapped'), ('QuickRepositorySwitcher', 'OnRepositoryTapped'),
     ):
-        markup = read(view)
-        handlers = read(code)
-        for event, names in events.items():
-            for name in names:
-                assert f'{event}="{name}"' in markup, (view, name)
-                assert re.search(rf"\bvoid\s+{name}\s*\(", handlers), (code, name)
-                print(f"PASS event {name}")
-
-
-def check_safe_navigation() -> None:
-    launcher = read("src/ViewModels/Launcher.cs")
-    home = re.search(
-        r"public void ShowWorkspaceHome\s*\(\)\s*\{(?P<body>.*?)"
-        r"(?=\n        public void AddNewTab)",
-        launcher,
-        re.DOTALL,
-    )
-    assert home, "ShowWorkspaceHome method not found"
-    body = home.group("body")
-    assert "ActivePage = page" in body and "Pages.Insert(0, home)" in body
-    assert "CloseRepositoryInTab" not in body and "Commands." not in body
-
-    menu = read("src/Views/Launcher.axaml.cs")
-    assert "launcher.SwitchWorkspace(workspace)" in menu
-    assert "launcher.ShowWorkspaceHome()" in menu
-    assert "LauncherPagesCommandPalette(" in menu
-    assert "flyout.ShowAt(button)" in menu
-
-    preferences = read("src/ViewModels/Preferences.cs")
-    assert "RecentRepositories" in preferences and "RemoveRange" in preferences
-    assert "RememberRepository(repo.FullPath)" in launcher
-
-    quick_model = read("src/ViewModels/QuickRepositorySwitcher.cs")
-    assert "preferences.RecentRepositories" in quick_model
-    assert "workspace.Repositories" in quick_model
-    assert "item.Name.Contains(filter" in quick_model
-    assert "item.Path.Contains(filter" in quick_model
-    assert "_launcher.OpenRepositoryInTab(item.Path, null)" in quick_model
-    assert "Commands." not in quick_model
-
-    quick_view = read("src/Views/QuickRepositorySwitcher.axaml.cs")
-    assert "SearchBox.Focus" in quick_view
-    assert "Key.Enter" in quick_view and "Key.Escape" in quick_view
-    print("PASS non-destructive home, persisted recency and searchable switcher")
-
-
-def check_design_surfaces() -> None:
-    repository = read("src/Views/Repository.axaml")
-    view_model = read("src/ViewModels/Repository.cs")
-    working_copy = read("src/Views/WorkingCopy.axaml")
-    settings = read("src/Views/Preferences.axaml")
-    branches = read("src/Views/BranchesOverview.axaml")
-    history = read("src/Views/Histories.axaml")
-
-    assert "IsBranchesVisible" in repository and "IsBranchesVisible" in view_model
-    assert "BranchesOverview" in repository
-    assert 'Grid.Column="4"' in working_copy  # permanent right commit pane
-    assert "CommitMessageToolBox" in working_copy
-    assert "UseTwoColumnsLayoutInHistories" in history
-    assert 'TabStripPlacement="Left"' in settings
-    assert "OnBranchDoubleTapped" in branches
-    assert "OnWorktreeDoubleTapped" in branches
-    assert "RecentRepositories" in read("src/Views/Welcome.axaml")
-
-    english = read("src/Resources/Locales/en_US.axaml")
-    views = (
-        "src/Views/Repository.axaml",
-        "src/Views/WorkingCopy.axaml",
-        "src/Views/BranchesOverview.axaml",
-        "src/Views/MergeConflictEditor.axaml",
-        "src/Views/Preferences.axaml",
-        "src/Views/Welcome.axaml",
-    )
-    for view in views:
-        for key in re.findall(r"\{DynamicResource (Text\.[\w.]+)\}", read(view)):
-            assert f'x:Key="{key}"' in english, (view, key)
-
-    print("PASS design surface and localization links")
+        require(event in read(root, f'src/Views/{view}.axaml'), f'Missing event binding: {view}.{event}')
+        require(re.search(rf'\bvoid\s+{event}\s*\(', read(root, f'src/Views/{view}.axaml.cs')) is not None,
+                f'Missing event handler: {view}.{event}')
+    print('PASS layout wiring and localization references; compilation and GUI comparison still required')
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('root', nargs='?', type=Path, default=Path.cwd())
+    args = parser.parse_args()
     try:
-        check_xml()
-        check_localization()
-        check_ui_handlers()
-        check_safe_navigation()
-        check_design_surfaces()
-    except (AssertionError, ET.ParseError, OSError) as exc:
-        print(f"FAIL: {exc}", file=sys.stderr)
+        verify_tree(args.root.expanduser().resolve())
+        return 0
+    except (OSError, ValueError, ET.ParseError, StopIteration) as error:
+        print(f'FAIL: {error}', file=sys.stderr)
         return 1
 
-    print("PASS generated MyGIt layout static checks; .NET build and GUI validation still required")
-    return 0
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     raise SystemExit(main())

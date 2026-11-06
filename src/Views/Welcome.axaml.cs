@@ -81,6 +81,24 @@ namespace SourceGit.Views
             InitializeComponent();
         }
 
+        private void OnCloneRepository(object sender, RoutedEventArgs e)
+        {
+            ViewModels.Welcome.Instance.Clone();
+            e.Handled = true;
+        }
+
+        private void OnOpenLocalRepository(object sender, RoutedEventArgs e)
+        {
+            ViewModels.Welcome.Instance.OpenLocalRepository();
+            e.Handled = true;
+        }
+
+        private void OnFocusRepositorySearch(object sender, RoutedEventArgs e)
+        {
+            SearchBox.Focus();
+            e.Handled = true;
+        }
+
         protected override async void OnLoaded(RoutedEventArgs e)
         {
             base.OnLoaded(e);

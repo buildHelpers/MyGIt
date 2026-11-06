@@ -15,7 +15,7 @@
           </StackPanel>
           <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
             <Button Classes="flat mygit_action"
-                    Content="{DynamicResource Text.Repository.Refresh}"
+                    Content="Refresh"
                     Click="OnRefreshRepository"/>
             <Button Classes="flat mygit_action primary"
                     Content="{DynamicResource Text.Repository.NewBranch}"
@@ -100,7 +100,7 @@
           <ItemsControl.ItemTemplate>
             <DataTemplate DataType="vm:Worktree">
               <Border Classes="mygit_card" Width="260" Margin="0,0,12,12"
-                      PointerPressed="OnWorktreePointerPressed"
+                      DoubleTapped="OnWorktreeDoubleTapped"
                       ToolTip.Tip="{Binding FullPath}">
                 <StackPanel Spacing="8">
                   <StackPanel Orientation="Horizontal" Spacing="8">
@@ -136,7 +136,7 @@
         <TextBlock Text="{Binding CurrentBranch.Name, TargetNullValue='--'}"
                    FontSize="21" FontWeight="Bold"
                    TextTrimming="CharacterEllipsis"/>
-        <TextBlock Text="{DynamicResource Text.Repository.Branches.Current}"
+        <TextBlock Text="{DynamicResource Text.Repository.LocalBranches}"
                    Classes="mygit_section_label"/>
         <Border Height="1" Background="{DynamicResource Brush.Mygit.Hairline}"/>
         <TextBlock Text="{DynamicResource Text.Repository.Remotes}"
@@ -151,7 +151,7 @@
         <Button Classes="flat mygit_action primary" Height="34"
                 Content="{DynamicResource Text.Repository.NavigateToCurrentHead}"
                 Click="OnViewCurrentHead"/>
-        <TextBlock Text="{DynamicResource Text.Repository.Branches.CheckoutTip}"
+        <TextBlock Text="{DynamicResource Text.Repository.Filter}"
                    Classes="mygit_section_label" TextWrapping="Wrap"/>
       </StackPanel>
     </Border>

@@ -1,0 +1,23 @@
+{
+  "formatVersion": 1,
+  "package": "MyGIt Native Themes",
+  "engine": "SourceGit ThemeOverrides JSON",
+  "version": "1.0.0",
+  "description": "Styles for upstream SourceGit. No forked C#/Avalonia views or commands.",
+  "presets": [
+    {
+      "id": "light",
+      "name": "MyGIt Light",
+      "file": "presets/MyGIt-Light.json",
+      "baseTheme": "Light",
+      "default": true
+    },
+    {
+      "id": "dark",
+      "name": "MyGIt Dark",
+      "file": "presets/MyGIt-Dark.json",
+      "baseTheme": "Dark",
+      "default": false
+    }
+  ]
+}

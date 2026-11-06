@@ -99,7 +99,7 @@ def check_safe_navigation() -> None:
 
     menu = read("src/Views/Launcher.axaml.cs")
     assert "launcher.SwitchWorkspace(workspace)" in menu
-    assert "launcher.ActivePage = page" in menu
+    assert "launcher.ShowWorkspaceHome()" in menu
     assert "LauncherPagesCommandPalette(launcher)" in menu
     assert "flyout.ShowAt(button)" in menu
 

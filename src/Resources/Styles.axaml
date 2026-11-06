@@ -1608,5 +1608,28 @@
     <Setter Property="Margin" Value="5,2"/>
     <Setter Property="CornerRadius" Value="8"/>
   </Style>
+
+  <!-- Preferences: sidebar tabs retain the original content and bindings. -->
+  <Style Selector="TabControl.mygit_settings">
+    <Setter Property="Background" Value="{DynamicResource Brush.Mygit.Surface}"/>
+    <Setter Property="BorderThickness" Value="0"/>
+  </Style>
+  <Style Selector="TabControl.mygit_settings TabItem">
+    <Setter Property="MinWidth" Value="192"/>
+    <Setter Property="MinHeight" Value="44"/>
+    <Setter Property="Margin" Value="2,2,12,2"/>
+    <Setter Property="Padding" Value="14,0"/>
+    <Setter Property="CornerRadius" Value="9"/>
+    <Setter Property="HorizontalContentAlignment" Value="Left"/>
+  </Style>
+  <Style Selector="TabControl.mygit_settings TabItem:selected">
+    <Setter Property="Background" Value="{DynamicResource Brush.Mygit.Selected}"/>
+  </Style>
+  <Style Selector="TabControl.mygit_settings TextBlock.tab_header">
+    <Setter Property="FontSize" Value="13"/>
+    <Setter Property="FontWeight" Value="SemiBold"/>
+    <Setter Property="Opacity" Value="1"/>
+    <Setter Property="Foreground" Value="{DynamicResource Brush.FG1}"/>
+  </Style>
 </Styles>
 

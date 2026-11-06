@@ -140,6 +140,8 @@ def prepare(profile_id: str, dest: Path, source: Path = ROOT, build: bool = Fals
         dotnet = shutil.which("dotnet")
         if not dotnet:
             raise LayoutError(f".NET SDK not found. Prepared source remains at {dest}")
+        print("Initializing upstream submodules in the isolated worktree")
+        git(dest, "submodule", "update", "--init", "--recursive")
         print("Running: dotnet build -c Release src/SourceGit.csproj")
         subprocess.run([dotnet, "build", "-c", "Release", "src/SourceGit.csproj"],
                        cwd=dest, check=True)

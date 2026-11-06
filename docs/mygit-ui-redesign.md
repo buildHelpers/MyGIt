@@ -52,3 +52,21 @@ flowchart TD
 - [ ] Increment 4: preferences and advanced tool entry points.
 
 The previous design mockups illustrate target layouts. Only the features listed under **Scope implemented** are committed in this increment; visual parity across all six mockups is not yet claimed.
+
+
+## Increment 1B · recent repositories from the title bar
+
+Click the new **Repositories** button beside the workspace switcher to open an anchored popover immediately. The popover includes:
+
+- Recent repository paths first, newest activation at the top; visual markers distinguish recent and already-open repositories.
+- An auto-focused text box that filters by repository name or full local path as the user types.
+- A complete candidate list built from managed repository folders, saved workspaces, currently open tabs, and recent history (even for ungrouped repositories).
+- Click to open/switch, keyboard Up/Down for selection, Enter to open, Escape to dismiss, and standard outside-click dismissal.
+
+Repository recency is stored as a de-duplicated, bounded list of **16 paths** in the existing local `preference.json`. Activating a repository updates the list (without recording every repository while restoring tabs). No tokens, credentials, repository files, or Git history are stored. When upgrading with an empty recent list, the switcher offers currently opened repositories as a first-run fallback.
+
+Selecting an already-open repository reuses its tab without checking out branches or running additional Git commands. Opening a repository not currently open uses the existing SourceGit repository validation and places that tab in the active workspace. Selecting a missing path preserves the popover and routes failure through SourceGit's existing notification path.
+
+Key files: `src/ViewModels/QuickRepositorySwitcher.cs`, `src/Views/QuickRepositorySwitcher.axaml[.cs]`, `src/ViewModels/Preferences.cs`, `src/ViewModels/Launcher.cs`, `src/Views/Launcher.axaml[.cs]`, and locale resources.
+
+Static checks: `python3 tools/verify_mygit_ui.py`; **.NET build and macOS UI smoke test are still pending**.

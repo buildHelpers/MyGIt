@@ -478,6 +478,41 @@ namespace SourceGit.Views
             e.Handled = true;
         }
 
+        // An anchored flyout places recent repositories and a search field one click away.
+        private void OnOpenRecentRepositories(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && DataContext is ViewModels.Launcher launcher)
+            {
+                launcher.CommandPalette = null;
+
+                if (_quickRepositoryFlyout is { IsOpen: true })
+                {
+                    _quickRepositoryFlyout.Hide();
+                }
+                else
+                {
+                    var switcher = new QuickRepositorySwitcher(launcher);
+                    var flyout = new Flyout
+                    {
+                        Placement = PlacementMode.BottomEdgeAlignedLeft,
+                        Content = switcher,
+                    };
+
+                    switcher.CloseRequested += (_, _) => flyout.Hide();
+                    flyout.Closed += (_, _) =>
+                    {
+                        if (ReferenceEquals(_quickRepositoryFlyout, flyout))
+                            _quickRepositoryFlyout = null;
+                    };
+
+                    _quickRepositoryFlyout = flyout;
+                    flyout.ShowAt(button);
+                }
+            }
+
+            e.Handled = true;
+        }
+
         private void OnOpenPagesCommandPalette(object sender, RoutedEventArgs e)
         {
             if (DataContext is ViewModels.Launcher vm)
@@ -506,6 +541,7 @@ namespace SourceGit.Views
             e.Handled = true;
         }
 
+        private Flyout _quickRepositoryFlyout = null;
         private GridLength _captionHeight = new(32);
         private WindowState _lastWindowState = WindowState.Normal;
     }

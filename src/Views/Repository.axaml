@@ -130,7 +130,6 @@
       <Button Grid.Row="2"
               Classes="flat mygit_action"
               Height="36" Margin="10,0,10,6"
-              Margin="4,0"
               Click="OnOpenConfigure"
               ToolTip.Tip="{DynamicResource Text.Repository.Configure}"
               ToolTip.Placement="Right">

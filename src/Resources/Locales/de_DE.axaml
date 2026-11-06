@@ -743,6 +743,14 @@ $1, $2, … Werte der Eingabe-Steuerelemente</x:String>
   <x:String x:Key="Text.PushToNewBranch" xml:space="preserve">Push zu einem NEUEN Branch</x:String>
   <x:String x:Key="Text.PushToNewBranch.Title" xml:space="preserve">Name des neuen Remote-Branches:</x:String>
   <x:String x:Key="Text.Quit" xml:space="preserve">Schließen</x:String>
+  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">Repositories</x:String>
+  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">Zuletzt verwendet zuerst</x:String>
+  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ Auswahl · Enter Öffnen · Esc Schließen</x:String>
+  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">Keine passenden Repositories</x:String>
+  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">Geöffnet</x:String>
+  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">Zuletzt</x:String>
+  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">Nach Name oder Pfad suchen...</x:String>
+  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">Repository schnell wechseln</x:String>
   <x:String x:Key="Text.Rebase" xml:space="preserve">Aktuellen Branch rebasen</x:String>
   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">Lokale Änderungen stashen &amp; wieder anwenden</x:String>
   <x:String x:Key="Text.Rebase.NoVerify" xml:space="preserve">pre-rebase Hook überspringen</x:String>

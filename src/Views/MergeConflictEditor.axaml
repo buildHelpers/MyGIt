@@ -13,7 +13,7 @@
                     Icon="/App.ico"
                     Title="{DynamicResource Text.MergeConflictEditor.Title}"
                     MinWidth="1024" MinHeight="600">
-  <Grid RowDefinitions="Auto,32,*,32">
+  <Grid RowDefinitions="Auto,42,*,42" Background="{DynamicResource Brush.Mygit.Surface}">
     <!-- TitleBar -->
     <Grid Grid.Row="0" Height="28" IsVisible="{Binding !#ThisControl.UseSystemWindowFrame}">
       <Border Background="{DynamicResource Brush.TitleBar}"
@@ -36,7 +36,7 @@
     </Grid>
 
     <!-- Toolbar -->
-    <Border Grid.Row="1" Padding="8,0" Background="{DynamicResource Brush.ToolBar}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Border2}">
+    <Border Grid.Row="1" Padding="16,0" Background="{DynamicResource Brush.Mygit.Surface}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
       <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto">
         <Path Grid.Column="0" Width="14" Height="14" Data="{StaticResource Icons.File}"/>
 
@@ -74,13 +74,13 @@
     </Border>
 
     <!-- Main Content -->
-    <Grid Grid.Row="2" RowDefinitions="*,*" ColumnDefinitions="*,20">
+    <Grid Grid.Row="2" RowDefinitions="5*,4*" ColumnDefinitions="*,22" Margin="12,10,12,8">
       <!-- Mine and Theirs Panels (Side-by-Side) -->
-      <Grid Grid.Row="0" Grid.Column="0" ColumnDefinitions="*,*" Margin="4,4,4,2">
+      <Grid Grid.Row="0" Grid.Column="0" ColumnDefinitions="*,*" Margin="0,0,0,7">
         <!-- Mine (Ours) Panel -->
-        <Border Grid.Column="0" Margin="0,0,2,0">
-          <Grid RowDefinitions="26,*">
-            <Border Grid.Row="0" Padding="8,0" Background="{DynamicResource Brush.Popup}" BorderThickness="1,1,1,0" BorderBrush="{DynamicResource Brush.Border2}">
+        <Border Grid.Column="0" Classes="mygit_surface" ClipToBounds="True" Margin="0,0,5,0">
+          <Grid RowDefinitions="36,*">
+            <Border Grid.Row="0" Padding="8,0" Background="{DynamicResource Brush.Mygit.Sidebar}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
               <Grid ColumnDefinitions="Auto,*">
                 <TextBlock Grid.Column="0"
                            Text="{DynamicResource Text.MergeConflictEditor.Mine}"
@@ -145,9 +145,9 @@
         </Border>
 
         <!-- Theirs Panel -->
-        <Border Grid.Column="1" Margin="2,0,0,0">
-          <Grid RowDefinitions="26,*">
-            <Border Grid.Row="0" Padding="8,0" Background="{DynamicResource Brush.Popup}" BorderThickness="1,1,1,0" BorderBrush="{DynamicResource Brush.Border2}">
+        <Border Grid.Column="1" Classes="mygit_surface" ClipToBounds="True" Margin="5,0,0,0">
+          <Grid RowDefinitions="36,*">
+            <Border Grid.Row="0" Padding="8,0" Background="{DynamicResource Brush.Mygit.Sidebar}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
               <Grid ColumnDefinitions="Auto,*">
                 <TextBlock Grid.Column="0"
                            Text="{DynamicResource Text.MergeConflictEditor.Theirs}"
@@ -213,9 +213,9 @@
       </Grid>
 
       <!-- Result Panel -->
-      <Border Grid.Row="1" Grid.Column="0" Margin="4,2,4,4">
-        <Grid RowDefinitions="26,*">
-          <Border Grid.Row="0" Padding="8,0" Background="{DynamicResource Brush.Popup}" BorderThickness="1,1,1,0" BorderBrush="{DynamicResource Brush.Border2}">
+      <Border Grid.Row="1" Grid.Column="0" Classes="mygit_surface" ClipToBounds="True" Margin="0,7,0,0">
+        <Grid RowDefinitions="36,*">
+          <Border Grid.Row="0" Padding="8,0" Background="{DynamicResource Brush.Mygit.Sidebar}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
             <TextBlock Text="{DynamicResource Text.MergeConflictEditor.Result}" FontWeight="Bold" VerticalAlignment="Center"/>
           </Border>
           <Grid Grid.Row="1" Background="{DynamicResource Brush.Contents}">

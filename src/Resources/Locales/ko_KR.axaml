@@ -714,6 +714,14 @@
   <x:String x:Key="Text.PushToNewBranch" xml:space="preserve">새 브랜치로 푸시</x:String>
   <x:String x:Key="Text.PushToNewBranch.Title" xml:space="preserve">새 원격 브랜치 이름을 입력하세요:</x:String>
   <x:String x:Key="Text.Quit" xml:space="preserve">종료</x:String>
+  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">저장소</x:String>
+  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">최근 사용 순</x:String>
+  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ 선택 · Enter 열기 · Esc 닫기</x:String>
+  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">일치하는 저장소가 없습니다</x:String>
+  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">열림</x:String>
+  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">최근</x:String>
+  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">이름 또는 경로 검색...</x:String>
+  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">저장소 빠르게 전환</x:String>
   <x:String x:Key="Text.Rebase" xml:space="preserve">현재 브랜치 리베이스</x:String>
   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">로컬 변경 사항 스태시 &amp; 재적용</x:String>
   <x:String x:Key="Text.Rebase.NoVerify" xml:space="preserve">pre-rebase 훅 건너뛰기</x:String>

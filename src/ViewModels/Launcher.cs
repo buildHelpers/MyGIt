@@ -542,7 +542,11 @@ namespace SourceGit.ViewModels
                 return;
 
             if (_activePage is { Data: Repository repo })
+            {
                 _activeWorkspace.ActiveIdx = _activeWorkspace.Repositories.IndexOf(repo.FullPath);
+                // User-driven activation, not every tab restored during application startup.
+                Preferences.Instance.RememberRepository(repo.FullPath);
+            }
 
             CommandPalette = null;
         }

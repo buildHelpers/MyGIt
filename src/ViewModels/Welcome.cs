@@ -28,6 +28,35 @@ namespace SourceGit.ViewModels
             }
         }
 
+        /// <summary>Current workspace displayed on the repository home page.</summary>
+        public Workspace ActiveWorkspace => Preferences.Instance.GetActiveWorkspace();
+
+        public int ManagedRepositoryCount
+        {
+            get
+            {
+                var count = 0;
+                foreach (var node in Preferences.Instance.RepositoryNodes)
+                    count += CountRepositories(node);
+
+                return count;
+            }
+        }
+
+        public int WorkspaceCount => Preferences.Instance.Workspaces.Count;
+
+        private static int CountRepositories(RepositoryNode node)
+        {
+            if (node.IsRepository)
+                return 1;
+
+            var count = 0;
+            foreach (var child in node.SubNodes)
+                count += CountRepositories(child);
+
+            return count;
+        }
+
         public Welcome()
         {
             Refresh();
@@ -50,6 +79,9 @@ namespace SourceGit.ViewModels
             MakeTreeRows(rows, Preferences.Instance.RepositoryNodes);
             Rows.Clear();
             Rows.AddRange(rows);
+            OnPropertyChanged(nameof(ActiveWorkspace));
+            OnPropertyChanged(nameof(ManagedRepositoryCount));
+            OnPropertyChanged(nameof(WorkspaceCount));
         }
 
         public async Task UpdateStatusAsync(bool force, CancellationToken? token)

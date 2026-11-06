@@ -359,54 +359,113 @@ namespace SourceGit.Views
             }
         }
 
+        // The home button remains available regardless of the selected repository tab.
+        private void OnShowWorkspaceHome(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is ViewModels.Launcher launcher)
+                launcher.ShowWorkspaceHome();
+
+            e.Handled = true;
+        }
+
         private void OnOpenWorkspaceMenu(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && DataContext is ViewModels.Launcher launcher)
             {
-                if (launcher.CommandPalette != null)
-                    launcher.CommandPalette = null;
+                launcher.CommandPalette = null;
 
                 var pref = ViewModels.Preferences.Instance;
-                var menu = new ContextMenu();
-                menu.Placement = PlacementMode.BottomEdgeAlignedLeft;
-                menu.VerticalOffset = -6;
-
-                var groupHeader = new TextBlock()
+                var menu = new ContextMenu
                 {
-                    Text = App.Text("Launcher.Workspaces"),
-                    FontWeight = FontWeight.Bold,
+                    Placement = PlacementMode.BottomEdgeAlignedLeft,
+                    VerticalOffset = -6,
                 };
 
-                var workspaces = new MenuItem();
-                workspaces.Header = groupHeader;
-                workspaces.IsEnabled = false;
-                menu.Items.Add(workspaces);
-
-                for (var i = 0; i < pref.Workspaces.Count; i++)
+                // One click to return home, keeping every open repository tab intact.
+                var home = new MenuItem
                 {
-                    var workspace = pref.Workspaces[i];
+                    Header = App.Text("PageTabBar.Welcome.Title"),
+                    Icon = this.CreateMenuIcon("Icons.Workspace"),
+                };
+                home.Click += (_, ev) =>
+                {
+                    launcher.ShowWorkspaceHome();
+                    ev.Handled = true;
+                };
+                menu.Items.Add(home);
+                menu.Items.Add(new MenuItem { Header = "-" });
 
+                menu.Items.Add(new MenuItem
+                {
+                    Header = new TextBlock
+                    {
+                        Text = App.Text("Launcher.Workspaces"),
+                        FontWeight = FontWeight.Bold,
+                    },
+                    IsEnabled = false,
+                });
+
+                foreach (var workspace in pref.Workspaces)
+                {
                     var icon = this.CreateMenuIcon(workspace.IsActive ? "Icons.Check" : "Icons.Workspace");
                     icon.Fill = workspace.Brush;
 
-                    var item = new MenuItem();
-                    item.Header = workspace.Name;
-                    item.Icon = icon;
+                    var item = new MenuItem { Header = workspace.Name, Icon = icon };
                     item.Click += (_, ev) =>
                     {
                         if (!workspace.IsActive)
                             launcher.SwitchWorkspace(workspace);
+                        else
+                            launcher.ShowWorkspaceHome();
 
                         ev.Handled = true;
                     };
-
                     menu.Items.Add(item);
                 }
 
-                menu.Items.Add(new MenuItem() { Header = "-" });
+                // Switching an opened repository only selects its existing page.
+                // It never checks out a branch, reloads a repository or discards changes.
+                menu.Items.Add(new MenuItem { Header = "-" });
+                menu.Items.Add(new MenuItem
+                {
+                    Header = new TextBlock
+                    {
+                        Text = App.Text("Launcher.Pages"),
+                        FontWeight = FontWeight.Bold,
+                    },
+                    IsEnabled = false,
+                });
 
-                var configure = new MenuItem();
-                configure.Header = App.Text("Workspace.Configure");
+                foreach (var page in launcher.Pages)
+                {
+                    if (page.Data is not ViewModels.Repository)
+                        continue;
+
+                    var icon = this.CreateMenuIcon(page == launcher.ActivePage ? "Icons.Check" : "Icons.Repositories");
+                    var item = new MenuItem { Header = page.Node.Name, Icon = icon };
+                    item.Click += (_, ev) =>
+                    {
+                        launcher.ActivePage = page;
+                        ev.Handled = true;
+                    };
+                    menu.Items.Add(item);
+                }
+
+                // The existing searchable palette also includes managed, not-yet-opened repos.
+                var search = new MenuItem
+                {
+                    Header = App.Text("Welcome.Search"),
+                    Icon = this.CreateMenuIcon("Icons.Search"),
+                };
+                search.Click += (_, ev) =>
+                {
+                    launcher.CommandPalette = new ViewModels.LauncherPagesCommandPalette(launcher);
+                    ev.Handled = true;
+                };
+                menu.Items.Add(search);
+                menu.Items.Add(new MenuItem { Header = "-" });
+
+                var configure = new MenuItem { Header = App.Text("Workspace.Configure") };
                 configure.Click += async (_, ev) =>
                 {
                     await this.ShowDialogAsync(new ViewModels.ConfigureWorkspace());

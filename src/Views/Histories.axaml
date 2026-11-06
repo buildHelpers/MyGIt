@@ -18,21 +18,21 @@
     </v:HistoriesLayout.RowDefinitions>
 
     <v:HistoriesLayout.ColumnDefinitions>
-      <ColumnDefinition Width="{Binding LeftArea, Mode=TwoWay}" MinWidth="100"/>
+      <ColumnDefinition Width="{Binding LeftArea, Mode=TwoWay}" MinWidth="280"/>
       <ColumnDefinition Width="3"/>
-      <ColumnDefinition Width="{Binding RightArea, Mode=TwoWay}" MinWidth="100"/>
+      <ColumnDefinition Width="{Binding RightArea, Mode=TwoWay}" MinWidth="260"/>
     </v:HistoriesLayout.ColumnDefinitions>
 
     <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
       <v:HistoriesCommitList x:Name="CommitListContainer"
                              Classes="static_scrollbar"
                              ScrollViewer.AllowAutoHide="False"
-                             Background="Transparent"
+                             Background="{DynamicResource Brush.Mygit.Surface}"
                              ItemsSource="{Binding Commits, Mode=OneWay}"
                              TotalCommits="{Binding Commits.Count, Mode=OneWay}"
                              SelectedCommits="{Binding SelectedCommits, Mode=TwoWay}"
-                             ColumnHeaderHeight="24"
-                             RowHeight="26"
+                             ColumnHeaderHeight="32"
+                             RowHeight="34"
                              LayoutUpdated="OnCommitListLayoutUpdated"
                              ContextRequested="OnCommitListContextRequested"
                              DoubleTapped="OnCommitListDoubleTapped">
@@ -56,8 +56,8 @@
           </Style>
 
           <Style Selector="DataGridColumnHeader">
-            <Setter Property="MinHeight" Value="24"/>
-            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="MinHeight" Value="32"/>
+            <Setter Property="Background" Value="{DynamicResource Brush.Mygit.Card}"/>
             <Setter Property="Template">
               <ControlTemplate>
                 <Border x:Name="HeaderBorder"
@@ -309,7 +309,7 @@
                   Focusable="False"
                   IsEnabled="{Binding #ThisControl.IsDetailsPanelExpanded, Mode=OneWay}"/>
 
-    <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" >
+    <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Background="{DynamicResource Brush.Mygit.Card}">
       <ContentControl Content="{Binding DetailContext, Mode=OneWay}">
         <ContentControl.DataTemplates>
           <DataTemplate DataType="m:Null">

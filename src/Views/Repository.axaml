@@ -125,6 +125,13 @@
             </Border>
           </Grid>
         </ListBoxItem>
+
+        <ListBoxItem ToolTip.Placement="Right">
+          <StackPanel Orientation="Horizontal" Spacing="11" Margin="10,0">
+            <Path Classes="icon" Data="{StaticResource Icons.Branch}"/>
+            <TextBlock Text="{DynamicResource Text.Repository.LocalBranches}" FontWeight="SemiBold"/>
+          </StackPanel>
+        </ListBoxItem>
       </ListBox>
       
       <Button Grid.Row="2"
@@ -311,6 +318,9 @@
               </ListBoxItem>
               <ListBoxItem IsVisible="{Binding !IsBare}">
                 <TextBlock Text="{DynamicResource Text.Stashes}" FontWeight="SemiBold"/>
+              </ListBoxItem>
+              <ListBoxItem>
+                <TextBlock Text="{DynamicResource Text.Repository.LocalBranches}" FontWeight="SemiBold"/>
               </ListBoxItem>
             </ListBox>
           </Border>
@@ -881,6 +891,11 @@
               <!-- Stashes Page -->
               <Border IsVisible="{Binding IsStashesVisible, Mode=OneWay}" PropertyChanged="OnRightPagePropertyChanged">
                 <v:StashesPage DataContext="{Binding StashesPage, Mode=OneWay}"/>
+              </Border>
+
+              <!-- Branches and worktrees overview. Uses the existing repository state. -->
+              <Border IsVisible="{Binding IsBranchesVisible, Mode=OneWay}">
+                <v:BranchesOverview/>
               </Border>
 
               <!-- Auto-Fetch Notification -->

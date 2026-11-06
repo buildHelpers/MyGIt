@@ -12,13 +12,17 @@
              x:Name="ThisControl">  
   <Grid>
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="49"/>
+      <ColumnDefinition Width="190"/>
       <ColumnDefinition Width="*"/>
     </Grid.ColumnDefinitions>
 
     <!-- Page Switcher -->
-    <Grid Grid.Column="0" Width="49" RowDefinitions="Auto,*,Auto,12">
-      <ListBox Background="Transparent" SelectedIndex="{Binding SelectedViewIndex, Mode=TwoWay}" SelectionMode="AlwaysSelected">
+    <Grid Grid.Column="0" Width="190" RowDefinitions="Auto,*,Auto,12"
+          Background="{DynamicResource Brush.Mygit.Sidebar}">
+      <TextBlock Grid.Row="0" Margin="16,20,8,10"
+                 Classes="mygit_section_label"
+                 Text="{DynamicResource Text.Launcher.OpenRepository}"/>
+      <ListBox Grid.Row="1" Background="Transparent" SelectedIndex="{Binding SelectedViewIndex, Mode=TwoWay}" SelectionMode="AlwaysSelected">
         <ListBox.Styles>
           <Style Selector="Path.icon">
             <Setter Property="Width" Value="18"/>
@@ -29,16 +33,16 @@
           </Style>
           <Style Selector="ListBoxItem">
             <Setter Property="Height" Value="42"/>
-            <Setter Property="Margin" Value="4"/>
+            <Setter Property="Margin" Value="8,3"/>
             <Setter Property="Padding" Value="0"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="CornerRadius" Value="9"/>
           </Style>
           <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="#18888888"/>
           </Style>
           <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource Brush.AccentHovered}"/>
+            <Setter Property="Background" Value="{DynamicResource Brush.Mygit.Selected}"/>
           </Style>
         </ListBox.Styles>
 
@@ -56,7 +60,10 @@
               <Run Text="{OnPlatform Ctrl+1, macOS=⌘+1}" FontSize="11" Foreground="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForeground}"/>
             </TextBlock>
           </ToolTip.Tip>
-          <Path Classes="icon" Data="{StaticResource Icons.Dashboard}"/>
+          <StackPanel Orientation="Horizontal" Spacing="11" Margin="10,0">
+            <Path Classes="icon" Data="{StaticResource Icons.Dashboard}"/>
+            <TextBlock Text="{DynamicResource Text.Dashboard}" FontWeight="SemiBold"/>
+          </StackPanel>
         </ListBoxItem>
 
         <ListBoxItem IsVisible="{Binding !IsBare}" ToolTip.Placement="Right">
@@ -68,7 +75,10 @@
             </TextBlock>
           </ToolTip.Tip>
           <Grid>
-            <Path Classes="icon" Data="{StaticResource Icons.Changes}"/>
+            <StackPanel Orientation="Horizontal" Spacing="11" Margin="10,0">
+              <Path Classes="icon" Data="{StaticResource Icons.Changes}"/>
+              <TextBlock Text="{DynamicResource Text.WorkingCopy}" FontWeight="SemiBold"/>
+            </StackPanel>
             <Border Height="14"
                     Margin="0,4,4,0" Padding="5,0"
                     CornerRadius="7"
@@ -98,7 +108,10 @@
             </TextBlock>
           </ToolTip.Tip>
           <Grid>
-            <Path Classes="icon" Data="{StaticResource Icons.Stashes}"/>
+            <StackPanel Orientation="Horizontal" Spacing="11" Margin="10,0">
+              <Path Classes="icon" Data="{StaticResource Icons.Stashes}"/>
+              <TextBlock Text="{DynamicResource Text.Stashes}" FontWeight="SemiBold"/>
+            </StackPanel>
             <Border Height="14"
                     Margin="0,4,4,0" Padding="5,0"
                     CornerRadius="7"
@@ -115,24 +128,27 @@
       </ListBox>
       
       <Button Grid.Row="2"
-              Classes="icon_button"
-              Width="40" Height="40"
+              Classes="flat mygit_action"
+              Height="36" Margin="10,0,10,6"
               Margin="4,0"
               Click="OnOpenConfigure"
               ToolTip.Tip="{DynamicResource Text.Repository.Configure}"
               ToolTip.Placement="Right">
-        <Path Width="18" Height="18" Data="{StaticResource Icons.Settings}"/>
+        <StackPanel Orientation="Horizontal" Spacing="10" Margin="5,0">
+          <Path Width="16" Height="16" Data="{StaticResource Icons.Settings}"/>
+          <TextBlock Text="{DynamicResource Text.Configure}"/>
+        </StackPanel>
       </Button>
     </Grid>
 
     <!-- Body -->
     <Border Grid.Column="1"
-            Margin="0,0,4,4"
+            Margin="4,0,8,7"
             BorderThickness="1"
             BorderBrush="{DynamicResource Brush.Border0}"
-            CornerRadius="8">
-      <Border CornerRadius="8" ClipToBounds="True">
-        <Grid RowDefinitions="Auto,*">
+            CornerRadius="12">
+      <Border CornerRadius="12" ClipToBounds="True">
+        <Grid RowDefinitions="Auto,44,*">
           <!-- In-Progress Information Bar -->
           <Grid Grid.Row="0" Height="28" ColumnDefinitions="*,Auto,Auto,Auto" Background="{DynamicResource Brush.Conflict}" IsVisible="{Binding InProgressContext, Converter={x:Static ObjectConverters.IsNotNull}}">
             <ContentControl Grid.Column="0" Margin="8,0" Content="{Binding InProgressContext}">
@@ -266,8 +282,42 @@
                     Click="OnAbortInProgress"/>
           </Grid>
 
+          <!-- Mirror the main navigation as clear repository tabs. Both lists share
+               SelectedViewIndex and therefore reuse the existing view model. -->
+          <Border Grid.Row="1" Background="{DynamicResource Brush.Mygit.Surface}"
+                  BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
+            <ListBox SelectedIndex="{Binding SelectedViewIndex, Mode=TwoWay}"
+                     Background="Transparent" SelectionMode="AlwaysSelected">
+              <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+              </ListBox.ItemsPanel>
+              <ListBox.Styles>
+                <Style Selector="ListBoxItem">
+                  <Setter Property="Margin" Value="10,5,0,5"/>
+                  <Setter Property="Padding" Value="16,0"/>
+                  <Setter Property="CornerRadius" Value="8"/>
+                  <Setter Property="MinHeight" Value="32"/>
+                </Style>
+                <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+                  <Setter Property="Background" Value="{DynamicResource Brush.Mygit.Selected}"/>
+                </Style>
+              </ListBox.Styles>
+              <ListBoxItem>
+                <TextBlock Text="{DynamicResource Text.Dashboard}" FontWeight="SemiBold"/>
+              </ListBoxItem>
+              <ListBoxItem IsVisible="{Binding !IsBare}">
+                <TextBlock Text="{DynamicResource Text.WorkingCopy}" FontWeight="SemiBold"/>
+              </ListBoxItem>
+              <ListBoxItem IsVisible="{Binding !IsBare}">
+                <TextBlock Text="{DynamicResource Text.Stashes}" FontWeight="SemiBold"/>
+              </ListBoxItem>
+            </ListBox>
+          </Border>
+
           <!-- Main Body -->
-          <Grid Grid.Row="1" Background="{DynamicResource Brush.Window}">
+          <Grid Grid.Row="2" Background="{DynamicResource Brush.Mygit.Surface}">
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="{Binding #ThisControl.SidebarWidth, Mode=TwoWay}" MinWidth="{Binding #ThisControl.SidebarMinWidth, Mode=OneWay}"/>
               <ColumnDefinition Width="Auto"/>
@@ -275,14 +325,17 @@
             </Grid.ColumnDefinitions>
 
             <!-- Sidebar (Branches/Remotes/Tags/Submodules/Worktrees) -->
-            <Grid Grid.Column="0" RowDefinitions="Auto,*" IsVisible="{Binding #ThisControl.IsNormalSidebarVisible, Mode=OneWay}">              
+            <Grid Grid.Column="0" RowDefinitions="Auto,*"
+                  Background="{DynamicResource Brush.Mygit.Sidebar}"
+                  IsVisible="{Binding #ThisControl.IsNormalSidebarVisible, Mode=OneWay}">              
               <!-- Filter Branches/Tags/Submodules -->
               <TextBox Grid.Row="0"
                        x:Name="FilterBox"
-                       Height="24"
-                       Margin="6,6,4,0"
+                       Classes="mygit_search"
+                       Height="30"
+                       Margin="10,10,8,4"
                        BorderThickness="1"
-                       CornerRadius="13"
+                       CornerRadius="9"
                        BorderBrush="{DynamicResource Brush.Border2}"
                        Watermark="{DynamicResource Text.Repository.Filter}"
                        Text="{Binding Filter, Mode=TwoWay}"

@@ -26,9 +26,9 @@
     </Grid.RowDefinitions>
 
     <!-- Custom TitleBar -->
-    <Grid Grid.Row="0" ColumnDefinitions="Auto,32,32,*,Auto,Auto">
+    <Grid Grid.Row="0" ColumnDefinitions="Auto,Auto,Auto,32,*,Auto,Auto">
       <!-- Bottom border -->
-      <Border Grid.Column="0" Grid.ColumnSpan="6"
+      <Border Grid.Column="0" Grid.ColumnSpan="7"
               BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Border0}"
               Background="{DynamicResource Brush.TitleBar}"
               DoubleTapped="MaximizeOrRestoreWindow"
@@ -94,26 +94,34 @@
         <Path Width="12" Height="12" Data="{StaticResource Icons.Menu}"/>
       </Button>
 
-      <!-- Workspace Dropdown Menu -->
-      <Button Grid.Column="1" Classes="icon_button" VerticalAlignment="Bottom" Margin="0,0,0,1" Click="OnOpenWorkspaceMenu" HotKey="{OnPlatform Ctrl+Alt+P, macOS=⌘+Alt+P}">
-        <ToolTip.Tip>
-          <StackPanel Orientation="Horizontal">
-            <TextBlock Text="{DynamicResource Text.Workspace}" FontWeight="Bold" Foreground="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForeground}"/>
-            <TextBlock Text="{Binding ActiveWorkspace.Name}"/>
-            <TextBlock Margin="16,0,0,0"
-                       Text="{OnPlatform Ctrl+Alt+P, macOS=⌘+Alt+P}"
-                       FontSize="11"
-                       Foreground="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForeground}"
-                       VerticalAlignment="Center"/>
-          </StackPanel>
-        </ToolTip.Tip>
-        <Path Width="14" Height="14"
-              Data="{StaticResource Icons.Workspace}"
-              Fill="{Binding ActiveWorkspace.Brush}"/>
+      <!-- MyGIt: permanent workspace home action. Never replaces or closes repository tabs. -->
+      <Button Grid.Column="1"
+              Classes="flat workspace_home"
+              Height="28" Margin="8,0,4,1" Padding="11,0"
+              CornerRadius="8" VerticalAlignment="Bottom"
+              Click="OnShowWorkspaceHome"
+              ToolTip.Tip="{DynamicResource Text.PageTabBar.Welcome.Title}">
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="7">
+          <Path Width="14" Height="14" Data="{StaticResource Icons.Workspace}" Fill="{DynamicResource Brush.Accent}"/>
+          <TextBlock Text="{DynamicResource Text.Launcher.Workspaces}" FontWeight="SemiBold"/>
+        </StackPanel>
+      </Button>
+
+      <!-- Quick switch: other workspaces, opened repositories, and searchable repositories. -->
+      <Button Grid.Column="2"
+              Classes="flat workspace_switch"
+              Height="28" Margin="0,0,5,1" Padding="10,0"
+              CornerRadius="8" VerticalAlignment="Bottom"
+              Click="OnOpenWorkspaceMenu" HotKey="{OnPlatform Ctrl+Alt+P, macOS=⌘+Alt+P}"
+              ToolTip.Tip="{DynamicResource Text.Welcome.Search}">
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="7">
+          <TextBlock Text="{Binding ActiveWorkspace.Name}" MaxWidth="130" TextTrimming="CharacterEllipsis"/>
+          <Path Width="9" Height="9" Data="{StaticResource Icons.Down}" Fill="{DynamicResource Brush.FG2}"/>
+        </StackPanel>
       </Button>
 
       <!-- Pages Switcher Toggle Button -->
-      <Button Grid.Column="2" Classes="icon_button" VerticalAlignment="Bottom" Margin="0,0,0,1" Click="OnOpenPagesCommandPalette" HotKey="{OnPlatform Ctrl+P, macOS=⌘+P}">
+      <Button Grid.Column="3" Classes="icon_button" VerticalAlignment="Bottom" Margin="0,0,0,1" Click="OnOpenPagesCommandPalette" HotKey="{OnPlatform Ctrl+P, macOS=⌘+P}">
         <ToolTip.Tip>
           <StackPanel Orientation="Horizontal">
             <TextBlock Text="{DynamicResource Text.Launcher.Pages}"
@@ -129,10 +137,10 @@
       </Button>
 
       <!-- Pages Tabs -->
-      <v:LauncherTabBar Grid.Column="3" Height="30" Margin="0,0,16,0" VerticalAlignment="Bottom"/>
+      <v:LauncherTabBar Grid.Column="4" Height="30" Margin="0,0,16,0" VerticalAlignment="Bottom"/>
 
       <!-- Update Available Button -->
-      <Button Grid.Column="4"
+      <Button Grid.Column="5"
               Classes="icon_button"
               Height="30"
               Margin="0,0,4,0"
@@ -144,7 +152,7 @@
       </Button>
 
       <!-- Caption Buttons (Windows/Linux) -->
-      <Border Grid.Column="5" IsVisible="{Binding #ThisControl.HasRightCaptionButton}">
+      <Border Grid.Column="6" IsVisible="{Binding #ThisControl.HasRightCaptionButton}">
         <v:CaptionButtons Height="30" VerticalAlignment="Top"/>
       </Border>
     </Grid>

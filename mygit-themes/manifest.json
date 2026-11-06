@@ -2,8 +2,9 @@
   "formatVersion": 1,
   "package": "MyGIt Design Theme System",
   "engine": "MyGIt layout overlay + SourceGit ThemeOverrides",
-  "version": "2.0.0",
-  "description": "Complete MyGIt design: versioned, isolated UI layout overlay plus SourceGit native light/dark palettes. No UI patch applied to the upstream tracking branch.",
+  "version": "2.0.1",
+  "description": "Partial UI redesign with integration corrections; not yet screenshot-verified against the six approved mockups.",
+  "implementationStatus": "partial-ui-integration-pending-desktop-validation",
   "presets": [
     {
       "id": "light",
@@ -24,7 +25,7 @@
   "layouts": [
     {
       "id": "mygit-design",
-      "name": "MyGIt · Complete Design",
+      "name": "MyGIt Design",
       "type": "isolated-source-overlay",
       "default": true,
       "requiresRebuild": true,
@@ -35,8 +36,17 @@
         "layouts/mygit-design/patches/20-working-copy.patch",
         "layouts/mygit-design/patches/30-history-branches.patch",
         "layouts/mygit-design/patches/40-conflicts-settings.patch",
-        "layouts/mygit-design/patches/50-visual-resources.patch"
+        "layouts/mygit-design/patches/50-visual-resources.patch",
+        "layouts/mygit-design/patches/60-integration.patch"
       ],
+      "revisions": {
+        "layouts/mygit-design/patches/60-integration.patch": [
+          "src/Views/Launcher.axaml",
+          "src/Views/Launcher.axaml.cs",
+          "src/Views/Repository.axaml",
+          "src/Views/Histories.axaml"
+        ]
+      },
       "screens": [
         "workspace-home",
         "working-copy-diff-commit",

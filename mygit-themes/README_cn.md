@@ -1,66 +1,39 @@
-# MyGIt · 完整设计主题系统
+# MyGIt · 设计主题系统（进行中）
 
-**主题 = 页面布局 + 导航交互 + 控件样式 + 浅色/深色配色。**
+**目标：主题包含页面布局、导航、控件样式及深浅配色，而不只是换颜色。当前只完成部分改造，尚未完整还原六张设计稿。**
 
-这是最初确认的六张 MyGIt 设计稿的**界面实现包**，不再把“主题”理解为单纯修改颜色。SourceGit 的 Git 命令、数据和工作流仍由上游维护。为方便同步上游，所有自定义内容放在 `mygit-themes/`，`develop` 与 `mygit` 分支不直接提交对上游 `src/` 的私有改动。
+[本轮整改与逐页未完成项](UI_AUDIT_cn.md) · [English](README.md)
 
-[English](README.md) · [SourceGit 上游](https://github.com/sourcegit-scm/sourcegit) · [官方原生主题规范](https://github.com/sourcegit-scm/sourcegit-theme)
+## 当前方案
 
-## 主题的两层结构
+`mygit-design` 将六组初始界面补丁和一组整合修正应用到独立 Git worktree，再构建。`upstream-classic` 保留原 SourceGit。Light/Dark JSON 继续使用 SourceGit 原生 Theme Overrides。
 
-| 层级 | 包含的内容 | 切换方式 |
-|---|---|---|
-| **布局主题 · MyGIt Design** | 工作区首页、三栏工作副本、历史、分支/Worktrees、冲突解决、设置及顶部导航 | 准备独立构建目录，重新构建；不修改原版仓库 |
-| **布局主题 · SourceGit Classic** | 原生 SourceGit 完整界面 | 使用原版程序，或生成未打补丁的独立目录 |
-| **外观主题 · MyGIt Light/Dark** | 背景、文字、圆角配色、Diff、提交图等 | 原版 **Preferences → Appearance → Theme Overrides**，不需编译 |
+自定义内容集中在 `mygit-themes/`；产品分支不直接保存对上游 `src/` 的改动。但布局补丁仍依赖上游页面与 ViewModel，因此上游改动相关文件时需要适配，**不是零维护，也不是运行时热切换布局**。
 
-**技术边界必须明确：SourceGit 原生 JSON 主题没有布局替换能力。** 因此完整设计布局目前由版本化界面补丁装配到**单独的 Git worktree**，属于“需要重新构建的布局主题”，而不是运行时即刻热切换。未来如果 SourceGit 上游提供替换页面的标准扩展接口，可以将这套布局包迁移过去。
+## 本轮纠正
 
-## 完整设计包含什么
+顶部仓库切换现在只有一个入口，沿用 `Ctrl/Cmd+P`，点击和快捷键共用最近仓库/搜索面板。移除仓库页面重复的顶部分类导航；同步历史图与表头高度；修正三栏工作副本的宽度计算。具体代码、已执行检查和未完成页面见审计记录。
 
-- **工作区首页**：自定义布局、最近仓库卡片、搜索、克隆/打开本地仓库、真实仓库树。
-- **顶部导航**：常驻返回工作区、独立工作区菜单、最近仓库列表与即时名称/路径搜索、原仓库标签。
-- **工作副本**：左侧变更文件、中间 Diff、右侧提交编辑器，保留暂存/撤销暂存/提交/AI 辅助。
-- **历史**：提交图与详情默认左右分栏，保留原有筛选及历史操作。
-- **分支与 Worktrees**：新增分支与 Worktree 管理页，操作复用 SourceGit 原来的代码。
-- **冲突**：重构三方差异和结果区域的视觉布局，保留原冲突处理逻辑。
-- **设置**：全局与仓库设置采用较宽窗口及左侧分类，保留原设置行为。
+## 本地使用
 
-这套界面包来源于先前独立分支中已经提交的布局改造代码，并拆分成六个有序、可审阅的补丁。**尚未在 Mac 真实编译及逐页截图验收，因此不能宣称与原设计稿像素完全一致。**
-
-## 使用 · 默认完整设计
-
-要求本地有 Git、Python 3.9+；编译程序需要 .NET 10 SDK 和 SourceGit 原有的构建依赖。
-
-在 `buildHelpers/MyGIt` 的 `mygit` 分支中：
+要求 Git、Python 3.9+；构建要求 .NET 10 及 SourceGit 原有依赖。请从 `mygit` 分支的干净工作区执行：
 
 ```bash
-# 查看可用主题
 python3 mygit-themes/tools/theme.py layouts
-python3 mygit-themes/tools/theme.py list
-
-# 验证所有主题资源和布局补丁格式
 python3 mygit-themes/tools/theme.py validate
-
-# 不改变任何持久工作区：创建临时工作树检查当前上游能否应用布局
+python3 -m unittest discover -s mygit-themes/tools -p 'test_*.py'
 python3 mygit-themes/tools/theme.py check mygit-design
+python3 mygit-themes/tools/theme.py build mygit-design --output ../MyGIt-Design-Fixed
+```
 
-# 生成 MyGIt 完整设计的独立源码目录；目标目录必须不存在
-python3 mygit-themes/tools/theme.py prepare mygit-design --output ../MyGIt-Design
+输出目录必须不存在且在源码仓库外。仅准备源码、不编译：
 
-# 在生成目录安装原有子模块并启动（不改变上游 checkout）
-cd ../MyGIt-Design
+```bash
+python3 mygit-themes/tools/theme.py prepare mygit-design --output ../MyGIt-Design-Source
+cd ../MyGIt-Design-Source
 git submodule update --init --recursive
 dotnet run --project src/SourceGit.csproj
 ```
-
-也可以一步创建独立目录并尝试编译：
-
-```bash
-python3 mygit-themes/tools/theme.py build mygit-design --output ../MyGIt-Design-Build
-```
-
-构建工具只会操作新生成的工作树和其子模块，原 `develop` / `mygit` 分支源码不受影响；如果上游版本不兼容，会报错并停止，而不是静默覆盖。已有目标目录不会自动覆盖。不要把生成目录里的修改提交回上游跟踪分支。
 
 使用原版布局：
 
@@ -68,55 +41,22 @@ python3 mygit-themes/tools/theme.py build mygit-design --output ../MyGIt-Design-
 python3 mygit-themes/tools/theme.py prepare upstream-classic --output ../SourceGit-Classic
 ```
 
-## 浅色/深色主题
+旧生成目录和已安装程序不会随 `git pull` 自动更新，需重新生成、编译。
 
-同一款完整设计布局提供两套配色：
+## 配色与同步
 
-- [MyGIt Light](presets/MyGIt-Light.json)：浅灰白背景、蓝紫点缀。
-- [MyGIt Dark](presets/MyGIt-Dark.json)：深蓝色背景、低眩光。
+在应用 Preferences → Appearance 中选择 Light 或 Dark，并将相应 JSON 设为 Theme Overrides：
 
-在应用 **Preferences → Appearance** 里先选择 `Light` 或 `Dark`，然后选择对应的 JSON 作为 **Theme Overrides**；这一步无需编译。
-
-如需单独复制外观主题到系统目录，也可运行：
+- [MyGIt Light](presets/MyGIt-Light.json)
+- [MyGIt Dark](presets/MyGIt-Dark.json)
 
 ```bash
 python3 mygit-themes/tools/theme.py install light
 python3 mygit-themes/tools/theme.py install dark
 ```
 
-## 为什么这样更利于同步上游
+安装工具只复制 JSON，不修改 `preference.json` 或密钥。外观配色可在运行时切换，页面布局需要重建。
 
-```mermaid
-flowchart TD
-    A[SourceGit develop] --> B[MyGIt develop: 完整跟进上游]
-    B --> C[MyGIt mygit: 上游源码 + mygit-themes]
-    C --> D[Classic: 原始 SourceGit 页面]
-    C --> E[Design composer: 临时独立 worktree]
-    E --> F[应用六组 UI 主题补丁]
-    F --> G[MyGIt Design 构建]
-    E --> H[不改动 develop / mygit 源码]
-```
+同步时保留 `develop` 跟随上游，更新 `mygit` 后运行 `check mygit-design`。补丁不兼容会停止，不应强制覆盖。第七组补丁的顺序修订目标必须在清单中逐一声明。
 
-**需要持续维护的只有主题目录，但主题内的布局补丁依然依赖上游 XAML/VM 的结构。** 若上游更新了对应页面，补丁检查可能失败，这时需要适配；它不是“永不维护”。与直接长期修改 `develop` 的 48 个源文件相比，独立补丁使变更更容易追踪，能明确发现不兼容。
-
-## 文件结构
-
-```text
-mygit-themes/
-├── manifest.json
-├── presets/
-│   ├── MyGIt-Light.json
-│   └── MyGIt-Dark.json
-├── layouts/mygit-design/patches/
-│   ├── 00-adapters.patch
-│   ├── 10-shell-home.patch
-│   ├── 20-working-copy.patch
-│   ├── 30-history-branches.patch
-│   ├── 40-conflicts-settings.patch
-│   └── 50-visual-resources.patch
-└── tools/
-    ├── theme.py              # 统一命令入口
-    └── layout.py             # 隔离布局构建逻辑
-```
-
-下一步由用户在 macOS 上编译、运行及与六张效果图逐页对比；未验收前不声明程序已经达标。
+**验收状态：** 本轮规则测试和取回源码样本上的补丁检查已通过；完整装配、.NET 构建、Mac 实际运行和逐页视觉验收未完成。新图标仍未接入程序资源。

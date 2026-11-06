@@ -465,6 +465,14 @@
   <x:String x:Key="Text.PushTag.Remote" xml:space="preserve">தொலை:</x:String>
   <x:String x:Key="Text.PushTag.Tag" xml:space="preserve">குறிச்சொல்:</x:String>
   <x:String x:Key="Text.Quit" xml:space="preserve">வெளியேறு</x:String>
+  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">Repositories</x:String>
+  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">Recent first</x:String>
+  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ Navigate · Enter Open · Esc Close</x:String>
+  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">No matching repositories</x:String>
+  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">Open</x:String>
+  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">Recent</x:String>
+  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">Search name or path...</x:String>
+  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">Quick switch repositories</x:String>
   <x:String x:Key="Text.Rebase" xml:space="preserve">தற்போதைய கிளையை மறுதளம் செய்</x:String>
   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">உள்ளக மாற்றங்களை பதுக்கிவை &amp; மீண்டும் இடு</x:String>
   <x:String x:Key="Text.Rebase.On" xml:space="preserve">மேல்:</x:String>

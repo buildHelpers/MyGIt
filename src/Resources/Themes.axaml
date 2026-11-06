@@ -2,6 +2,16 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <ResourceDictionary.ThemeDictionaries>
     <ResourceDictionary x:Key="Light">
+      <!-- MyGIt design system: understated macOS surfaces -->
+      <Color x:Key="Color.Mygit.Sidebar">#FFF5F7FC</Color>
+      <Color x:Key="Color.Mygit.Surface">#FFFFFFFF</Color>
+      <Color x:Key="Color.Mygit.Card">#FFFFFFFF</Color>
+      <Color x:Key="Color.Mygit.Selected">#FFE9EEFF</Color>
+      <Color x:Key="Color.Mygit.Hairline">#FFE1E7F1</Color>
+      <Color x:Key="Color.Mygit.Muted">#FF7583A0</Color>
+      <Color x:Key="Color.Mygit.Success">#FF1A9B74</Color>
+      <Color x:Key="Color.Mygit.Warning">#FFDD9735</Color>
+
       <Color x:Key="Color.Window">#FFF8FAFD</Color>
       <Color x:Key="Color.WindowBorder">#FFCFD7E6</Color>
       <Color x:Key="Color.TitleBar">#FFF9FBFE</Color>
@@ -36,6 +46,15 @@
     </ResourceDictionary>
 
     <ResourceDictionary x:Key="Dark">
+      <Color x:Key="Color.Mygit.Sidebar">#FF151F30</Color>
+      <Color x:Key="Color.Mygit.Surface">#FF192537</Color>
+      <Color x:Key="Color.Mygit.Card">#FF202E44</Color>
+      <Color x:Key="Color.Mygit.Selected">#FF313F67</Color>
+      <Color x:Key="Color.Mygit.Hairline">#FF344359</Color>
+      <Color x:Key="Color.Mygit.Muted">#FF9BA9C2</Color>
+      <Color x:Key="Color.Mygit.Success">#FF50C9A2</Color>
+      <Color x:Key="Color.Mygit.Warning">#FFF3B96B</Color>
+
       <Color x:Key="Color.Window">#FF182234</Color>
       <Color x:Key="Color.WindowBorder">#FF33435C</Color>
       <Color x:Key="Color.TitleBar">#FF202E4A</Color>
@@ -73,6 +92,15 @@
   <!-- Default MyGIt accent; user theme overrides still take precedence. -->
   <Color x:Key="SystemAccentColor">#FF606FF0</Color>
 
+
+  <SolidColorBrush x:Key="Brush.Mygit.Sidebar" Color="{DynamicResource Color.Mygit.Sidebar}"/>
+  <SolidColorBrush x:Key="Brush.Mygit.Surface" Color="{DynamicResource Color.Mygit.Surface}"/>
+  <SolidColorBrush x:Key="Brush.Mygit.Card" Color="{DynamicResource Color.Mygit.Card}"/>
+  <SolidColorBrush x:Key="Brush.Mygit.Selected" Color="{DynamicResource Color.Mygit.Selected}"/>
+  <SolidColorBrush x:Key="Brush.Mygit.Hairline" Color="{DynamicResource Color.Mygit.Hairline}"/>
+  <SolidColorBrush x:Key="Brush.Mygit.Muted" Color="{DynamicResource Color.Mygit.Muted}"/>
+  <SolidColorBrush x:Key="Brush.Mygit.Success" Color="{DynamicResource Color.Mygit.Success}"/>
+  <SolidColorBrush x:Key="Brush.Mygit.Warning" Color="{DynamicResource Color.Mygit.Warning}"/>
   <SolidColorBrush x:Key="Brush.Window" Color="{DynamicResource Color.Window}"/>
   <SolidColorBrush x:Key="Brush.WindowBorder" Color="{DynamicResource Color.WindowBorder}"/>
   <SolidColorBrush x:Key="Brush.TitleBar" Color="{DynamicResource Color.TitleBar}"/>

@@ -712,6 +712,22 @@
     <Setter Property="Foreground" Value="{DynamicResource Brush.FG1}"/>
   </Style>
 
+  <!-- MyGIt header navigation: quiet macOS-like controls. -->
+  <Style Selector="Button.flat.workspace_home">
+    <Setter Property="Background" Value="{DynamicResource Brush.SubPanel}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border2}"/>
+    <Setter Property="BorderThickness" Value="1"/>
+  </Style>
+  <Style Selector="Button.flat.workspace_switch">
+    <Setter Property="Background" Value="{DynamicResource Brush.Contents}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border2}"/>
+    <Setter Property="BorderThickness" Value="1"/>
+  </Style>
+  <Style Selector="Button.flat.workspace_home:pointerover /template/ Border#PART_Border, Button.flat.workspace_switch:pointerover /template/ Border#PART_Border">
+    <Setter Property="Background" Value="{DynamicResource Brush.ToolBar}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Accent}"/>
+  </Style>
+
   <Style Selector="ListBox.repo_left_content_list">
     <Setter Property="Background" Value="Transparent"/>
     <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>

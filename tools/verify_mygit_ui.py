@@ -175,7 +175,7 @@ def check_design_surfaces() -> None:
         "src/Views/Welcome.axaml",
     )
     for view in views:
-        for key in re.findall(r"\\{DynamicResource (Text\\.[\\w.]+)\\}", read(view)):
+        for key in re.findall(r"\{DynamicResource (Text\.[\w.]+)\}", read(view)):
             assert f'x:Key="{key}"' in english, (view, key)
 
     print("PASS design surface and localization links")

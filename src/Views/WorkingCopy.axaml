@@ -249,7 +249,7 @@
         <StackPanel Orientation="Horizontal" Spacing="10">
           <Path Width="14" Height="14" Data="{StaticResource Icons.Diff}"
                 Fill="{DynamicResource Brush.Accent}"/>
-          <TextBlock Text="{DynamicResource Text.Diff}" FontWeight="SemiBold"/>
+          <TextBlock Text="{DynamicResource Text.CommitDetail.Changes}" FontWeight="SemiBold"/>
         </StackPanel>
       </Border>
       <!-- Select Change Detail -->

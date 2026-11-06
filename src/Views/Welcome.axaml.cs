@@ -81,6 +81,16 @@ namespace SourceGit.Views
             InitializeComponent();
         }
 
+        private void OnRecentRepositoryTapped(object sender, TappedEventArgs e)
+        {
+            if (sender is Border { DataContext: ViewModels.RepositoryNode node } &&
+                node.IsRepository)
+            {
+                node.Open();
+                e.Handled = true;
+            }
+        }
+
         private void OnCloneRepository(object sender, RoutedEventArgs e)
         {
             ViewModels.Welcome.Instance.Clone();

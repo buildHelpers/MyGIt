@@ -128,6 +128,13 @@ def prepare(profile_id: str, dest: Path, source: Path = ROOT, build: bool = Fals
             git(dest, "apply", "--check", "--whitespace=nowarn", str(patch))
             git(dest, "apply", "--whitespace=nowarn", str(patch))
             print(f"APPLIED {patch.relative_to(THEMES_DIR)}")
+        if profile_id == "mygit-design":
+            # The theme verification script reads the generated working tree.
+            # It never modifies the source repository or app settings.
+            subprocess.run(
+                [sys.executable, str(THEMES_DIR / "tools" / "verify_design.py"), str(dest)],
+                check=True,
+            )
     except (OSError, subprocess.CalledProcessError):
         if created:
             # Only remove the detached worktree created by THIS invocation.

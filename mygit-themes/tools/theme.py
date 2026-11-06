@@ -125,7 +125,7 @@ def install(preset: dict, target: Path, force: bool) -> Path:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="MyGIt design theme system: appearance + layout")
-    parser.add_argument("command", choices=["list", "validate", "install", "layouts", "prepare", "build"])
+    parser.add_argument("command", choices=["list", "validate", "install", "layouts", "check", "prepare", "build"])
     parser.add_argument("preset", nargs="?", help="Appearance id (light/dark) or layout id (mygit-design/upstream-classic)")
     parser.add_argument("--target-dir", type=Path,
                         help="SourceGit config directory (otherwise detected by OS)")
@@ -148,6 +148,14 @@ def main() -> int:
             profiles = validate_layout()
             for name in profiles:
                 print(f"{name}{' [default]' if load_manifest().get('defaultLayout') == name else ''}")
+        elif args.command == "check":
+            # Invoke the dedicated layout CLI's temporary-worktree compatibility
+            # check without rewriting this checkout or application preferences.
+            import subprocess
+            command = [sys.executable, str(PACK / "tools" / "layout.py"), "check",
+                       args.preset or load_manifest().get("defaultLayout", "mygit-design"),
+                       "--source", str(args.source)]
+            subprocess.run(command, check=True)
         elif args.command in ("prepare", "build"):
             from layout import prepare as prepare_layout
             if args.output is None:

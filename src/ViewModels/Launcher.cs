@@ -156,6 +156,26 @@ namespace SourceGit.ViewModels
             GC.Collect();
         }
 
+        /// <summary>
+        /// Shows the workspace home without closing an open repository or changing its Git state.
+        /// Reuse an existing welcome tab; otherwise create a new one for this workspace.
+        /// </summary>
+        public void ShowWorkspaceHome()
+        {
+            foreach (var page in Pages)
+            {
+                if (page.Data is Welcome)
+                {
+                    ActivePage = page;
+                    return;
+                }
+            }
+
+            var home = new LauncherPage();
+            Pages.Insert(0, home);
+            ActivePage = home;
+        }
+
         public void AddNewTab()
         {
             var page = new LauncherPage();

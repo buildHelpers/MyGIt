@@ -49,15 +49,15 @@ def check_ui_handlers() -> None:
         handlers = read(code)
         for name in names:
             assert f'Click="{name}"' in markup, (view, name)
-            assert re.search(rf"\\bvoid\\s+{name}\\s*\\(", handlers), (code, name)
+            assert re.search(rf"\bvoid\s+{name}\s*\(", handlers), (code, name)
             print(f"PASS event {name}")
 
 
 def check_safe_navigation() -> None:
     launcher = read("src/ViewModels/Launcher.cs")
     match = re.search(
-        r"public void ShowWorkspaceHome\\s*\\(\\)\\s*\\{(?P<body>.*?)"
-        r"(?=\\n        public void AddNewTab)",
+        r"public void ShowWorkspaceHome\s*\(\)\s*\{(?P<body>.*?)"
+        r"(?=\n        public void AddNewTab)",
         launcher,
         re.DOTALL,
     )

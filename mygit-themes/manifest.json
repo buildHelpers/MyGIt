@@ -1,9 +1,9 @@
 {
   "formatVersion": 1,
-  "package": "MyGIt Native Themes",
-  "engine": "SourceGit ThemeOverrides JSON",
-  "version": "1.0.0",
-  "description": "Styles for upstream SourceGit. No forked C#/Avalonia views or commands.",
+  "package": "MyGIt Design Theme System",
+  "engine": "MyGIt layout overlay + SourceGit ThemeOverrides",
+  "version": "2.0.0",
+  "description": "Complete MyGIt design: versioned, isolated UI layout overlay plus SourceGit native light/dark palettes. No UI patch applied to the upstream tracking branch.",
   "presets": [
     {
       "id": "light",
@@ -18,6 +18,44 @@
       "file": "presets/MyGIt-Dark.json",
       "baseTheme": "Dark",
       "default": false
+    }
+  ],
+  "defaultLayout": "mygit-design",
+  "layouts": [
+    {
+      "id": "mygit-design",
+      "name": "MyGIt · Complete Design",
+      "type": "isolated-source-overlay",
+      "default": true,
+      "requiresRebuild": true,
+      "baseSourceCommit": "37bd1fbd8c56a872ebb6033c0639d3cb930f8aa9",
+      "patches": [
+        "layouts/mygit-design/patches/00-adapters.patch",
+        "layouts/mygit-design/patches/10-shell-home.patch",
+        "layouts/mygit-design/patches/20-working-copy.patch",
+        "layouts/mygit-design/patches/30-history-branches.patch",
+        "layouts/mygit-design/patches/40-conflicts-settings.patch",
+        "layouts/mygit-design/patches/50-visual-resources.patch"
+      ],
+      "screens": [
+        "workspace-home",
+        "working-copy-diff-commit",
+        "commit-history",
+        "branches-worktrees",
+        "conflict-resolution",
+        "preferences"
+      ],
+      "appearanceDefault": "light"
+    },
+    {
+      "id": "upstream-classic",
+      "name": "SourceGit Classic Layout",
+      "type": "upstream-unchanged",
+      "default": false,
+      "requiresRebuild": false,
+      "patches": [],
+      "screens": [],
+      "appearanceDefault": "light"
     }
   ]
 }

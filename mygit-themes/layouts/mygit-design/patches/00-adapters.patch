@@ -1,0 +1,532 @@
+diff --git a/src/App.axaml b/src/App.axaml
+--- a/src/App.axaml
++++ b/src/App.axaml
+@@ -2,7 +2,7 @@
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:s="using:SourceGit"
+              x:Class="SourceGit.App"
+-             Name="SourceGit"
++             Name="MyGIt"
+              RequestedThemeVariant="Dark">
+   <Application.Resources>
+     <ResourceDictionary>
+diff --git a/src/Converters/StringConverters.cs b/src/Converters/StringConverters.cs
+--- a/src/Converters/StringConverters.cs
++++ b/src/Converters/StringConverters.cs
+@@ -98,7 +98,7 @@ public class ToWindowTitleConverter : IMultiValueConverter
+             public object Convert(IList<object> values, Type targetType, object parameter, CultureInfo culture)
+             {
+                 if (values is not { Count: 2 })
+-                    return "SourceGit";
++                    return "MyGIt";
+ 
+                 var page = values[0] as string;
+                 var workspace = values[1] as string;
+@@ -107,7 +107,7 @@ public object Convert(IList<object> values, Type targetType, object parameter, C
+                 if (string.IsNullOrEmpty(workspace))
+                     workspace = "Unnamed";
+ 
+-                return $"{page} - {workspace}";
++                return $"MyGIt - {page} - {workspace}";
+             }
+ 
+             public IList<object> ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+diff --git a/src/SourceGit.csproj b/src/SourceGit.csproj
+--- a/src/SourceGit.csproj
++++ b/src/SourceGit.csproj
+@@ -9,8 +9,8 @@
+     <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
+     <InvariantGlobalization>false</InvariantGlobalization>
+ 
+-    <Product>SourceGit</Product>
+-    <Description>OpenSource GIT client</Description>
++    <Product>MyGIt</Product>
++    <Description>Cross-platform Git desktop client</Description>
+     <Company>sourcegit-scm</Company>
+     <Copyright>Copyright © $([System.DateTime]::Now.Year) sourcegit-scm.</Copyright>
+     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+diff --git a/src/ViewModels/Launcher.cs b/src/ViewModels/Launcher.cs
+--- a/src/ViewModels/Launcher.cs
++++ b/src/ViewModels/Launcher.cs
+@@ -133,6 +133,7 @@ public void SwitchWorkspace(Workspace to)
+ 
+             ActiveWorkspace = to;
+             to.IsActive = true;
++            Welcome.Instance.Refresh();
+ 
+             foreach (var one in Pages)
+                 CloseRepositoryInTab(one, false);
+@@ -156,6 +157,28 @@ public void SwitchWorkspace(Workspace to)
+             GC.Collect();
+         }
+ 
++        /// <summary>
++        /// Shows the workspace home without closing an open repository or changing its Git state.
++        /// Reuse an existing welcome tab; otherwise create a new one for this workspace.
++        /// </summary>
++        public void ShowWorkspaceHome()
++        {
++            Welcome.Instance.Refresh();
++
++            foreach (var page in Pages)
++            {
++                if (page.Data is Welcome)
++                {
++                    ActivePage = page;
++                    return;
++                }
++            }
++
++            var home = new LauncherPage();
++            Pages.Insert(0, home);
++            ActivePage = home;
++        }
++
+         public void AddNewTab()
+         {
+             var page = new LauncherPage();
+@@ -519,7 +542,11 @@ private void PostActivePageChanged()
+                 return;
+ 
+             if (_activePage is { Data: Repository repo })
++            {
+                 _activeWorkspace.ActiveIdx = _activeWorkspace.Repositories.IndexOf(repo.FullPath);
++                // User-driven activation, not every tab restored during application startup.
++                Preferences.Instance.RememberRepository(repo.FullPath);
++            }
+ 
+             CommandPalette = null;
+         }
+diff --git a/src/ViewModels/LayoutInfo.cs b/src/ViewModels/LayoutInfo.cs
+--- a/src/ViewModels/LayoutInfo.cs
++++ b/src/ViewModels/LayoutInfo.cs
+@@ -9,13 +9,13 @@ public double LauncherWidth
+         {
+             get;
+             set;
+-        } = 1280;
++        } = 1360;
+ 
+         public double LauncherHeight
+         {
+             get;
+             set;
+-        } = 720;
++        } = 820;
+ 
+         public int LauncherPositionX
+         {
+@@ -39,7 +39,7 @@ public double RepositorySidebarWidth
+         {
+             get;
+             set;
+-        } = 250;
++        } = 230;
+ 
+         public double RepositorySearchCommitWidth
+         {
+@@ -77,10 +77,10 @@ public GridLength CommitDetailFilesLeftWidth
+             set => SetProperty(ref _commitDetailFilesLeftWidth, value);
+         }
+ 
+-        private GridLength _workingCopyLeftWidth = new GridLength(300, GridUnitType.Pixel);
++        private GridLength _workingCopyLeftWidth = new GridLength(280, GridUnitType.Pixel);
+         private GridLength _stashesLeftWidth = new GridLength(300, GridUnitType.Pixel);
+         private GridLength _commitDetailChangesLeftWidth = new GridLength(256, GridUnitType.Pixel);
+         private GridLength _commitDetailFilesLeftWidth = new GridLength(256, GridUnitType.Pixel);
+-        private bool _isSidebarCollapsedInLocalChanges = false;
++        private bool _isSidebarCollapsedInLocalChanges = true;
+     }
+ }
+diff --git a/src/ViewModels/Preferences.cs b/src/ViewModels/Preferences.cs
+--- a/src/ViewModels/Preferences.cs
++++ b/src/ViewModels/Preferences.cs
+@@ -456,6 +456,45 @@ public List<Workspace> Workspaces
+             set;
+         } = [];
+ 
++        /// <summary>
++        /// Most recently selected repositories, across all workspaces.
++        /// Only local paths are saved; no Git credentials or repository contents.
++        /// </summary>
++        public List<string> RecentRepositories
++        {
++            get;
++            set;
++        } = [];
++
++        /// <summary>
++        /// Records a successful repository activation. A bounded list is used to
++        /// avoid unbounded growth; normal settings persistence keeps it across restarts.
++        /// </summary>
++        public void RememberRepository(string path)
++        {
++            if (string.IsNullOrWhiteSpace(path))
++                return;
++
++            var normalized = path.Replace('\\', '/').TrimEnd('/');
++            if (string.IsNullOrEmpty(normalized))
++                return;
++
++            RecentRepositories ??= [];
++            var comparer = OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal;
++
++            if (RecentRepositories.Count > 0 && comparer.Equals(RecentRepositories[0], normalized))
++                return;
++
++            RecentRepositories.RemoveAll(item => comparer.Equals(item, normalized));
++            RecentRepositories.Insert(0, normalized);
++
++            const int maxRecent = 16;
++            if (RecentRepositories.Count > maxRecent)
++                RecentRepositories.RemoveRange(maxRecent, RecentRepositories.Count - maxRecent);
++
++            Save();
++        }
++
+         public AvaloniaList<Models.CustomAction> CustomActions
+         {
+             get;
+@@ -790,7 +829,7 @@ private bool RemoveInvalidRepositoriesRecursive(List<RepositoryNode> collection)
+         private bool _isLoading = true;
+         private bool _isReadonly = true;
+         private string _locale = "en_US";
+-        private string _theme = "Default";
++        private string _theme = "Light";
+         private string _themeOverrides = string.Empty;
+         private string _defaultFontFamily = string.Empty;
+         private string _monospaceFontFamily = string.Empty;
+@@ -812,7 +851,7 @@ private bool RemoveInvalidRepositoriesRecursive(List<RepositoryNode> collection)
+         private string _ignoreUpdateTag = string.Empty;
+ 
+         private bool _showTagsInGraph = true;
+-        private bool _useTwoColumnsLayoutInHistories = false;
++        private bool _useTwoColumnsLayoutInHistories = true;
+         private bool _displayTimeAsPeriodInHistories = false;
+         private bool _useSideBySideDiff = false;
+         private bool _ignoreWhitespaceChangesInDiff = false;
+diff --git a/src/ViewModels/QuickRepositorySwitcher.cs b/src/ViewModels/QuickRepositorySwitcher.cs
+new file mode 100644
+--- /dev/null
++++ b/src/ViewModels/QuickRepositorySwitcher.cs
+@@ -0,0 +1,203 @@
++using System;
++using System.Collections.Generic;
++using System.Linq;
++
++using CommunityToolkit.Mvvm.ComponentModel;
++
++namespace SourceGit.ViewModels
++{
++    /// <summary>
++    /// A local repository destination, not a Git operation.
++    /// </summary>
++    public sealed class QuickRepositoryItem
++    {
++        public string Name { get; init; } = string.Empty;
++        public string Path { get; init; } = string.Empty;
++        public bool IsRecent { get; set; }
++        public bool IsOpen { get; set; }
++    }
++
++    /// <summary>
++    /// Searchable repository switcher shown directly beneath the global title bar.
++    /// Merges recently used paths, managed repositories, restored workspaces and open tabs.
++    /// </summary>
++    public sealed class QuickRepositorySwitcher : ObservableObject
++    {
++        public List<QuickRepositoryItem> VisibleRepositories
++        {
++            get => _visibleRepositories;
++            private set
++            {
++                if (SetProperty(ref _visibleRepositories, value))
++                    OnPropertyChanged(nameof(HasMatches));
++            }
++        }
++
++        public bool HasMatches => _visibleRepositories.Count > 0;
++
++        public QuickRepositoryItem SelectedRepository
++        {
++            get => _selectedRepository;
++            set => SetProperty(ref _selectedRepository, value);
++        }
++
++        public string SearchFilter
++        {
++            get => _searchFilter;
++            set
++            {
++                if (SetProperty(ref _searchFilter, value))
++                    UpdateVisible();
++            }
++        }
++
++        public QuickRepositorySwitcher(Launcher launcher)
++        {
++            _launcher = launcher;
++            Refresh();
++        }
++
++        /// <summary>
++        /// Open the selected repository using the existing validated SourceGit path.
++        /// If it is already open, the Launcher simply selects its existing page.
++        /// </summary>
++        public bool Open(QuickRepositoryItem item)
++        {
++            if (item == null)
++                return false;
++
++            _launcher.OpenRepositoryInTab(item.Path, null);
++            if (_launcher.ActivePage is not { Data: Repository active } ||
++                !_pathComparer.Equals(Normalize(active.FullPath), Normalize(item.Path)))
++                return false;
++
++            // Also handles choosing the already-selected tab (no property-change event).
++            Preferences.Instance.RememberRepository(active.FullPath);
++            return true;
++        }
++
++        private void Refresh()
++        {
++            var preferences = Preferences.Instance;
++            var all = new Dictionary<string, QuickRepositoryItem>(_pathComparer);
++
++            CollectManaged(all, preferences.RepositoryNodes);
++
++            foreach (var workspace in preferences.Workspaces)
++            {
++                foreach (var repo in workspace.Repositories)
++                    Add(all, repo, null, false);
++            }
++
++            foreach (var page in _launcher.Pages)
++            {
++                if (page.Data is Repository repo)
++                    Add(all, repo.FullPath, page.Node.Name, true);
++            }
++
++            var recentPaths = preferences.RecentRepositories ?? [];
++            foreach (var path in recentPaths)
++                Add(all, path, null, false);
++
++            // First run after upgrading: show the restored opened repositories as recent.
++            var recent = new List<string>(recentPaths);
++            if (recent.Count == 0)
++            {
++                foreach (var page in _launcher.Pages.Reverse())
++                {
++                    if (page.Data is Repository repo)
++                        recent.Add(repo.FullPath);
++                }
++            }
++
++            var ordered = new List<QuickRepositoryItem>();
++            var seen = new HashSet<string>(_pathComparer);
++
++            foreach (var path in recent)
++            {
++                var normalized = Normalize(path);
++                if (all.TryGetValue(normalized, out var item) && seen.Add(normalized))
++                {
++                    item.IsRecent = true;
++                    ordered.Add(item);
++                }
++            }
++
++            foreach (var item in all.Values
++                         .Where(item => !seen.Contains(item.Path))
++                         .OrderByDescending(item => item.IsOpen)
++                         .ThenBy(item => item.Name, StringComparer.OrdinalIgnoreCase)
++                         .ThenBy(item => item.Path, StringComparer.OrdinalIgnoreCase))
++                ordered.Add(item);
++
++            _allRepositories = ordered;
++            UpdateVisible();
++        }
++
++        private void UpdateVisible()
++        {
++            var filter = _searchFilter?.Trim();
++            var items = string.IsNullOrEmpty(filter)
++                ? _allRepositories
++                : _allRepositories.Where(item =>
++                    item.Name.Contains(filter, StringComparison.OrdinalIgnoreCase) ||
++                    item.Path.Contains(filter, StringComparison.OrdinalIgnoreCase)).ToList();
++
++            VisibleRepositories = items;
++            SelectedRepository = items.Count > 0 ? items[0] : null;
++        }
++
++        private static void CollectManaged(
++            Dictionary<string, QuickRepositoryItem> all,
++            List<RepositoryNode> nodes)
++        {
++            foreach (var node in nodes)
++            {
++                if (node.IsRepository)
++                    Add(all, node.Id, node.Name, false);
++                else
++                    CollectManaged(all, node.SubNodes);
++            }
++        }
++
++        private static void Add(
++            Dictionary<string, QuickRepositoryItem> all,
++            string path,
++            string name,
++            bool isOpen)
++        {
++            var normalized = Normalize(path);
++            if (string.IsNullOrEmpty(normalized))
++                return;
++
++            if (all.TryGetValue(normalized, out var existing))
++            {
++                existing.IsOpen |= isOpen;
++                return;
++            }
++
++            all.Add(normalized, new QuickRepositoryItem
++            {
++                Name = !string.IsNullOrWhiteSpace(name)
++                    ? name
++                    : System.IO.Path.GetFileName(normalized),
++                Path = normalized,
++                IsOpen = isOpen,
++            });
++        }
++
++        private static string Normalize(string path)
++        {
++            return path?.Replace('\\', '/').TrimEnd('/') ?? string.Empty;
++        }
++
++        private static readonly StringComparer _pathComparer =
++            OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal;
++
++        private readonly Launcher _launcher;
++        private List<QuickRepositoryItem> _allRepositories = [];
++        private List<QuickRepositoryItem> _visibleRepositories = [];
++        private QuickRepositoryItem _selectedRepository = null;
++        private string _searchFilter = string.Empty;
++    }
++}
+diff --git a/src/ViewModels/Repository.cs b/src/ViewModels/Repository.cs
+--- a/src/ViewModels/Repository.cs
++++ b/src/ViewModels/Repository.cs
+@@ -97,6 +97,7 @@ public int SelectedViewIndex
+                     OnPropertyChanged(nameof(IsDashboardVisible));
+                     OnPropertyChanged(nameof(IsWorkingCopyVisible));
+                     OnPropertyChanged(nameof(IsStashesVisible));
++                    OnPropertyChanged(nameof(IsBranchesVisible));
+                 }
+             }
+         }
+@@ -131,6 +132,9 @@ public bool IsStashesVisible
+             get => SelectedViewIndex == 2;
+         }
+ 
++        /// <summary>The full-size branch and worktree overview.</summary>
++        public bool IsBranchesVisible => SelectedViewIndex == 3;
++
+         public string Filter
+         {
+             get => _filter;
+diff --git a/src/ViewModels/Welcome.cs b/src/ViewModels/Welcome.cs
+--- a/src/ViewModels/Welcome.cs
++++ b/src/ViewModels/Welcome.cs
+@@ -1,5 +1,6 @@
+ ﻿using System;
+ using System.Collections.Generic;
++using System.IO;
+ using System.Threading;
+ using System.Threading.Tasks;
+ 
+@@ -28,6 +29,74 @@ public string SearchFilter
+             }
+         }
+ 
++        /// <summary>Current workspace displayed on the repository home page.</summary>
++        public Workspace ActiveWorkspace => Preferences.Instance.GetActiveWorkspace();
++
++        /// <summary>
++        /// Recent repository cards. The active workspace provides a first-run fallback,
++        /// and stale paths are hidden without deleting the saved history.
++        /// </summary>
++        public List<RepositoryNode> RecentRepositories
++        {
++            get
++            {
++                var preferences = Preferences.Instance;
++                var paths = preferences.RecentRepositories is { Count: > 0 }
++                    ? preferences.RecentRepositories
++                    : ActiveWorkspace.Repositories;
++
++                var recent = new List<RepositoryNode>();
++                var seen = new HashSet<string>(OperatingSystem.IsWindows()
++                    ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
++
++                foreach (var path in paths)
++                {
++                    var normalized = path?.Replace('\\', '/').TrimEnd('/');
++                    if (string.IsNullOrEmpty(normalized) || !seen.Add(normalized) || !Directory.Exists(normalized))
++                        continue;
++
++                    recent.Add(preferences.FindNode(normalized) ?? new RepositoryNode
++                    {
++                        Id = normalized,
++                        Name = Path.GetFileName(normalized),
++                        IsRepository = true,
++                        IsUnmanaged = true,
++                    });
++
++                    if (recent.Count == 6)
++                        break;
++                }
++
++                return recent;
++            }
++        }
++
++        public int ManagedRepositoryCount
++        {
++            get
++            {
++                var count = 0;
++                foreach (var node in Preferences.Instance.RepositoryNodes)
++                    count += CountRepositories(node);
++
++                return count;
++            }
++        }
++
++        public int WorkspaceCount => Preferences.Instance.Workspaces.Count;
++
++        private static int CountRepositories(RepositoryNode node)
++        {
++            if (node.IsRepository)
++                return 1;
++
++            var count = 0;
++            foreach (var child in node.SubNodes)
++                count += CountRepositories(child);
++
++            return count;
++        }
++
+         public Welcome()
+         {
+             Refresh();
+@@ -50,6 +119,10 @@ public void Refresh()
+             MakeTreeRows(rows, Preferences.Instance.RepositoryNodes);
+             Rows.Clear();
+             Rows.AddRange(rows);
++            OnPropertyChanged(nameof(ActiveWorkspace));
++            OnPropertyChanged(nameof(ManagedRepositoryCount));
++            OnPropertyChanged(nameof(RecentRepositories));
++            OnPropertyChanged(nameof(WorkspaceCount));
+         }
+ 
+         public async Task UpdateStatusAsync(bool force, CancellationToken? token)

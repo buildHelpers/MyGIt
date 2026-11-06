@@ -1,0 +1,687 @@
+diff --git a/src/Views/Launcher.axaml b/src/Views/Launcher.axaml
+--- a/src/Views/Launcher.axaml
++++ b/src/Views/Launcher.axaml
+@@ -26,9 +26,9 @@
+     </Grid.RowDefinitions>
+ 
+     <!-- Custom TitleBar -->
+-    <Grid Grid.Row="0" ColumnDefinitions="Auto,32,32,*,Auto,Auto">
++    <Grid Grid.Row="0" ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,32,*,Auto,Auto">
+       <!-- Bottom border -->
+-      <Border Grid.Column="0" Grid.ColumnSpan="6"
++      <Border Grid.Column="0" Grid.ColumnSpan="9"
+               BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Border0}"
+               Background="{DynamicResource Brush.TitleBar}"
+               DoubleTapped="MaximizeOrRestoreWindow"
+@@ -94,26 +94,64 @@
+         <Path Width="12" Height="12" Data="{StaticResource Icons.Menu}"/>
+       </Button>
+ 
+-      <!-- Workspace Dropdown Menu -->
+-      <Button Grid.Column="1" Classes="icon_button" VerticalAlignment="Bottom" Margin="0,0,0,1" Click="OnOpenWorkspaceMenu" HotKey="{OnPlatform Ctrl+Alt+P, macOS=⌘+Alt+P}">
+-        <ToolTip.Tip>
+-          <StackPanel Orientation="Horizontal">
+-            <TextBlock Text="{DynamicResource Text.Workspace}" FontWeight="Bold" Foreground="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForeground}"/>
+-            <TextBlock Text="{Binding ActiveWorkspace.Name}"/>
+-            <TextBlock Margin="16,0,0,0"
+-                       Text="{OnPlatform Ctrl+Alt+P, macOS=⌘+Alt+P}"
+-                       FontSize="11"
+-                       Foreground="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForeground}"
+-                       VerticalAlignment="Center"/>
+-          </StackPanel>
+-        </ToolTip.Tip>
+-        <Path Width="14" Height="14"
+-              Data="{StaticResource Icons.Workspace}"
+-              Fill="{Binding ActiveWorkspace.Brush}"/>
++      <!-- Product identity uses a vector mark, so it scales on Retina and Windows DPI. -->
++      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8"
++                  Margin="10,0,10,0" IsHitTestVisible="False"
++                  VerticalAlignment="Center">
++        <Border Width="27" Height="27" CornerRadius="8"
++                Background="{DynamicResource Brush.Accent}">
++          <Path Width="15" Height="15" Data="{StaticResource Icons.Branch}"
++                Fill="White"/>
++        </Border>
++        <TextBlock Text="MyGIt" FontWeight="Bold" FontSize="15"/>
++      </StackPanel>
++
++      <!-- MyGIt: permanent workspace home action. Never replaces or closes repository tabs. -->
++      <Button Grid.Column="2"
++              Classes="flat workspace_home"
++              Height="28" Margin="8,0,4,1" Padding="11,0"
++              CornerRadius="8" VerticalAlignment="Bottom"
++              Click="OnShowWorkspaceHome"
++              ToolTip.Tip="{DynamicResource Text.PageTabBar.Welcome.Title}">
++        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="7">
++          <Path Width="14" Height="14" Data="{StaticResource Icons.Workspace}" Fill="{DynamicResource Brush.Accent}"/>
++          <TextBlock Text="{DynamicResource Text.Launcher.Workspaces}" FontWeight="SemiBold"/>
++        </StackPanel>
++      </Button>
++
++      <!-- Quick switch: other workspaces, opened repositories, and searchable repositories. -->
++      <Button Grid.Column="3"
++              Classes="flat workspace_switch"
++              Height="28" Margin="0,0,5,1" Padding="10,0"
++              CornerRadius="8" VerticalAlignment="Bottom"
++              Click="OnOpenWorkspaceMenu" HotKey="{OnPlatform Ctrl+Alt+P, macOS=⌘+Alt+P}"
++              ToolTip.Tip="{DynamicResource Text.Welcome.Search}">
++        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="7">
++          <TextBlock Text="{Binding ActiveWorkspace.Name}" MaxWidth="130" TextTrimming="CharacterEllipsis"/>
++          <Path Width="9" Height="9" Data="{StaticResource Icons.Down}" Fill="{DynamicResource Brush.FG2}"/>
++        </StackPanel>
++      </Button>
++
++      <!-- One-click recent repository switcher with search in the popup itself. -->
++      <Button Grid.Column="4"
++              Classes="flat workspace_switch"
++              Height="28" Margin="0,0,5,1" Padding="10,0"
++              CornerRadius="8" VerticalAlignment="Bottom"
++              Click="OnOpenRecentRepositories"
++              ToolTip.Tip="{DynamicResource Text.QuickRepo.Title}">
++        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="7">
++          <Path Width="13" Height="13" Data="{StaticResource Icons.Repositories}" Fill="{DynamicResource Brush.Accent}"/>
++          <TextBlock Text="{DynamicResource Text.QuickRepo.Button}" FontWeight="SemiBold"/>
++          <TextBlock Text="{Binding ActivePage.Node.Name}" MaxWidth="130"
++                     TextTrimming="CharacterEllipsis"
++                     Foreground="{DynamicResource Brush.FG2}"
++                     IsVisible="{Binding ActivePage.Node.IsRepository}"/>
++          <Path Width="9" Height="9" Data="{StaticResource Icons.Down}" Fill="{DynamicResource Brush.FG2}"/>
++        </StackPanel>
+       </Button>
+ 
+       <!-- Pages Switcher Toggle Button -->
+-      <Button Grid.Column="2" Classes="icon_button" VerticalAlignment="Bottom" Margin="0,0,0,1" Click="OnOpenPagesCommandPalette" HotKey="{OnPlatform Ctrl+P, macOS=⌘+P}">
++      <Button Grid.Column="5" Classes="icon_button" VerticalAlignment="Bottom" Margin="0,0,0,1" Click="OnOpenPagesCommandPalette" HotKey="{OnPlatform Ctrl+P, macOS=⌘+P}">
+         <ToolTip.Tip>
+           <StackPanel Orientation="Horizontal">
+             <TextBlock Text="{DynamicResource Text.Launcher.Pages}"
+@@ -129,10 +167,10 @@
+       </Button>
+ 
+       <!-- Pages Tabs -->
+-      <v:LauncherTabBar Grid.Column="3" Height="30" Margin="0,0,16,0" VerticalAlignment="Bottom"/>
++      <v:LauncherTabBar Grid.Column="6" Height="30" Margin="0,0,16,0" VerticalAlignment="Bottom"/>
+ 
+       <!-- Update Available Button -->
+-      <Button Grid.Column="4"
++      <Button Grid.Column="7"
+               Classes="icon_button"
+               Height="30"
+               Margin="0,0,4,0"
+@@ -144,7 +182,7 @@
+       </Button>
+ 
+       <!-- Caption Buttons (Windows/Linux) -->
+-      <Border Grid.Column="5" IsVisible="{Binding #ThisControl.HasRightCaptionButton}">
++      <Border Grid.Column="8" IsVisible="{Binding #ThisControl.HasRightCaptionButton}">
+         <v:CaptionButtons Height="30" VerticalAlignment="Top"/>
+       </Border>
+     </Grid>
+diff --git a/src/Views/Launcher.axaml.cs b/src/Views/Launcher.axaml.cs
+--- a/src/Views/Launcher.axaml.cs
++++ b/src/Views/Launcher.axaml.cs
+@@ -359,54 +359,74 @@ private void OnPositionChanged(object sender, PixelPointEventArgs e)
+             }
+         }
+ 
++        // The home button remains available regardless of the selected repository tab.
++        private void OnShowWorkspaceHome(object sender, RoutedEventArgs e)
++        {
++            if (DataContext is ViewModels.Launcher launcher)
++                launcher.ShowWorkspaceHome();
++
++            e.Handled = true;
++        }
++
+         private void OnOpenWorkspaceMenu(object sender, RoutedEventArgs e)
+         {
+             if (sender is Button btn && DataContext is ViewModels.Launcher launcher)
+             {
+-                if (launcher.CommandPalette != null)
+-                    launcher.CommandPalette = null;
++                launcher.CommandPalette = null;
+ 
+                 var pref = ViewModels.Preferences.Instance;
+-                var menu = new ContextMenu();
+-                menu.Placement = PlacementMode.BottomEdgeAlignedLeft;
+-                menu.VerticalOffset = -6;
+-
+-                var groupHeader = new TextBlock()
++                var menu = new ContextMenu
+                 {
+-                    Text = App.Text("Launcher.Workspaces"),
+-                    FontWeight = FontWeight.Bold,
++                    Placement = PlacementMode.BottomEdgeAlignedLeft,
++                    VerticalOffset = -6,
+                 };
+ 
+-                var workspaces = new MenuItem();
+-                workspaces.Header = groupHeader;
+-                workspaces.IsEnabled = false;
+-                menu.Items.Add(workspaces);
++                // One click to return home, keeping every open repository tab intact.
++                var home = new MenuItem
++                {
++                    Header = App.Text("PageTabBar.Welcome.Title"),
++                    Icon = this.CreateMenuIcon("Icons.Workspace"),
++                };
++                home.Click += (_, ev) =>
++                {
++                    launcher.ShowWorkspaceHome();
++                    ev.Handled = true;
++                };
++                menu.Items.Add(home);
++                menu.Items.Add(new MenuItem { Header = "-" });
+ 
+-                for (var i = 0; i < pref.Workspaces.Count; i++)
++                menu.Items.Add(new MenuItem
+                 {
+-                    var workspace = pref.Workspaces[i];
++                    Header = new TextBlock
++                    {
++                        Text = App.Text("Launcher.Workspaces"),
++                        FontWeight = FontWeight.Bold,
++                    },
++                    IsEnabled = false,
++                });
+ 
++                foreach (var workspace in pref.Workspaces)
++                {
+                     var icon = this.CreateMenuIcon(workspace.IsActive ? "Icons.Check" : "Icons.Workspace");
+                     icon.Fill = workspace.Brush;
+ 
+-                    var item = new MenuItem();
+-                    item.Header = workspace.Name;
+-                    item.Icon = icon;
++                    var item = new MenuItem { Header = workspace.Name, Icon = icon };
+                     item.Click += (_, ev) =>
+                     {
+                         if (!workspace.IsActive)
+                             launcher.SwitchWorkspace(workspace);
++                        else
++                            launcher.ShowWorkspaceHome();
+ 
+                         ev.Handled = true;
+                     };
+-
+                     menu.Items.Add(item);
+                 }
+ 
+-                menu.Items.Add(new MenuItem() { Header = "-" });
++                // Repository search and recent lists live in the separate top-bar repository button.
++                menu.Items.Add(new MenuItem { Header = "-" });
+ 
+-                var configure = new MenuItem();
+-                configure.Header = App.Text("Workspace.Configure");
++                var configure = new MenuItem { Header = App.Text("Workspace.Configure") };
+                 configure.Click += async (_, ev) =>
+                 {
+                     await this.ShowDialogAsync(new ViewModels.ConfigureWorkspace());
+@@ -419,6 +439,41 @@ private void OnOpenWorkspaceMenu(object sender, RoutedEventArgs e)
+             e.Handled = true;
+         }
+ 
++        // An anchored flyout places recent repositories and a search field one click away.
++        private void OnOpenRecentRepositories(object sender, RoutedEventArgs e)
++        {
++            if (sender is Button button && DataContext is ViewModels.Launcher launcher)
++            {
++                launcher.CommandPalette = null;
++
++                if (_quickRepositoryFlyout is { IsOpen: true })
++                {
++                    _quickRepositoryFlyout.Hide();
++                }
++                else
++                {
++                    var switcher = new QuickRepositorySwitcher(launcher);
++                    var flyout = new Flyout
++                    {
++                        Placement = PlacementMode.BottomEdgeAlignedLeft,
++                        Content = switcher,
++                    };
++
++                    switcher.CloseRequested += (_, _) => flyout.Hide();
++                    flyout.Closed += (_, _) =>
++                    {
++                        if (ReferenceEquals(_quickRepositoryFlyout, flyout))
++                            _quickRepositoryFlyout = null;
++                    };
++
++                    _quickRepositoryFlyout = flyout;
++                    flyout.ShowAt(button);
++                }
++            }
++
++            e.Handled = true;
++        }
++
+         private void OnOpenPagesCommandPalette(object sender, RoutedEventArgs e)
+         {
+             if (DataContext is ViewModels.Launcher vm)
+@@ -447,6 +502,7 @@ private async void OnShowNewVersion(object sender, RoutedEventArgs e)
+             e.Handled = true;
+         }
+ 
++        private Flyout _quickRepositoryFlyout = null;
+         private GridLength _captionHeight = new(32);
+         private WindowState _lastWindowState = WindowState.Normal;
+     }
+diff --git a/src/Views/LauncherPage.axaml b/src/Views/LauncherPage.axaml
+--- a/src/Views/LauncherPage.axaml
++++ b/src/Views/LauncherPage.axaml
+@@ -9,10 +9,12 @@
+              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+              x:Class="SourceGit.Views.LauncherPage"
+              x:DataType="vm:LauncherPage">
+-  <Grid RowDefinitions="36,*" Background="{DynamicResource Brush.ToolBar}">
++  <Grid RowDefinitions="44,*" Background="{DynamicResource Brush.Mygit.Surface}">
+     <!-- ToolBar -->
+     <Border Grid.Row="0"
+-            Background="Transparent"
++            Background="{DynamicResource Brush.Mygit.Surface}"
++            BorderBrush="{DynamicResource Brush.Mygit.Hairline}"
++            BorderThickness="0,0,0,1"
+             PointerPressed="OnToolBarPointerPressed">
+       <ContentControl Content="{Binding Data}">
+         <ContentControl.DataTemplates>
+@@ -33,9 +35,9 @@
+         <ContentControl.DataTemplates>
+           <DataTemplate DataType="vm:Welcome">
+             <v:Welcome Margin="4,0,4,4"
+-                       CornerRadius="8"
++                       CornerRadius="12"
+                        BorderThickness="1"
+-                       BorderBrush="{DynamicResource Brush.Border0}"
++                       BorderBrush="{DynamicResource Brush.Mygit.Hairline}"
+                        Background="{DynamicResource Brush.Window}"/>
+           </DataTemplate>
+diff --git a/src/Views/QuickRepositorySwitcher.axaml b/src/Views/QuickRepositorySwitcher.axaml
+new file mode 100644
+--- /dev/null
++++ b/src/Views/QuickRepositorySwitcher.axaml
+@@ -0,0 +1,109 @@
++<UserControl xmlns="https://github.com/avaloniaui"
++             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
++             xmlns:vm="using:SourceGit.ViewModels"
++             x:Class="SourceGit.Views.QuickRepositorySwitcher"
++             x:DataType="vm:QuickRepositorySwitcher"
++             Width="440">
++  <Grid RowDefinitions="Auto,Auto,Auto,Auto" Margin="14,12">
++    <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="2,0,2,10">
++      <TextBlock Grid.Column="0"
++                 Text="{DynamicResource Text.QuickRepo.Title}"
++                 FontWeight="SemiBold" FontSize="15"/>
++      <TextBlock Grid.Column="1" Text="{DynamicResource Text.QuickRepo.Hint}"
++                 Foreground="{DynamicResource Brush.FG2}" FontSize="11"/>
++    </Grid>
++
++    <!-- The search field is focused as soon as the top-bar popover opens. -->
++    <TextBox Grid.Row="1"
++             x:Name="SearchBox"
++             Height="36"
++             CornerRadius="9"
++             Padding="7,0"
++             Watermark="{DynamicResource Text.QuickRepo.Search}"
++             Text="{Binding SearchFilter, Mode=TwoWay}"
++             VerticalContentAlignment="Center">
++      <TextBox.InnerLeftContent>
++        <Path Width="15" Height="15" Margin="6,0,8,0"
++              Data="{StaticResource Icons.Search}"
++              Fill="{DynamicResource Brush.FG2}"/>
++      </TextBox.InnerLeftContent>
++    </TextBox>
++
++    <Border Grid.Row="2" Margin="0,12,0,0"
++            Background="{DynamicResource Brush.Contents}"
++            CornerRadius="10"
++            BorderBrush="{DynamicResource Brush.Border2}"
++            BorderThickness="1">
++      <Grid>
++        <ListBox x:Name="RepositoryList"
++                 ItemsSource="{Binding VisibleRepositories, Mode=OneWay}"
++                 SelectedItem="{Binding SelectedRepository, Mode=TwoWay}"
++                 IsVisible="{Binding HasMatches}"
++                 MaxHeight="360"
++                 BorderThickness="0"
++                 Background="Transparent"
++                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
++                 ScrollViewer.VerticalScrollBarVisibility="Auto">
++          <ListBox.Styles>
++            <Style Selector="ListBoxItem">
++              <Setter Property="MinHeight" Value="58"/>
++              <Setter Property="Padding" Value="6,4"/>
++              <Setter Property="Margin" Value="4,2"/>
++              <Setter Property="CornerRadius" Value="8"/>
++            </Style>
++          </ListBox.Styles>
++          <ListBox.ItemsPanel>
++            <ItemsPanelTemplate>
++              <VirtualizingStackPanel Orientation="Vertical"/>
++            </ItemsPanelTemplate>
++          </ListBox.ItemsPanel>
++          <ListBox.ItemTemplate>
++            <DataTemplate DataType="vm:QuickRepositoryItem">
++              <Grid ColumnDefinitions="24,*,Auto"
++                    Background="Transparent"
++                    ToolTip.Tip="{Binding Path}"
++                    Tapped="OnRepositoryTapped">
++                <Path Grid.Column="0" Width="15" Height="15"
++                      Margin="4,0,0,0"
++                      Data="{StaticResource Icons.Repositories}"
++                      Fill="{DynamicResource Brush.Accent}"/>
++                <StackPanel Grid.Column="1" Spacing="3" Margin="10,0,4,0">
++                  <TextBlock Text="{Binding Name}"
++                             FontWeight="SemiBold"
++                             TextTrimming="CharacterEllipsis"/>
++                  <TextBlock Text="{Binding Path}" FontSize="11"
++                             Foreground="{DynamicResource Brush.FG2}"
++                             TextTrimming="CharacterEllipsis"/>
++                </StackPanel>
++                <StackPanel Grid.Column="2" Orientation="Horizontal"
++                            Margin="6,0,6,0" Spacing="5" VerticalAlignment="Center">
++                  <Border Padding="7,3" CornerRadius="7"
++                          Background="{DynamicResource Brush.SubPanel}"
++                          IsVisible="{Binding IsRecent}">
++                    <TextBlock Text="{DynamicResource Text.QuickRepo.Recent}"
++                               FontSize="10" Foreground="{DynamicResource Brush.FG2}"/>
++                  </Border>
++                  <Border Padding="7,3" CornerRadius="7"
++                          Background="{DynamicResource Brush.SubPanel}"
++                          IsVisible="{Binding IsOpen}">
++                    <TextBlock Text="{DynamicResource Text.QuickRepo.Open}"
++                               FontSize="10" Foreground="{DynamicResource Brush.Accent}"/>
++                  </Border>
++                </StackPanel>
++              </Grid>
++            </DataTemplate>
++          </ListBox.ItemTemplate>
++        </ListBox>
++        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
++                   Margin="8,22"
++                   Text="{DynamicResource Text.QuickRepo.NoResults}"
++                   Foreground="{DynamicResource Brush.FG2}"
++                   IsVisible="{Binding !HasMatches}"/>
++      </Grid>
++    </Border>
++
++    <TextBlock Grid.Row="3" Margin="4,11,0,0"
++               Text="{DynamicResource Text.QuickRepo.Keyboard}"
++               FontSize="11" Foreground="{DynamicResource Brush.FG2}"/>
++  </Grid>
++</UserControl>
+diff --git a/src/Views/QuickRepositorySwitcher.axaml.cs b/src/Views/QuickRepositorySwitcher.axaml.cs
+new file mode 100644
+--- /dev/null
++++ b/src/Views/QuickRepositorySwitcher.axaml.cs
+@@ -0,0 +1,70 @@
++using System;
++
++using Avalonia.Controls;
++using Avalonia.Input;
++using Avalonia.Interactivity;
++
++namespace SourceGit.Views
++{
++    public partial class QuickRepositorySwitcher : UserControl
++    {
++        public event EventHandler CloseRequested;
++
++        public QuickRepositorySwitcher(ViewModels.Launcher launcher)
++        {
++            InitializeComponent();
++            DataContext = new ViewModels.QuickRepositorySwitcher(launcher);
++        }
++
++        protected override void OnLoaded(RoutedEventArgs e)
++        {
++            base.OnLoaded(e);
++            SearchBox.Focus(NavigationMethod.Directional);
++        }
++
++        protected override void OnKeyDown(KeyEventArgs e)
++        {
++            if (DataContext is not ViewModels.QuickRepositorySwitcher vm)
++            {
++                base.OnKeyDown(e);
++                return;
++            }
++
++            if (e.Key == Key.Enter)
++            {
++                TryOpen(vm.SelectedRepository);
++                e.Handled = true;
++            }
++            else if (e.Key == Key.Down && SearchBox.IsKeyboardFocusWithin &&
++                     vm.VisibleRepositories.Count > 0)
++            {
++                RepositoryList.Focus(NavigationMethod.Directional);
++                vm.SelectedRepository = vm.VisibleRepositories[0];
++                e.Handled = true;
++            }
++            else if (e.Key == Key.Escape)
++            {
++                CloseRequested?.Invoke(this, EventArgs.Empty);
++                e.Handled = true;
++            }
++
++            if (!e.Handled)
++                base.OnKeyDown(e);
++        }
++
++        private void OnRepositoryTapped(object sender, TappedEventArgs e)
++        {
++            if (sender is Grid { DataContext: ViewModels.QuickRepositoryItem item })
++            {
++                TryOpen(item);
++                e.Handled = true;
++            }
++        }
++
++        private void TryOpen(ViewModels.QuickRepositoryItem item)
++        {
++            if (DataContext is ViewModels.QuickRepositorySwitcher vm && vm.Open(item))
++                CloseRequested?.Invoke(this, EventArgs.Empty);
++        }
++    }
++}
+diff --git a/src/Views/Welcome.axaml b/src/Views/Welcome.axaml
+--- a/src/Views/Welcome.axaml
++++ b/src/Views/Welcome.axaml
+@@ -9,15 +9,73 @@
+              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+              x:Class="SourceGit.Views.Welcome"
+              x:DataType="vm:Welcome">
+-  <Grid RowDefinitions="*,Auto" Margin="8">
++  <Grid RowDefinitions="Auto,*" Margin="24,18,24,16">
++    <!-- Home hero: real workspace data, not a static dashboard. -->
++    <Border Grid.Row="0" Background="{DynamicResource Brush.SubPanel}"
++            CornerRadius="14" BorderThickness="1" BorderBrush="{DynamicResource Brush.Border2}"
++            Padding="24,18">
++      <Grid ColumnDefinitions="*,Auto">
++        <StackPanel Grid.Column="0" Spacing="7">
++          <TextBlock Text="MYGIT  /  WORKSPACE" Foreground="{DynamicResource Brush.Accent}" FontSize="11" FontWeight="SemiBold"/>
++          <TextBlock Text="{Binding ActiveWorkspace.Name}" FontSize="25" FontWeight="Bold"/>
++          <StackPanel Orientation="Horizontal" Spacing="8">
++            <TextBlock Text="{Binding ManagedRepositoryCount}" Foreground="{DynamicResource Brush.FG2}" FontWeight="SemiBold"/>
++            <TextBlock Text="{DynamicResource Text.PageTabBar.Welcome.Title}" Foreground="{DynamicResource Brush.FG2}"/>
++            <TextBlock Text="·" Foreground="{DynamicResource Brush.FG2}"/>
++            <TextBlock Text="{Binding WorkspaceCount}" Foreground="{DynamicResource Brush.FG2}" FontWeight="SemiBold"/>
++            <TextBlock Text="{DynamicResource Text.Launcher.Workspaces}" Foreground="{DynamicResource Brush.FG2}"/>
++          </StackPanel>
++        </StackPanel>
++        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Spacing="10">
++          <Button Classes="flat" Height="34" CornerRadius="8" Padding="14,0"
++                  Content="{DynamicResource Text.Welcome.OpenOrInit}" Click="OnOpenLocalRepository"/>
++          <Button Classes="flat primary" Height="34" CornerRadius="8" Padding="14,0"
++                  Content="{DynamicResource Text.Welcome.Clone}" Click="OnCloneRepository"/>
++        </StackPanel>
++      </Grid>
++    </Border>
++
++    <Grid Grid.Row="1" RowDefinitions="*,Auto" Margin="0,16,0,0">
+     <Grid.ColumnDefinitions>
+-      <ColumnDefinition Width="1*"/>
+-      <ColumnDefinition Width="2*" MinWidth="600"/>
+-      <ColumnDefinition Width="1*"/>
++      <ColumnDefinition Width="170"/>
++      <ColumnDefinition Width="*" MinWidth="480"/>
++      <ColumnDefinition Width="210"/>
+     </Grid.ColumnDefinitions>
+ 
++    <!-- Stable left navigation; workspace/repository switching is also available in the title bar. -->
++    <Border Grid.Row="0" Grid.Column="0" Margin="0,0,16,0" Padding="14,20"
++            Background="{DynamicResource Brush.SubPanel}" CornerRadius="12">
++      <StackPanel Spacing="12">
++        <TextBlock Text="{DynamicResource Text.Launcher.Workspaces}" FontWeight="SemiBold" Foreground="{DynamicResource Brush.FG2}"/>
++        <TextBlock Text="{Binding ActiveWorkspace.Name}" FontSize="17" FontWeight="Bold" TextWrapping="Wrap"/>
++        <Border Height="1" Margin="0,8" Background="{DynamicResource Brush.Border2}"/>
++        <Button Classes="flat" CornerRadius="8" Height="34" Padding="8,0"
++                HorizontalContentAlignment="Left"
++                Content="{DynamicResource Text.Welcome.Search}" Click="OnFocusRepositorySearch"/>
++        <Button Classes="flat" CornerRadius="8" Height="34" Padding="8,0"
++                HorizontalContentAlignment="Left"
++                Content="{DynamicResource Text.Welcome.OpenOrInit}" Click="OnOpenLocalRepository"/>
++        <Button Classes="flat" CornerRadius="8" Height="34" Padding="8,0"
++                HorizontalContentAlignment="Left"
++                Content="{DynamicResource Text.Welcome.Clone}" Click="OnCloneRepository"/>
++      </StackPanel>
++    </Border>
++
++    <!-- Read-only counts obtained from the existing repository/workspace model. -->
++    <Border Grid.Row="0" Grid.Column="2" Margin="16,0,0,0" Padding="16,20"
++            Background="{DynamicResource Brush.SubPanel}" CornerRadius="12">
++      <StackPanel Spacing="12">
++        <TextBlock Text="OVERVIEW" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Brush.FG2}"/>
++        <TextBlock Text="{Binding ManagedRepositoryCount}" FontSize="27" FontWeight="Bold"/>
++        <TextBlock Text="{DynamicResource Text.PageTabBar.Welcome.Title}" Foreground="{DynamicResource Brush.FG2}"/>
++        <Border Height="1" Margin="0,8" Background="{DynamicResource Brush.Border2}"/>
++        <TextBlock Text="{Binding WorkspaceCount}" FontSize="27" FontWeight="Bold"/>
++        <TextBlock Text="{DynamicResource Text.Launcher.Workspaces}" Foreground="{DynamicResource Brush.FG2}"/>
++      </StackPanel>
++    </Border>
++
+     <!-- Managed Repositories -->
+-    <Grid Grid.Row="0" Grid.Column="1" RowDefinitions="Auto,*">
++    <Grid Grid.Row="0" Grid.Column="1" RowDefinitions="Auto,Auto,*">
+       <!-- Search Box -->
+       <TextBox Grid.Row="0"
+                x:Name="SearchBox"
+@@ -58,10 +116,50 @@
+         </TextBox.InnerRightContent>
+       </TextBox>
+ 
++      <!-- Most recently used repositories; same validated open action as the tree. -->
++      <StackPanel Grid.Row="1" Margin="0,16,0,12" Spacing="9">
++        <StackPanel Orientation="Horizontal" Spacing="10">
++          <TextBlock Text="{DynamicResource Text.QuickRepo.Recent}" FontSize="15" FontWeight="SemiBold"/>
++          <TextBlock Text="{DynamicResource Text.PageTabBar.Welcome.Title}"
++                     Classes="mygit_section_label"/>
++        </StackPanel>
++        <ItemsControl ItemsSource="{Binding RecentRepositories, Mode=OneWay}">
++          <ItemsControl.ItemsPanel>
++            <ItemsPanelTemplate>
++              <WrapPanel Orientation="Horizontal"/>
++            </ItemsPanelTemplate>
++          </ItemsControl.ItemsPanel>
++          <ItemsControl.ItemTemplate>
++            <DataTemplate DataType="vm:RepositoryNode">
++              <Border Classes="mygit_card"
++                      Width="240" Margin="0,0,10,10"
++                      Tapped="OnRecentRepositoryTapped"
++                      ToolTip.Tip="{Binding Id}">
++                <StackPanel Spacing="9">
++                  <StackPanel Orientation="Horizontal" Spacing="9">
++                    <Border Width="32" Height="32" CornerRadius="9"
++                            Background="{DynamicResource Brush.Mygit.Selected}">
++                      <Path Width="16" Height="16"
++                            Data="{StaticResource Icons.Repositories}"
++                            Fill="{DynamicResource Brush.Accent}"/>
++                    </Border>
++                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold"
++                               FontSize="14" TextTrimming="CharacterEllipsis"/>
++                  </StackPanel>
++                  <TextBlock Text="{Binding Id}" FontSize="11"
++                             Foreground="{DynamicResource Brush.Mygit.Muted}"
++                             TextTrimming="CharacterEllipsis"/>
++                </StackPanel>
++              </Border>
++            </DataTemplate>
++          </ItemsControl.ItemTemplate>
++        </ItemsControl>
++      </StackPanel>
++
+       <!-- Repository Tree -->
+-      <v:RepositoryListBox Grid.Row="1"
++      <v:RepositoryListBox Grid.Row="2"
+                            x:Name="TreeContainer"
+-                           Margin="0,8,8,0"
++                           Margin="0,12,8,0"
+                            Focusable="True"
+                            Background="Transparent"
+                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+@@ -84,8 +182,8 @@
+           <Style Selector="ListBoxItem" x:DataType="vm:RepositoryNode">
+             <Setter Property="Margin" Value="0"/>
+             <Setter Property="Padding" Value="0"/>
+-            <Setter Property="Height" Value="30"/>
+-            <Setter Property="CornerRadius" Value="4"/>
++            <Setter Property="Height" Value="36"/>
++            <Setter Property="CornerRadius" Value="8"/>
+             <Setter Property="FocusAdorner">
+               <FocusAdornerTemplate>
+                 <Border Background="Transparent" BorderThickness="0"/>
+@@ -113,7 +211,7 @@
+         <ListBox.ItemTemplate>
+           <DataTemplate DataType="vm:RepositoryNode">
+             <Grid Background="Transparent"
+-                  Height="30"
++                  Height="36"
+                   ColumnDefinitions="16,18,*,Auto,8"
+                   Margin="{Binding Depth, Converter={x:Static c:IntConverters.ToTreeMargin}}"
+                   ClipToBounds="True"
+@@ -221,5 +319,6 @@
+                  Text="{DynamicResource Text.Welcome.DragDropTip}"
+                  Opacity=".5"/>
+     </Border>
++    </Grid>
+   </Grid>
+ </UserControl>
+diff --git a/src/Views/Welcome.axaml.cs b/src/Views/Welcome.axaml.cs
+--- a/src/Views/Welcome.axaml.cs
++++ b/src/Views/Welcome.axaml.cs
+@@ -81,6 +81,34 @@ public Welcome()
+             InitializeComponent();
+         }
+ 
++        private void OnRecentRepositoryTapped(object sender, TappedEventArgs e)
++        {
++            if (sender is Border { DataContext: ViewModels.RepositoryNode node } &&
++                node.IsRepository)
++            {
++                node.Open();
++                e.Handled = true;
++            }
++        }
++
++        private void OnCloneRepository(object sender, RoutedEventArgs e)
++        {
++            ViewModels.Welcome.Instance.Clone();
++            e.Handled = true;
++        }
++
++        private void OnOpenLocalRepository(object sender, RoutedEventArgs e)
++        {
++            ViewModels.Welcome.Instance.OpenLocalRepository();
++            e.Handled = true;
++        }
++
++        private void OnFocusRepositorySearch(object sender, RoutedEventArgs e)
++        {
++            SearchBox.Focus();
++            e.Handled = true;
++        }
++
+         protected override async void OnLoaded(RoutedEventArgs e)
+         {
+             base.OnLoaded(e);

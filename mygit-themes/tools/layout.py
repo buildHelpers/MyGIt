@@ -19,7 +19,7 @@ THEMES_DIR = Path(__file__).resolve().parents[1]
 ROOT = THEMES_DIR.parent
 MANIFEST_PATH = THEMES_DIR / "manifest.json"
 PATCH_HEADER = re.compile(r"^diff --git a/(src/[^\s]+) b/\1$", re.MULTILINE)
-HUNK_HEADER = re.compile(r"^@@ -(\\d+)(?:,(\\d+))? \\+(\\d+)(?:,(\\d+))? @@")
+HUNK_HEADER = re.compile(r"^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@")
 
 
 class LayoutError(Exception):

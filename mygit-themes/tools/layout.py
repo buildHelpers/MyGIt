@@ -19,6 +19,7 @@ THEMES_DIR = Path(__file__).resolve().parents[1]
 ROOT = THEMES_DIR.parent
 MANIFEST_PATH = THEMES_DIR / "manifest.json"
 PATCH_HEADER = re.compile(r"^diff --git a/(src/[^\s]+) b/\1$", re.MULTILINE)
+HUNK_HEADER = re.compile(r"^@@ -(\\d+)(?:,(\\d+))? \\+(\\d+)(?:,(\\d+))? @@")
 
 
 class LayoutError(Exception):
@@ -42,6 +43,43 @@ def find_profile(profile_id: str) -> dict:
     raise LayoutError(f"Unknown layout {profile_id!r}; use 'layouts' to list choices")
 
 
+def validate_hunk_counts(body: str, name: str) -> None:
+    """Reject malformed unified diffs before invoking git worktree or git apply."""
+    lines = body.splitlines()
+    hunks = 0
+    for i, line in enumerate(lines):
+        match = HUNK_HEADER.match(line)
+        if not match:
+            continue
+        hunks += 1
+        expected_old = int(match.group(2) or 1)
+        expected_new = int(match.group(4) or 1)
+        actual_old = 0
+        actual_new = 0
+        for following in lines[i + 1:]:
+            if following.startswith(('@@ ', 'diff --git ')):
+                break
+            if following.startswith(' '):
+                actual_old += 1
+                actual_new += 1
+            elif following.startswith('-'):
+                actual_old += 1
+            elif following.startswith('+'):
+                actual_new += 1
+            elif following.startswith('\\'):
+                continue
+            elif following:
+                raise LayoutError(f"Unexpected diff line in {name}: {following[:80]}")
+        if (actual_old, actual_new) != (expected_old, expected_new):
+            raise LayoutError(
+                f"Corrupt hunk in {name} at line {i + 1}: "
+                f"expected {expected_old}/{expected_new} lines, "
+                f"actual {actual_old}/{actual_new}"
+            )
+    if not hunks:
+        raise LayoutError(f"Missing unified diff hunks in {name}")
+
+
 def profile_patches(profile: dict) -> list[Path]:
     paths = profile.get("patches")
     if not isinstance(paths, list):
@@ -56,6 +94,7 @@ def profile_patches(profile: dict) -> list[Path]:
         if file.suffix != ".patch" or not file.is_file():
             raise LayoutError(f"Patch not found: {rel}")
         body = file.read_text(encoding="utf-8")
+        validate_hunk_counts(body, rel)
         headers = PATCH_HEADER.findall(body)
         if not headers or len(headers) != body.count("diff --git "):
             raise LayoutError(f"Invalid Git diff headers in {rel}")

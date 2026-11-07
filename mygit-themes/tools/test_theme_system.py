@@ -24,7 +24,7 @@ class MyGItThemeTests(unittest.TestCase):
     def test_ordered_integration_targets_are_declared(self):
         profile = layout.find_profile('mygit-design')
         profiles = layout.validate()
-        self.assertEqual(len(profiles['mygit-design']), 11)
+        self.assertEqual(len(profiles['mygit-design']), 12)
         self.assertEqual(profiles['upstream-classic'], [])
         targets = layout.validate_patch_sequence(profile, profiles['mygit-design'])
         self.assertEqual(len(targets), 50)

@@ -780,6 +780,14 @@
   <x:String x:Key="Text.PushToNewBranch" xml:space="preserve">Отправить к НОВОЙ ветке</x:String>
   <x:String x:Key="Text.PushToNewBranch.Title" xml:space="preserve">Введите имя для новой удалённой ветки:</x:String>
   <x:String x:Key="Text.Quit" xml:space="preserve">Выйти</x:String>
+  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">Репозитории</x:String>
+  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">Недавние сначала</x:String>
+  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ Выбор · Enter Открыть · Esc Закрыть</x:String>
+  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">Репозитории не найдены</x:String>
+  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">Открыт</x:String>
+  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">Недавний</x:String>
+  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">Поиск по имени или пути...</x:String>
+  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">Быстрое переключение репозиториев</x:String>
   <x:String x:Key="Text.Rebase" xml:space="preserve">Перемещение текущей ветки</x:String>
   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">Отложить и применить повторно локальные изменения</x:String>
   <x:String x:Key="Text.Rebase.NoVerify" xml:space="preserve">Обходной зацеп предварительного перемещения</x:String>

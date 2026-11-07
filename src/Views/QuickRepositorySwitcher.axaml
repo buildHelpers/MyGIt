@@ -1,0 +1,109 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:SourceGit.ViewModels"
+             x:Class="SourceGit.Views.QuickRepositorySwitcher"
+             x:DataType="vm:QuickRepositorySwitcher"
+             Width="440">
+  <Grid RowDefinitions="Auto,Auto,Auto,Auto" Margin="14,12">
+    <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="2,0,2,10">
+      <TextBlock Grid.Column="0"
+                 Text="{DynamicResource Text.QuickRepo.Title}"
+                 FontWeight="SemiBold" FontSize="15"/>
+      <TextBlock Grid.Column="1" Text="{DynamicResource Text.QuickRepo.Hint}"
+                 Foreground="{DynamicResource Brush.FG2}" FontSize="11"/>
+    </Grid>
+
+    <!-- The search field is focused as soon as the top-bar popover opens. -->
+    <TextBox Grid.Row="1"
+             x:Name="SearchBox"
+             Height="36"
+             CornerRadius="9"
+             Padding="7,0"
+             Watermark="{DynamicResource Text.QuickRepo.Search}"
+             Text="{Binding SearchFilter, Mode=TwoWay}"
+             VerticalContentAlignment="Center">
+      <TextBox.InnerLeftContent>
+        <Path Width="15" Height="15" Margin="6,0,8,0"
+              Data="{StaticResource Icons.Search}"
+              Fill="{DynamicResource Brush.FG2}"/>
+      </TextBox.InnerLeftContent>
+    </TextBox>
+
+    <Border Grid.Row="2" Margin="0,12,0,0"
+            Background="{DynamicResource Brush.Contents}"
+            CornerRadius="10"
+            BorderBrush="{DynamicResource Brush.Border2}"
+            BorderThickness="1">
+      <Grid>
+        <ListBox x:Name="RepositoryList"
+                 ItemsSource="{Binding VisibleRepositories, Mode=OneWay}"
+                 SelectedItem="{Binding SelectedRepository, Mode=TwoWay}"
+                 IsVisible="{Binding HasMatches}"
+                 MaxHeight="360"
+                 BorderThickness="0"
+                 Background="Transparent"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto">
+          <ListBox.Styles>
+            <Style Selector="ListBoxItem">
+              <Setter Property="MinHeight" Value="58"/>
+              <Setter Property="Padding" Value="6,4"/>
+              <Setter Property="Margin" Value="4,2"/>
+              <Setter Property="CornerRadius" Value="8"/>
+            </Style>
+          </ListBox.Styles>
+          <ListBox.ItemsPanel>
+            <ItemsPanelTemplate>
+              <VirtualizingStackPanel Orientation="Vertical"/>
+            </ItemsPanelTemplate>
+          </ListBox.ItemsPanel>
+          <ListBox.ItemTemplate>
+            <DataTemplate DataType="vm:QuickRepositoryItem">
+              <Grid ColumnDefinitions="24,*,Auto"
+                    Background="Transparent"
+                    ToolTip.Tip="{Binding Path}"
+                    Tapped="OnRepositoryTapped">
+                <Path Grid.Column="0" Width="15" Height="15"
+                      Margin="4,0,0,0"
+                      Data="{StaticResource Icons.Repositories}"
+                      Fill="{DynamicResource Brush.Accent}"/>
+                <StackPanel Grid.Column="1" Spacing="3" Margin="10,0,4,0">
+                  <TextBlock Text="{Binding Name}"
+                             FontWeight="SemiBold"
+                             TextTrimming="CharacterEllipsis"/>
+                  <TextBlock Text="{Binding Path}" FontSize="11"
+                             Foreground="{DynamicResource Brush.FG2}"
+                             TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2" Orientation="Horizontal"
+                            Margin="6,0,6,0" Spacing="5" VerticalAlignment="Center">
+                  <Border Padding="7,3" CornerRadius="7"
+                          Background="{DynamicResource Brush.SubPanel}"
+                          IsVisible="{Binding IsRecent}">
+                    <TextBlock Text="{DynamicResource Text.QuickRepo.Recent}"
+                               FontSize="10" Foreground="{DynamicResource Brush.FG2}"/>
+                  </Border>
+                  <Border Padding="7,3" CornerRadius="7"
+                          Background="{DynamicResource Brush.SubPanel}"
+                          IsVisible="{Binding IsOpen}">
+                    <TextBlock Text="{DynamicResource Text.QuickRepo.Open}"
+                               FontSize="10" Foreground="{DynamicResource Brush.Accent}"/>
+                  </Border>
+                </StackPanel>
+              </Grid>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Margin="8,22"
+                   Text="{DynamicResource Text.QuickRepo.NoResults}"
+                   Foreground="{DynamicResource Brush.FG2}"
+                   IsVisible="{Binding !HasMatches}"/>
+      </Grid>
+    </Border>
+
+    <TextBlock Grid.Row="3" Margin="4,11,0,0"
+               Text="{DynamicResource Text.QuickRepo.Keyboard}"
+               FontSize="11" Foreground="{DynamicResource Brush.FG2}"/>
+  </Grid>
+</UserControl>

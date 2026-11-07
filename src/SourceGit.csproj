@@ -9,8 +9,8 @@
     <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
     <InvariantGlobalization>false</InvariantGlobalization>
 
-    <Product>SourceGit</Product>
-    <Description>OpenSource GIT client</Description>
+    <Product>MyGIt</Product>
+    <Description>Cross-platform Git desktop client</Description>
     <Company>sourcegit-scm</Company>
     <Copyright>Copyright © $([System.DateTime]::Now.Year) sourcegit-scm.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

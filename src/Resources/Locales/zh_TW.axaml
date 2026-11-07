@@ -770,6 +770,14 @@
   <x:String x:Key="Text.PushToNewBranch" xml:space="preserve">推送到新的分支</x:String>
   <x:String x:Key="Text.PushToNewBranch.Title" xml:space="preserve">輸入新的遠端分支名稱:</x:String>
   <x:String x:Key="Text.Quit" xml:space="preserve">結束</x:String>
+  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">儲存庫</x:String>
+  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">最近使用優先</x:String>
+  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ 選擇 · Enter 開啟 · Esc 關閉</x:String>
+  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">沒有符合的儲存庫</x:String>
+  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">已開啟</x:String>
+  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">最近</x:String>
+  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">搜尋名稱或路徑…</x:String>
+  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">快速切換儲存庫</x:String>
   <x:String x:Key="Text.Rebase" xml:space="preserve">重定基底 (rebase) 操作</x:String>
   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">自動擱置變更並復原本機變更</x:String>
   <x:String x:Key="Text.Rebase.NoVerify" xml:space="preserve">繞過 pre-rebase hook</x:String>

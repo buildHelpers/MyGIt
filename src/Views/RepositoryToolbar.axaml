@@ -24,7 +24,7 @@
     </StackPanel>
 
     <StackPanel Grid.Column="1" Orientation="Horizontal">
-      <Button Classes="icon_button" Width="32" Tapped="Fetch">
+      <Button Classes="flat mygit_action" Height="30" Margin="5,0" Padding="10,0" Tapped="Fetch">
         <ToolTip.Tip>
           <StackPanel Orientation="Vertical">
             <TextBlock Text="{DynamicResource Text.Fetch}"/>
@@ -32,10 +32,13 @@
           </StackPanel>
         </ToolTip.Tip>
 
-        <Path Width="14" Height="14" Data="{StaticResource Icons.Fetch}"/>
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <Path Width="14" Height="14" Data="{StaticResource Icons.Fetch}"/>
+          <TextBlock Text="{DynamicResource Text.Fetch}" FontWeight="SemiBold"/>
+        </StackPanel>
       </Button>
 
-      <Button Classes="icon_button" Width="32" Margin="16,0,0,0" Tapped="Pull" IsVisible="{Binding !IsBare}" IsEnabled="{Binding !IsBare}">
+      <Button Classes="flat mygit_action" Height="30" Margin="5,0" Padding="10,0" Tapped="Pull" IsVisible="{Binding !IsBare}" IsEnabled="{Binding !IsBare}">
         <ToolTip.Tip>
           <StackPanel Orientation="Vertical">
             <TextBlock Text="{DynamicResource Text.Pull}"/>
@@ -43,8 +46,10 @@
           </StackPanel>
         </ToolTip.Tip>
         
-        <Grid Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center">
-          <Path Width="14" Height="14" Data="{StaticResource Icons.Pull}"/>
+        <Grid ColumnDefinitions="20,Auto" Height="24" VerticalAlignment="Center">
+          <Path Grid.Column="0" Width="14" Height="14" Data="{StaticResource Icons.Pull}"/>
+          <TextBlock Grid.Column="1" Text="{DynamicResource Text.Pull}"
+                     FontWeight="SemiBold" Margin="5,0,0,0"/>
           <Ellipse Width="8" Height="8"
                    HorizontalAlignment="Right" VerticalAlignment="Top"
                    Fill="Green"
@@ -52,7 +57,7 @@
         </Grid>
       </Button>
 
-      <Button Classes="icon_button" Width="32" Margin="16,0,0,0" Tapped="Push">
+      <Button Classes="flat mygit_action primary" Height="30" Margin="5,0" Padding="10,0" Tapped="Push">
         <ToolTip.Tip>
           <StackPanel Orientation="Vertical">
             <TextBlock Text="{DynamicResource Text.Push}"/>
@@ -60,8 +65,11 @@
           </StackPanel>
         </ToolTip.Tip>
 
-        <Grid Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center">
-          <Path Width="14" Height="14" Data="{StaticResource Icons.Push}"/>
+        <Grid ColumnDefinitions="20,Auto" Height="24" VerticalAlignment="Center">
+          <Path Grid.Column="0" Width="14" Height="14" Data="{StaticResource Icons.Push}"/>
+          <TextBlock Grid.Column="1" Text="{DynamicResource Text.Push}"
+                     FontWeight="SemiBold" Margin="5,0,0,0"
+                     Foreground="{DynamicResource AccentButtonForeground}"/>
           <Ellipse Width="8" Height="8"
                    HorizontalAlignment="Right" VerticalAlignment="Top"
                    Fill="Green"

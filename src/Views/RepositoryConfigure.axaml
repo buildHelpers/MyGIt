@@ -11,10 +11,10 @@
                     x:Name="ThisControl"
                     Icon="/App.ico"
                     Title="{DynamicResource Text.Configure}"
-                    Width="600" SizeToContent="Height"
-                    CanResize="False"
+                    Width="1010" Height="720" MinWidth="820" MinHeight="610" SizeToContent="Manual"
+                    CanResize="True"
                     WindowStartupLocation="CenterOwner">
-  <Grid RowDefinitions="Auto,Auto">
+  <Grid RowDefinitions="Auto,*" Background="{DynamicResource Brush.Window}">
     <!-- TitleBar -->
     <Grid Grid.Row="0" Height="28" IsVisible="{Binding !#ThisControl.UseSystemWindowFrame}">
       <Border Background="{DynamicResource Brush.TitleBar}"
@@ -38,7 +38,8 @@
     </Grid>
 
     <!-- Body -->
-    <TabControl Grid.Row="1">
+    <ScrollViewer Grid.Row="1" Margin="14" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+      <TabControl Classes="mygit_settings" TabStripPlacement="Left">
       <TabItem>
         <TabItem.Header>
           <TextBlock Classes="tab_header" Text="{DynamicResource Text.Configure.Git}"/>
@@ -552,6 +553,7 @@
                      Foreground="{DynamicResource Brush.FG2}"/>
         </Grid>
       </TabItem>
-    </TabControl>
+      </TabControl>
+    </ScrollViewer>
   </Grid>
 </v:ChromelessWindow>

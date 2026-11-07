@@ -9,13 +9,13 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SourceGit.Views.DiffView"
              x:DataType="vm:DiffContext"
-             CornerRadius="4"
+             CornerRadius="10"
              BorderThickness="1"
-             BorderBrush="{DynamicResource Brush.Border2}">
-  <Border CornerRadius="4" Background="{DynamicResource Brush.Window}" ClipToBounds="True">
-    <Grid RowDefinitions="26,*">
+             BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
+  <Border CornerRadius="10" Background="{DynamicResource Brush.Mygit.Surface}" ClipToBounds="True">
+    <Grid RowDefinitions="36,*">
       <!-- Toolbar -->
-      <Border Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Border2}">
+      <Border Grid.Row="0" Background="{DynamicResource Brush.Mygit.Card}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
         <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto">
           <!-- File Icon -->
           <Path Grid.Column="0" Width="12" Height="12" Data="{StaticResource Icons.File}" Margin="8,0,0,0"/>

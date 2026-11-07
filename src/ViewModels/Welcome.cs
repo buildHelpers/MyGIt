@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,6 +29,74 @@ namespace SourceGit.ViewModels
             }
         }
 
+        /// <summary>Current workspace displayed on the repository home page.</summary>
+        public Workspace ActiveWorkspace => Preferences.Instance.GetActiveWorkspace();
+
+        /// <summary>
+        /// Recent repository cards. The active workspace provides a first-run fallback,
+        /// and stale paths are hidden without deleting the saved history.
+        /// </summary>
+        public List<RepositoryNode> RecentRepositories
+        {
+            get
+            {
+                var preferences = Preferences.Instance;
+                var paths = preferences.RecentRepositories is { Count: > 0 }
+                    ? preferences.RecentRepositories
+                    : ActiveWorkspace.Repositories;
+
+                var recent = new List<RepositoryNode>();
+                var seen = new HashSet<string>(OperatingSystem.IsWindows()
+                    ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
+
+                foreach (var path in paths)
+                {
+                    var normalized = path?.Replace('\\', '/').TrimEnd('/');
+                    if (string.IsNullOrEmpty(normalized) || !seen.Add(normalized) || !Directory.Exists(normalized))
+                        continue;
+
+                    recent.Add(preferences.FindNode(normalized) ?? new RepositoryNode
+                    {
+                        Id = normalized,
+                        Name = Path.GetFileName(normalized),
+                        IsRepository = true,
+                        IsUnmanaged = true,
+                    });
+
+                    if (recent.Count == 6)
+                        break;
+                }
+
+                return recent;
+            }
+        }
+
+        public int ManagedRepositoryCount
+        {
+            get
+            {
+                var count = 0;
+                foreach (var node in Preferences.Instance.RepositoryNodes)
+                    count += CountRepositories(node);
+
+                return count;
+            }
+        }
+
+        public int WorkspaceCount => Preferences.Instance.Workspaces.Count;
+
+        private static int CountRepositories(RepositoryNode node)
+        {
+            if (node.IsRepository)
+                return 1;
+
+            var count = 0;
+            foreach (var child in node.SubNodes)
+                count += CountRepositories(child);
+
+            return count;
+        }
+
         public Welcome()
         {
             Refresh();
@@ -50,6 +119,10 @@ namespace SourceGit.ViewModels
             MakeTreeRows(rows, Preferences.Instance.RepositoryNodes);
             Rows.Clear();
             Rows.AddRange(rows);
+            OnPropertyChanged(nameof(ActiveWorkspace));
+            OnPropertyChanged(nameof(ManagedRepositoryCount));
+            OnPropertyChanged(nameof(RecentRepositories));
+            OnPropertyChanged(nameof(WorkspaceCount));
         }
 
         public async Task UpdateStatusAsync(bool force, CancellationToken? token)

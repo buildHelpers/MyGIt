@@ -133,6 +133,7 @@ namespace SourceGit.ViewModels
 
             ActiveWorkspace = to;
             to.IsActive = true;
+            Welcome.Instance.Refresh();
 
             foreach (var one in Pages)
                 CloseRepositoryInTab(one, false);
@@ -154,6 +155,28 @@ namespace SourceGit.ViewModels
             PostActivePageChanged();
             Preferences.Instance.Save();
             GC.Collect();
+        }
+
+        /// <summary>
+        /// Shows the workspace home without closing an open repository or changing its Git state.
+        /// Reuse an existing welcome tab; otherwise create a new one for this workspace.
+        /// </summary>
+        public void ShowWorkspaceHome()
+        {
+            Welcome.Instance.Refresh();
+
+            foreach (var page in Pages)
+            {
+                if (page.Data is Welcome)
+                {
+                    ActivePage = page;
+                    return;
+                }
+            }
+
+            var home = new LauncherPage();
+            Pages.Insert(0, home);
+            ActivePage = home;
         }
 
         public void AddNewTab()
@@ -519,7 +542,11 @@ namespace SourceGit.ViewModels
                 return;
 
             if (_activePage is { Data: Repository repo })
+            {
                 _activeWorkspace.ActiveIdx = _activeWorkspace.Repositories.IndexOf(repo.FullPath);
+                // User-driven activation, not every tab restored during application startup.
+                Preferences.Instance.RememberRepository(repo.FullPath);
+            }
 
             CommandPalette = null;
         }

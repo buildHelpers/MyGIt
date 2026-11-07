@@ -744,6 +744,14 @@
   <x:String x:Key="Text.PushToNewBranch" xml:space="preserve">Push ke branch BARU</x:String>
   <x:String x:Key="Text.PushToNewBranch.Title" xml:space="preserve">Masukkan nama remote branch baru:</x:String>
   <x:String x:Key="Text.Quit" xml:space="preserve">Keluar</x:String>
+  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">Repositori</x:String>
+  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">Terbaru lebih dahulu</x:String>
+  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ Pilih · Enter Buka · Esc Tutup</x:String>
+  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">Repositori tidak ditemukan</x:String>
+  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">Terbuka</x:String>
+  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">Terbaru</x:String>
+  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">Cari nama atau lokasi...</x:String>
+  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">Beralih repositori dengan cepat</x:String>
   <x:String x:Key="Text.Rebase" xml:space="preserve">Rebase Branch Saat Ini</x:String>
   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">Stash &amp; terapkan ulang perubahan lokal</x:String>
   <x:String x:Key="Text.Rebase.NoVerify" xml:space="preserve">Lewati hook pre-rebase</x:String>

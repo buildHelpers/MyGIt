@@ -10,7 +10,7 @@
              x:Class="SourceGit.Views.CommitDetail"
              x:DataType="vm:CommitDetail"
              x:Name="ThisControl">
-  <TabControl SelectedIndex="{Binding ActiveTabIndex, Mode=TwoWay}" Padding="0,4">
+  <TabControl SelectedIndex="{Binding ActiveTabIndex, Mode=TwoWay}" Padding="12,8" Background="{DynamicResource Brush.Mygit.Card}">
     <!-- Information Page -->
     <TabItem>
       <TabItem.Header>

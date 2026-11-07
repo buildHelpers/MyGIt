@@ -10,13 +10,15 @@
              x:DataType="vm:WorkingCopy">
   <Grid SizeChanged="OnMainLayoutSizeChanged" Background="{DynamicResource Brush.SubPanel}">
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="{Binding Source={x:Static vm:Preferences.Instance}, Path=Layout.WorkingCopyLeftWidth, Mode=TwoWay}" MinWidth="300"/>
+      <ColumnDefinition Width="{Binding Source={x:Static vm:Preferences.Instance}, Path=Layout.WorkingCopyLeftWidth, Mode=TwoWay}" MinWidth="240"/>
       <ColumnDefinition Width="4"/>
-      <ColumnDefinition Width="*" MinWidth="470"/>
+      <ColumnDefinition Width="*" MinWidth="240"/>
+      <ColumnDefinition Width="4"/>
+      <ColumnDefinition Width="296" MinWidth="270"/>
     </Grid.ColumnDefinitions>
 
     <!-- Left -->
-    <Grid Grid.Column="0" Background="{DynamicResource Brush.Window}">
+    <Grid Grid.Column="0" Background="{DynamicResource Brush.Mygit.Sidebar}">
       <Grid.RowDefinitions>
         <RowDefinition Height="36" MinHeight="36" MaxHeight="36"/>
         <RowDefinition Height="*" MinHeight="100"/>
@@ -35,10 +37,11 @@
           
           <TextBox Grid.Column="1"
                    x:Name="LocalChangesSearchBox"
-                   Height="24"
-                   Margin="4,0"
+                   Classes="mygit_search"
+                   Height="29"
+                   Margin="6,0"
                    BorderThickness="1"
-                   CornerRadius="12"
+                   CornerRadius="9"
                    Text="{Binding Filter, Mode=TwoWay}"
                    BorderBrush="{DynamicResource Brush.Border2}"
                    Watermark="{DynamicResource Text.WorkingCopy.FilterChanges}"
@@ -237,17 +240,20 @@
                   BorderBrush="{DynamicResource Brush.Border0}"
                   Focusable="False"/>
 
-    <!-- Right -->
-    <Grid Grid.Column="2" Margin="4,4,6,0">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="*" MinHeight="100"/>
-        <RowDefinition Height="4"/>
-        <RowDefinition Height="128" MinHeight="100"/>
-        <RowDefinition Height="40"/>
-      </Grid.RowDefinitions>
-
+    <!-- Diff and commit are separate, persistent panes; existing commands are reused. -->
+    <Grid Grid.Column="2" Background="{DynamicResource Brush.Mygit.Surface}"
+          RowDefinitions="Auto,*">
+      <Border Grid.Row="0" Padding="14,0" Height="38"
+              Background="{DynamicResource Brush.Mygit.Card}"
+              BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
+        <StackPanel Orientation="Horizontal" Spacing="10">
+          <Path Width="14" Height="14" Data="{StaticResource Icons.Diff}"
+                Fill="{DynamicResource Brush.Accent}"/>
+          <TextBlock Text="{DynamicResource Text.CommitDetail.Changes}" FontWeight="SemiBold"/>
+        </StackPanel>
+      </Border>
       <!-- Select Change Detail -->
-      <Grid Grid.Row="0">
+      <Grid Grid.Row="1">
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
           <Path Width="64" Height="64" Data="{StaticResource Icons.Diff}" Fill="{DynamicResource Brush.FG2}"/>
           <TextBlock Margin="0,16,0,0"
@@ -270,20 +276,32 @@
         </ContentControl>
       </Grid>
 
-      <!-- Splitter -->
-      <GridSplitter Grid.Row="1" MinHeight="1"
-                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                    Background="Transparent"
-                    Focusable="False"/>
 
+    </Grid>
+
+    <GridSplitter Grid.Column="3" Width="4" MinWidth="4"
+                  ResizeDirection="Columns" Background="Transparent"/>
+
+    <Border Grid.Column="4" Background="{DynamicResource Brush.Mygit.Sidebar}"
+            BorderThickness="1,0,0,0" BorderBrush="{DynamicResource Brush.Mygit.Hairline}"
+            Padding="12,12,12,8">
+      <Grid RowDefinitions="Auto,200,*,Auto">
+        <StackPanel Grid.Row="0" Spacing="4" Margin="4,0,0,12">
+          <TextBlock Text="{DynamicResource Text.WorkingCopy.Commit}" Classes="mygit_heading"/>
+          <TextBlock Text="{DynamicResource Text.WorkingCopy.Staged}" Classes="mygit_section_label"/>
+        </StackPanel>
       <!-- Commit Message -->
-      <v:CommitMessageToolBox Grid.Row="2"
+      <v:CommitMessageToolBox Grid.Row="1" Height="190"
                               ShowAdvancedOptions="True"
                               CommitMessage="{Binding CommitMessage, Mode=TwoWay}"/>
 
+
+        <Border Grid.Row="2" BorderThickness="0,1,0,0"
+                BorderBrush="{DynamicResource Brush.Mygit.Hairline}"
+                Margin="0,12,0,0"/>
       <!-- Commit Options -->
-      <Grid Grid.Row="3" VerticalAlignment="Center" ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto,Auto,Auto">
-        <CheckBox Grid.Column="0"
+      <Grid Grid.Row="3" RowDefinitions="32,32,32,32,24,38,2,38" Margin="0,10,0,2">
+        <CheckBox Grid.Row="0"
                   Height="24"
                   Margin="1,0,0,0"
                   HorizontalAlignment="Left"
@@ -293,9 +311,9 @@
                   ToolTip.Placement="Top"
                   ToolTip.VerticalOffset="0"/>
 
-        <CheckBox Grid.Column="1"
+        <CheckBox Grid.Row="1"
                   Height="24"
-                  Margin="12,0,0,0"
+                  Margin="8,0,0,0"
                   HorizontalAlignment="Left"
                   IsChecked="{Binding NoVerifyOnCommit, Mode=TwoWay}"
                   Content="{DynamicResource Text.WorkingCopy.NoVerify}"
@@ -303,9 +321,9 @@
                   ToolTip.Placement="Top"
                   ToolTip.VerticalOffset="0"/>
 
-        <CheckBox Grid.Column="2"
+        <CheckBox Grid.Row="2"
                   Height="24"
-                  Margin="12,0,0,0"
+                  Margin="8,0,0,0"
                   HorizontalAlignment="Left"
                   IsChecked="{Binding UseAmend, Mode=TwoWay}"
                   Content="{DynamicResource Text.WorkingCopy.Amend}"
@@ -313,9 +331,9 @@
                   ToolTip.Placement="Top"
                   ToolTip.VerticalOffset="0"/>
 
-        <CheckBox Grid.Column="3"
+        <CheckBox Grid.Row="3"
                   Height="24"
-                  Margin="12,0,0,0"
+                  Margin="8,0,0,0"
                   HorizontalAlignment="Left"
                   IsChecked="{Binding ResetAuthor, Mode=TwoWay}"
                   IsVisible="{Binding UseAmend}"
@@ -324,12 +342,12 @@
                   ToolTip.Placement="Top"
                   ToolTip.VerticalOffset="0"/>
 
-        <v:LoadingIcon Grid.Column="4"
+        <v:LoadingIcon Grid.Row="4"
                        Width="18" Height="18"
                        HorizontalAlignment="Right"
                        IsVisible="{Binding IsCommitting}"/>
 
-        <SplitButton Grid.Column="5"
+        <SplitButton Grid.Row="5"
                      Content="{DynamicResource Text.Repository.Continue}"
                      Height="28"
                      Margin="8,0,0,0"
@@ -407,7 +425,7 @@
           </SplitButton.Flyout>
         </SplitButton>
 
-        <Button Grid.Column="5"
+        <Button Grid.Row="5"
                 Classes="flat primary"
                 Content="{DynamicResource Text.WorkingCopy.Commit}"
                 Height="28"
@@ -440,7 +458,7 @@
         </Button>
 
         <!-- Invisible button just to add another hotkey `Ctrl+Shift+Enter` to commit with auto-stage -->
-        <Button Grid.Column="6"
+        <Button Grid.Row="6"
                 Width="0" Height="0"
                 Background="Transparent"
                 Click="OnCommitWithAutoStage"
@@ -453,7 +471,7 @@
           </Button.IsEnabled>
         </Button>
 
-        <Button Grid.Column="7"
+        <Button Grid.Row="7"
                 Classes="flat"
                 Content="{DynamicResource Text.WorkingCopy.CommitAndPush}"
                 Height="28"
@@ -480,6 +498,8 @@
           </Button.IsVisible>
         </Button>
       </Grid>
-    </Grid>
+
+      </Grid>
+    </Border>
   </Grid>
 </UserControl>

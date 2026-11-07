@@ -97,6 +97,7 @@ namespace SourceGit.ViewModels
                     OnPropertyChanged(nameof(IsDashboardVisible));
                     OnPropertyChanged(nameof(IsWorkingCopyVisible));
                     OnPropertyChanged(nameof(IsStashesVisible));
+                    OnPropertyChanged(nameof(IsBranchesVisible));
                 }
             }
         }
@@ -130,6 +131,9 @@ namespace SourceGit.ViewModels
         {
             get => SelectedViewIndex == 2;
         }
+
+        /// <summary>The full-size branch and worktree overview.</summary>
+        public bool IsBranchesVisible => SelectedViewIndex == 3;
 
         public string Filter
         {

@@ -2,8 +2,8 @@
   "formatVersion": 1,
   "package": "MyGIt Design Theme System",
   "engine": "MyGIt layout overlay + SourceGit ThemeOverrides",
-  "version": "2.1.2",
-  "description": "MyGIt designed UI with cross-platform brand assets, separate application identity and user-data storage; macOS artifact testing in CI.",
+  "version": "2.2.0",
+  "description": "Complete MyGIt layout with bundled native Light/Dark appearance presets and independent OS-level app identity.",
   "implementationStatus": "source-layout-improvements-committed-pending-build-and-visual-acceptance",
   "presets": [
     {
@@ -43,7 +43,8 @@
         "layouts/mygit-design/patches/72-conflict-three-columns.patch",
         "layouts/mygit-design/patches/73-settings-preview.patch",
         "layouts/mygit-design/patches/74-explicit-branch-checkout.patch",
-        "layouts/mygit-design/patches/75-user-profile-isolation.patch"
+        "layouts/mygit-design/patches/75-user-profile-isolation.patch",
+        "layouts/mygit-design/patches/76-native-appearance-picker.patch"
       ],
       "revisions": {
         "layouts/mygit-design/patches/60-integration.patch": [
@@ -70,6 +71,11 @@
         "layouts/mygit-design/patches/74-explicit-branch-checkout.patch": [
           "src/Views/BranchesOverview.axaml",
           "src/Views/BranchesOverview.axaml.cs"
+        ],
+        "layouts/mygit-design/patches/76-native-appearance-picker.patch": [
+          "src/ViewModels/Preferences.cs",
+          "src/Views/Preferences.axaml.cs",
+          "src/SourceGit.csproj"
         ]
       },
       "screens": [

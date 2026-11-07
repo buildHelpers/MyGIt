@@ -476,9 +476,8 @@ namespace SourceGit.Views
 
         private void OnOpenPagesCommandPalette(object sender, RoutedEventArgs e)
         {
-            if (DataContext is ViewModels.Launcher vm)
-                vm.CommandPalette = new ViewModels.LauncherPagesCommandPalette(vm);
-            e.Handled = true;
+            // Click and Ctrl/Cmd+P must reach the same repository picker.
+            OnOpenRecentRepositories(sender, e);
         }
 
         private void OnCloseCommandPalette(object sender, PointerPressedEventArgs e)

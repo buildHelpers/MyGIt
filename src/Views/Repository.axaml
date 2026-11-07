@@ -154,7 +154,7 @@
             BorderBrush="{DynamicResource Brush.Border0}"
             CornerRadius="12">
       <Border CornerRadius="12" ClipToBounds="True">
-        <Grid RowDefinitions="Auto,44,*">
+        <Grid RowDefinitions="Auto,Auto,*">
           <!-- In-Progress Information Bar -->
           <Grid Grid.Row="0" Height="28" ColumnDefinitions="*,Auto,Auto,Auto" Background="{DynamicResource Brush.Conflict}" IsVisible="{Binding InProgressContext, Converter={x:Static ObjectConverters.IsNotNull}}">
             <ContentControl Grid.Column="0" Margin="8,0" Content="{Binding InProgressContext}">
@@ -288,42 +288,7 @@
                     Click="OnAbortInProgress"/>
           </Grid>
 
-          <!-- Mirror the main navigation as clear repository tabs. Both lists share
-               SelectedViewIndex and therefore reuse the existing view model. -->
-          <Border Grid.Row="1" Background="{DynamicResource Brush.Mygit.Surface}"
-                  BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
-            <ListBox SelectedIndex="{Binding SelectedViewIndex, Mode=TwoWay}"
-                     Background="Transparent" SelectionMode="AlwaysSelected">
-              <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                  <StackPanel Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-              </ListBox.ItemsPanel>
-              <ListBox.Styles>
-                <Style Selector="ListBoxItem">
-                  <Setter Property="Margin" Value="10,5,0,5"/>
-                  <Setter Property="Padding" Value="16,0"/>
-                  <Setter Property="CornerRadius" Value="8"/>
-                  <Setter Property="MinHeight" Value="32"/>
-                </Style>
-                <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
-                  <Setter Property="Background" Value="{DynamicResource Brush.Mygit.Selected}"/>
-                </Style>
-              </ListBox.Styles>
-              <ListBoxItem>
-                <TextBlock Text="{DynamicResource Text.Dashboard}" FontWeight="SemiBold"/>
-              </ListBoxItem>
-              <ListBoxItem IsVisible="{Binding !IsBare}">
-                <TextBlock Text="{DynamicResource Text.WorkingCopy}" FontWeight="SemiBold"/>
-              </ListBoxItem>
-              <ListBoxItem IsVisible="{Binding !IsBare}">
-                <TextBlock Text="{DynamicResource Text.Stashes}" FontWeight="SemiBold"/>
-              </ListBoxItem>
-              <ListBoxItem>
-                <TextBlock Text="{DynamicResource Text.Repository.LocalBranches}" FontWeight="SemiBold"/>
-              </ListBoxItem>
-            </ListBox>
-          </Border>
+          <!-- Section navigation lives only in the left sidebar. -->
 
           <!-- Main Body -->
           <Grid Grid.Row="2" Background="{DynamicResource Brush.Mygit.Surface}">

@@ -16,6 +16,9 @@ on:
 permissions:
   contents: read
 
+env:
+  PYTHONDONTWRITEBYTECODE: '1'
+
 jobs:
   macos-design:
     name: Mac build and layout compatibility

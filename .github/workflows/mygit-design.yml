@@ -67,10 +67,18 @@ jobs:
       - name: Package and ad-hoc sign MyGIt design preview
         working-directory: ../MyGIt-Design
         run: |
+          # Change identity only in the isolated build worktree. The system
+          # SourceGit bundle and its user preferences must remain untouched.
+          /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier com.buildhelpers.mygit" build/resources/app/App.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleName MyGIt" build/resources/app/App.plist
           export VERSION="$(cat VERSION)"
           export RUNTIME="osx-arm64"
           bash build/scripts/package.osx-app.sh
-          mv "build/sourcegit_${VERSION}.osx-arm64.zip" "build/MyGIt-Design-macOS-arm64.zip"
+          mv build/SourceGit.app build/MyGIt.app
+          codesign --verify --deep --strict --verbose=2 build/MyGIt.app
+          (cd build && zip -qry MyGIt-Design-macOS-arm64.zip MyGIt.app)
+          /usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" build/MyGIt.app/Contents/Info.plist
+          /usr/libexec/PlistBuddy -c "Print :CFBundleName" build/MyGIt.app/Contents/Info.plist
 
       - name: Upload macOS acceptance preview
         uses: actions/upload-artifact@v4

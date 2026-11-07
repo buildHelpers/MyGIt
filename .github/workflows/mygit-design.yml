@@ -57,6 +57,29 @@ jobs:
         working-directory: ../MyGIt-Design
         run: dotnet build src/SourceGit.csproj -c Debug -p:DisableAOT=true
 
+      - name: Publish self-contained Apple Silicon preview
+        working-directory: ../MyGIt-Design
+        run: |
+          dotnet publish src/SourceGit.csproj \
+            -c Release -r osx-arm64 --self-contained true \
+            -p:DisableAOT=true -o build/SourceGit
+
+      - name: Package and ad-hoc sign MyGIt design preview
+        working-directory: ../MyGIt-Design
+        run: |
+          export VERSION="$(cat VERSION)"
+          export RUNTIME="osx-arm64"
+          bash build/scripts/package.osx-app.sh
+          mv "build/sourcegit_${VERSION}.osx-arm64.zip" "build/MyGIt-Design-macOS-arm64.zip"
+
+      - name: Upload macOS acceptance preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: MyGIt-Design-macOS-arm64
+          path: ../MyGIt-Design/build/MyGIt-Design-macOS-arm64.zip
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Keep the original upstream and product code untouched
         run: |
           test -z "$(git status --porcelain)"

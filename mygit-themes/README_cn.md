@@ -1,5 +1,18 @@
 # MyGIt · 完整设计主题系统
 
+> **构建策略（2026-11-07）**：按使用者要求，GitHub 托管 CI 已暂停，额度不足时不得重新打开 Push/PR 自动构建，也不要手动触发 Actions。继续在独立开发分支提交源码，使用本地 Python 静态检查；需要编译时只在可用的本地 Mac 或自托管机器上执行。只有使用者明确恢复授权，才能重新启用云端构建。
+
+**离线/本机检查（无需 GitHub Actions）：**
+
+```bash
+python3 -m unittest discover -s mygit-themes/tools -p 'test_*.py'
+python3 mygit-themes/tools/theme.py validate
+python3 mygit-themes/tools/theme.py check mygit-design
+# 当本地 Mac 具备 .NET 10 时：
+python3 mygit-themes/tools/theme.py build mygit-design --output ../MyGIt-Local
+```
+
+
 **这套主题不只是颜色，还包含最初设计的六个页面、全局导航和交互。** 所有界面改动保存在独立主题包里，由构建工具装配；Git 核心继续跟随上游 SourceGit。
 
 [最新逐页核查与剩余事项](UI_AUDIT_cn.md) · [MyGIt Design SVG 图标](assets/MyGIt-icon.svg)

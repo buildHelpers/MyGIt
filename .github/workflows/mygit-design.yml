@@ -1,16 +1,10 @@
-name: MyGIt Design Theme Checks
+name: MyGIt Design Theme Checks (PAUSED)
 
+# PAUSED on 2026-11-07 at owner's request: GitHub hosted CI quota exhausted.
+# No push, pull_request, schedule, or automatic event can start this workflow.
+# The build steps are kept below as reference; the job is explicitly disabled.
+# Run local checks described in mygit-themes/README_cn.md instead.
 on:
-  push:
-    branches: [mygit]
-    paths:
-      - 'mygit-themes/**'
-      - '.github/workflows/mygit-design.yml'
-  pull_request:
-    branches: [mygit]
-    paths:
-      - 'mygit-themes/**'
-      - '.github/workflows/mygit-design.yml'
   workflow_dispatch:
 
 permissions:
@@ -21,7 +15,8 @@ env:
 
 jobs:
   macos-design:
-    name: Mac build and layout compatibility
+    if: ${{ false }}
+    name: Mac build and layout compatibility (disabled)
     runs-on: macos-latest
     timeout-minutes: 35
     steps:

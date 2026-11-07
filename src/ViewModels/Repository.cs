@@ -25,6 +25,16 @@ namespace SourceGit.ViewModels
             get;
         }
 
+        /// <summary>UI-only repository name for the persistent MyGIt sidebar.</summary>
+        public string DisplayName
+        {
+            get
+            {
+                var name = Path.GetFileName(FullPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+                return string.IsNullOrWhiteSpace(name) ? FullPath : name;
+            }
+        }
+
         public string GitDir
         {
             get;

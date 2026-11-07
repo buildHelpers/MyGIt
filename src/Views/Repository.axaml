@@ -12,16 +12,34 @@
              x:Name="ThisControl">  
   <Grid>
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="190"/>
+      <ColumnDefinition Width="218"/>
       <ColumnDefinition Width="*"/>
     </Grid.ColumnDefinitions>
 
     <!-- Page Switcher -->
-    <Grid Grid.Column="0" Width="190" RowDefinitions="Auto,*,Auto,12"
+    <Grid Grid.Column="0" Width="218" RowDefinitions="Auto,*,Auto,12"
           Background="{DynamicResource Brush.Mygit.Sidebar}">
-      <TextBlock Grid.Row="0" Margin="16,20,8,10"
-                 Classes="mygit_section_label"
-                 Text="{DynamicResource Text.Launcher.OpenRepository}"/>
+      <!-- Repository identity and navigation remain visible on every page. -->
+      <StackPanel Grid.Row="0" Margin="16,19,12,15" Spacing="9">
+        <TextBlock Text="REPOSITORY" Classes="mygit_section_label"/>
+        <Grid ColumnDefinitions="36,*" ColumnSpacing="10">
+          <Border Grid.Column="0" Width="36" Height="36"
+                  CornerRadius="10" Background="{DynamicResource Brush.Mygit.Selected}">
+            <Path Width="20" Height="20" Data="{StaticResource Icons.Repositories}"
+                  Fill="{DynamicResource Brush.Accent}"/>
+          </Border>
+          <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
+            <TextBlock Text="{Binding DisplayName}" FontSize="15" FontWeight="Bold"
+                       TextTrimming="CharacterEllipsis"/>
+            <TextBlock Text="{Binding CurrentBranch.Name}" FontSize="11"
+                       Foreground="{DynamicResource Brush.Mygit.Muted}"
+                       TextTrimming="CharacterEllipsis"/>
+          </StackPanel>
+        </Grid>
+        <Border Height="1" Margin="0,8,0,5"
+                Background="{DynamicResource Brush.Mygit.Hairline}"/>
+        <TextBlock Text="NAVIGATION" Classes="mygit_section_label"/>
+      </StackPanel>
       <ListBox Grid.Row="1" Background="Transparent" SelectedIndex="{Binding SelectedViewIndex, Mode=TwoWay}" SelectionMode="AlwaysSelected">
         <ListBox.Styles>
           <Style Selector="Path.icon">
@@ -55,14 +73,14 @@
         <ListBoxItem ToolTip.Placement="Right">
           <ToolTip.Tip>
             <TextBlock>
-              <Run Text="{DynamicResource Text.Dashboard}" Foreground="{DynamicResource Brush.FG1}"/>
+              <Run Text="提交历史" Foreground="{DynamicResource Brush.FG1}"/>
               <Run Text=" "/>
               <Run Text="{OnPlatform Ctrl+1, macOS=⌘+1}" FontSize="11" Foreground="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForeground}"/>
             </TextBlock>
           </ToolTip.Tip>
           <StackPanel Orientation="Horizontal" Spacing="11" Margin="10,0">
-            <Path Classes="icon" Data="{StaticResource Icons.Dashboard}"/>
-            <TextBlock Text="{DynamicResource Text.Dashboard}" FontWeight="SemiBold"/>
+            <Path Classes="icon" Data="{StaticResource Icons.Histories}"/>
+            <TextBlock Text="提交历史" FontWeight="SemiBold"/>
           </StackPanel>
         </ListBoxItem>
 
@@ -129,7 +147,7 @@
         <ListBoxItem ToolTip.Placement="Right">
           <StackPanel Orientation="Horizontal" Spacing="11" Margin="10,0">
             <Path Classes="icon" Data="{StaticResource Icons.Branch}"/>
-            <TextBlock Text="{DynamicResource Text.Repository.LocalBranches}" FontWeight="SemiBold"/>
+            <TextBlock Text="分支与 Worktrees" FontWeight="SemiBold"/>
           </StackPanel>
         </ListBoxItem>
       </ListBox>
@@ -149,7 +167,7 @@
 
     <!-- Body -->
     <Border Grid.Column="1"
-            Margin="4,0,8,7"
+            Margin="0,4,10,10"
             BorderThickness="1"
             BorderBrush="{DynamicResource Brush.Border0}"
             CornerRadius="12">

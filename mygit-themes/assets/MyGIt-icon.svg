@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="MyGIt Git branch logo">
+  <defs>
+    <linearGradient id="mygit" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#AC9BFF"/>
+      <stop offset="47%" stop-color="#7D6CF2"/>
+      <stop offset="100%" stop-color="#4D3DD5"/>
+    </linearGradient>
+    <radialGradient id="sheen" cx="0.20" cy="0.12" r="0.90">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.17"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect x="8" y="8" width="240" height="240" rx="53" fill="url(#mygit)"/>
+  <rect x="8" y="8" width="240" height="240" rx="53" fill="url(#sheen)"/>
+  <g stroke="white" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M 89 73 V 180" stroke-width="10"/>
+    <path d="M 89 138 C 139 138 178 123 178 104" stroke-width="10"/>
+    <circle cx="89" cy="59" r="14" stroke-width="10"/>
+    <circle cx="89" cy="195" r="14" stroke-width="10"/>
+    <circle cx="178" cy="90" r="14" stroke-width="10"/>
+  </g>
+</svg>

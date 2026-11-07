@@ -2,8 +2,8 @@
   "formatVersion": 1,
   "package": "MyGIt Design Theme System",
   "engine": "MyGIt layout overlay + SourceGit ThemeOverrides",
-  "version": "2.1.1",
-  "description": "MyGIt original design implementation extended with dashboard cards, search-first branches, side-by-side merge and settings theme previews; desktop acceptance still pending.",
+  "version": "2.1.2",
+  "description": "MyGIt designed UI with cross-platform brand assets, separate application identity and user-data storage; macOS artifact testing in CI.",
   "implementationStatus": "source-layout-improvements-committed-pending-build-and-visual-acceptance",
   "presets": [
     {
@@ -42,7 +42,8 @@
         "layouts/mygit-design/patches/71-workspace-dashboard.patch",
         "layouts/mygit-design/patches/72-conflict-three-columns.patch",
         "layouts/mygit-design/patches/73-settings-preview.patch",
-        "layouts/mygit-design/patches/74-explicit-branch-checkout.patch"
+        "layouts/mygit-design/patches/74-explicit-branch-checkout.patch",
+        "layouts/mygit-design/patches/75-user-profile-isolation.patch"
       ],
       "revisions": {
         "layouts/mygit-design/patches/60-integration.patch": [

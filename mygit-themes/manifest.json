@@ -2,9 +2,9 @@
   "formatVersion": 1,
   "package": "MyGIt Design Theme System",
   "engine": "MyGIt layout overlay + SourceGit ThemeOverrides",
-  "version": "2.0.1",
-  "description": "Partial UI redesign with integration corrections; not yet screenshot-verified against the six approved mockups.",
-  "implementationStatus": "partial-ui-integration-pending-desktop-validation",
+  "version": "2.1.0",
+  "description": "MyGIt original design implementation extended with dashboard cards, search-first branches, side-by-side merge and settings theme previews; desktop acceptance still pending.",
+  "implementationStatus": "source-layout-improvements-committed-pending-build-and-visual-acceptance",
   "presets": [
     {
       "id": "light",
@@ -37,7 +37,11 @@
         "layouts/mygit-design/patches/30-history-branches.patch",
         "layouts/mygit-design/patches/40-conflicts-settings.patch",
         "layouts/mygit-design/patches/50-visual-resources.patch",
-        "layouts/mygit-design/patches/60-integration.patch"
+        "layouts/mygit-design/patches/60-integration.patch",
+        "layouts/mygit-design/patches/70-branches-search.patch",
+        "layouts/mygit-design/patches/71-workspace-dashboard.patch",
+        "layouts/mygit-design/patches/72-conflict-three-columns.patch",
+        "layouts/mygit-design/patches/73-settings-preview.patch"
       ],
       "revisions": {
         "layouts/mygit-design/patches/60-integration.patch": [
@@ -45,6 +49,21 @@
           "src/Views/Launcher.axaml.cs",
           "src/Views/Repository.axaml",
           "src/Views/Histories.axaml"
+        ],
+        "layouts/mygit-design/patches/70-branches-search.patch": [
+          "src/ViewModels/Repository.cs",
+          "src/Views/BranchesOverview.axaml",
+          "src/Views/BranchesOverview.axaml.cs"
+        ],
+        "layouts/mygit-design/patches/71-workspace-dashboard.patch": [
+          "src/Views/Welcome.axaml",
+          "src/ViewModels/Welcome.cs"
+        ],
+        "layouts/mygit-design/patches/72-conflict-three-columns.patch": [
+          "src/Views/MergeConflictEditor.axaml"
+        ],
+        "layouts/mygit-design/patches/73-settings-preview.patch": [
+          "src/Views/Preferences.axaml"
         ]
       },
       "screens": [
@@ -55,7 +74,11 @@
         "conflict-resolution",
         "preferences"
       ],
-      "appearanceDefault": "light"
+      "appearanceDefault": "light",
+      "assetGenerator": "tools/icons.py",
+      "brandAssets": [
+        "assets/MyGIt-icon.svg"
+      ]
     },
     {
       "id": "upstream-classic",

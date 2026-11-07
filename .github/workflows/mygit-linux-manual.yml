@@ -1,0 +1,85 @@
+name: MyGIt · Manual Linux Self-Hosted Checks
+
+# IMPORTANT: Only a maintainer manually dispatches this workflow.
+# Never use GitHub-hosted runners, PR/push/schedule events, sudo, Docker or secrets.
+'on':
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mygit-linux-manual-${{ github.repository_id }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    if: >-
+      github.repository == 'buildHelpers/MyGIt' &&
+      github.event_name == 'workflow_dispatch' &&
+      github.ref_type == 'branch' &&
+      github.ref_name != 'master' &&
+      github.ref_name != 'develop'
+    runs-on:
+      group: buildhelpers-linux
+      labels: [self-hosted, linux, x64, buildhelpers-linux]
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONNOUSERSITE: '1'
+    steps:
+      - name: Verify organization runner and set isolated temporary directory
+        run: |
+          set -euo pipefail
+          test "$(whoami)" = "gha-runner"
+          test "$(id -nG)" = "gha-runner"
+          test "$(uname -s)" = "Linux"
+          test "$(uname -m)" = "x86_64"
+          umask 077
+          ci_tmp="$HOME/ci-tmp/$GITHUB_REPOSITORY_ID/$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir -p "$ci_tmp"
+          chmod 700 "$ci_tmp"
+          printf 'TMPDIR=%s\nTMP=%s\nTEMP=%s\n' "$ci_tmp" "$ci_tmp" "$ci_tmp" >> "$GITHUB_ENV"
+          git --version
+          python3 --version
+
+      - name: Check out manually selected trusted branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+          submodules: false
+
+      - name: Verify the exact requested commit and theme package
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -f mygit-themes/manifest.json
+          test -f mygit-themes/tools/theme.py
+          git diff --check
+
+      - name: MyGIt Python regression tests
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s mygit-themes/tools -p 'test_*.py'
+
+      - name: Validate color themes and UI patch manifest
+        run: |
+          set -euo pipefail
+          python3 mygit-themes/tools/theme.py validate
+
+      - name: Apply full UI layout in a disposable isolated worktree
+        run: |
+          set -euo pipefail
+          python3 mygit-themes/tools/theme.py check mygit-design
+
+      - name: Confirm no tracked files changed
+        run: |
+          set -euo pipefail
+          git diff --exit-code
+          git diff --cached --exit-code
+          echo "PASS: Manual Linux self-hosted static/overlay checks."
+          echo "NOT_RUN: .NET compile, macOS GUI, packaging, or release."

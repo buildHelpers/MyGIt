@@ -130,8 +130,10 @@ def prepare(profile_id: str, dest: Path, source: Path = ROOT, build: bool = Fals
         raise LayoutError("Output must be outside the upstream/source checkout")
     if dest.exists():
         raise LayoutError(f"Output already exists; refusing to overwrite: {dest}")
-    if git(source, "status", "--porcelain", capture=True).stdout.strip():
-        raise LayoutError("Source checkout has uncommitted changes; commit or stash first")
+    # Ignore untracked editor/test caches: the composer never touches them.
+    # Tracked source modifications still block preparation, to preserve work.
+    if git(source, "status", "--porcelain", "--untracked-files=no", capture=True).stdout.strip():
+        raise LayoutError("Tracked source has uncommitted changes; commit or stash first")
     created = False
     try:
         git(source, "worktree", "add", "--detach", str(dest), "HEAD")

@@ -668,7 +668,14 @@ namespace SourceGit.ViewModels
         {
             var path = Path.Combine(Native.OS.BasicDirectories.ConfigDir, "preference.json");
             if (!File.Exists(path))
-                return new Preferences();
+            {
+                // New MyGIt installations start with the approved indigo palette.
+                // Existing preferences are never replaced or imported from SourceGit.
+                var created = new Preferences();
+                if (Views.MyGItThemePresets.TryInstall("MyGIt-Light.json", out var preset))
+                    created._themeOverrides = preset;
+                return created;
+            }
 
             try
             {

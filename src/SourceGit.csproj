@@ -38,6 +38,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- MyGIt bundled appearance presets; not an upstream SourceGit modification. -->
+    <EmbeddedResource Include="../mygit-themes/presets/MyGIt-Light.json"
+                      LogicalName="MyGIt.Themes.MyGIt-Light.json" />
+    <EmbeddedResource Include="../mygit-themes/presets/MyGIt-Dark.json"
+                      LogicalName="MyGIt.Themes.MyGIt-Dark.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <AvaloniaResource Include="App.ico" />
     <AvaloniaResource Include="Resources/Fonts/*" />
     <AvaloniaResource Include="Resources/Grammars/*" />

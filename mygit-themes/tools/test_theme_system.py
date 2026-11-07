@@ -24,10 +24,10 @@ class MyGItThemeTests(unittest.TestCase):
     def test_ordered_integration_targets_are_declared(self):
         profile = layout.find_profile('mygit-design')
         profiles = layout.validate()
-        self.assertEqual(len(profiles['mygit-design']), 12)
+        self.assertEqual(len(profiles['mygit-design']), 13)
         self.assertEqual(profiles['upstream-classic'], [])
         targets = layout.validate_patch_sequence(profile, profiles['mygit-design'])
-        self.assertEqual(len(targets), 50)
+        self.assertEqual(len(targets), 53)
         self.assertIn('src/Views/WorkingCopy.axaml.cs', targets)
         integration = 'layouts/mygit-design/patches/60-integration.patch'
         self.assertEqual(set(profile['revisions'][integration]), {
@@ -46,6 +46,9 @@ class MyGItThemeTests(unittest.TestCase):
         self.assertEqual(profile['revisions']['layouts/mygit-design/patches/73-settings-preview.patch'],
                          ['src/Views/Preferences.axaml'])
         self.assertEqual(profile.get('assetGenerator'), 'tools/icons.py')
+        self.assertEqual({
+            'src/Native/MacOS.cs', 'src/Native/Windows.cs', 'src/Native/Linux.cs'
+        }.issubset(targets), True)
         self.assertFalse(any(p.startswith(('src/Commands/', 'src/Models/')) for p in targets))
 
     def test_native_appearance_presets(self):

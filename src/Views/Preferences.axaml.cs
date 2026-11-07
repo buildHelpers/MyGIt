@@ -406,6 +406,24 @@ namespace SourceGit.Views
                 await new Commands.Config(null).SetAsync(key, value);
         }
 
+        private void OnSelectMyGItLight(object sender, RoutedEventArgs e)
+        {
+            ViewModels.Preferences.Instance.Theme = "Light";
+            e.Handled = true;
+        }
+
+        private void OnSelectMyGItDark(object sender, RoutedEventArgs e)
+        {
+            ViewModels.Preferences.Instance.Theme = "Dark";
+            e.Handled = true;
+        }
+
+        private void OnSelectSystemTheme(object sender, RoutedEventArgs e)
+        {
+            ViewModels.Preferences.Instance.Theme = "Default";
+            e.Handled = true;
+        }
+
         private async void OnUseNativeWindowFrameChanged(object sender, RoutedEventArgs e)
         {
             if (sender is CheckBox box)

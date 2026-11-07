@@ -190,126 +190,188 @@
           <TabItem.Header>
             <TextBlock Classes="tab_header" Text="{DynamicResource Text.Preferences.Appearance}"/>
           </TabItem.Header>
-          <Grid Margin="22" RowDefinitions="32,32,32,32,32,32,32,32,Auto" ColumnDefinitions="Auto,*">
-            <TextBlock Grid.Row="0" Grid.Column="0"
-                       Text="{DynamicResource Text.Preferences.Appearance.Theme}"
-                       HorizontalAlignment="Right"
-                       Margin="0,0,16,0"/>
-            <ComboBox Grid.Row="0" Grid.Column="1"
-                      MinHeight="28"
-                      Padding="8,0"
-                      HorizontalAlignment="Stretch"
-                      DisplayMemberBinding="{Binding Key, x:DataType=ThemeVariant}"
-                      SelectedItem="{Binding Theme, Mode=TwoWay, Converter={x:Static c:StringConverters.ToTheme}}">
-              <ComboBox.Items>
-                <ThemeVariant>Default</ThemeVariant>
-                <ThemeVariant>Dark</ThemeVariant>
-                <ThemeVariant>Light</ThemeVariant>
-              </ComboBox.Items>
-            </ComboBox>
+          <StackPanel Margin="20,18,20,24" Spacing="16">
+            <StackPanel Spacing="5">
+              <TextBlock Text="{DynamicResource Text.Preferences.Appearance}"
+                         Classes="mygit_heading"/>
+              <TextBlock Text="{DynamicResource Text.Preferences.Appearance.Theme}"
+                         Classes="mygit_section_label"/>
+            </StackPanel>
 
-            <TextBlock Grid.Row="1" Grid.Column="0"
-                       Text="{DynamicResource Text.Preferences.Appearance.DefaultFont}"
-                       HorizontalAlignment="Right"
-                       Margin="0,0,16,0"/>
-            <TextBox Grid.Row="1" Grid.Column="1"
-                     Height="28"
-                     CornerRadius="3"
-                     Text="{Binding DefaultFontFamily, Mode=TwoWay}"/>
-
-            <TextBlock Grid.Row="2" Grid.Column="0"
-                       Text="{DynamicResource Text.Preferences.Appearance.MonospaceFont}"
-                       HorizontalAlignment="Right"
-                       Margin="0,0,16,0"/>
-            <TextBox Grid.Row="2" Grid.Column="1"
-                     Height="28"
-                     CornerRadius="3"
-                     Text="{Binding MonospaceFontFamily, Mode=TwoWay}"/>
-
-            <TextBlock Grid.Row="3" Grid.Column="0"
-                       Text="{DynamicResource Text.Preferences.Appearance.FontSize}"
-                       HorizontalAlignment="Right"
-                       Margin="0,0,16,0"/>
-            <Grid Grid.Row="3" Grid.Column="1" ColumnDefinitions="*,8,*">
-              <NumericUpDown Grid.Column="0"
-                             Minimum="10" Maximum="18" Increment="0.5"
-                             Height="28"
-                             Padding="4"
-                             BorderThickness="1" BorderBrush="{DynamicResource Brush.Border1}"
-                             CornerRadius="3"
-                             Value="{Binding DefaultFontSize, Mode=TwoWay}">
-                <NumericUpDown.InnerLeftContent>
-                  <Border BorderThickness="0,0,1,0" BorderBrush="{DynamicResource Brush.Border1}">
-                    <TextBlock Margin="4,0" Text="{DynamicResource Text.Preferences.Appearance.FontSize.Default}"/>
+            <!-- Editable theme previews: one click updates the existing Preferences.Theme. -->
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
+              <Button Grid.Column="0" Click="OnSelectMyGItLight"
+                      Classes="flat mygit_action" Padding="9"
+                      CornerRadius="12" Height="122">
+                <StackPanel Spacing="8">
+                  <Border Background="#FFF3F6FC" CornerRadius="9" Height="64"
+                          BorderBrush="#FFD7E0EE" BorderThickness="1">
+                    <Grid Margin="8" ColumnDefinitions="36,*">
+                      <Border Background="#FFE4EAFF" CornerRadius="6"/>
+                      <StackPanel Grid.Column="1" Margin="7,5,0,0" Spacing="7">
+                        <Border Background="#FF606FEC" CornerRadius="3" Height="7" Width="63"
+                                HorizontalAlignment="Left"/>
+                        <Border Background="#FFD6DFEC" CornerRadius="3" Height="6" Width="84"
+                                HorizontalAlignment="Left"/>
+                        <Border Background="#FFD6DFEC" CornerRadius="3" Height="6" Width="56"
+                                HorizontalAlignment="Left"/>
+                      </StackPanel>
+                    </Grid>
                   </Border>
-                </NumericUpDown.InnerLeftContent>
-              </NumericUpDown>
-              <NumericUpDown Grid.Column="2"
-                             Minimum="10" Maximum="18" Increment="0.5"
-                             Height="28"
-                             Padding="4"
-                             BorderThickness="1" BorderBrush="{DynamicResource Brush.Border1}"
-                             CornerRadius="3"
-                             Value="{Binding EditorFontSize, Mode=TwoWay}">
-                <NumericUpDown.InnerLeftContent>
-                  <Border BorderThickness="0,0,1,0" BorderBrush="{DynamicResource Brush.Border1}">
-                    <TextBlock Margin="4,0" Text="{DynamicResource Text.Preferences.Appearance.FontSize.Editor}"/>
-                  </Border>
-                </NumericUpDown.InnerLeftContent>
-              </NumericUpDown>
-            </Grid>
-
-            <TextBlock Grid.Row="4" Grid.Column="0"
-                       Text="{DynamicResource Text.Preferences.Appearance.EditorTabWidth}"
-                       HorizontalAlignment="Right"
-                       Margin="0,0,16,0"/>
-            <Grid Grid.Row="4" Grid.Column="1">
-              <NumericUpDown Minimum="1" Maximum="16" Increment="1"
-                             Height="28"
-                             Padding="4"
-                             BorderThickness="1" BorderBrush="{DynamicResource Brush.Border1}"
-                             CornerRadius="3"
-                             Value="{Binding EditorTabWidth, Mode=TwoWay}"/>
-            </Grid>
-
-            <TextBlock Grid.Row="5" Grid.Column="0"
-                       Text="{DynamicResource Text.Preferences.Appearance.ThemeOverrides}"
-                       HorizontalAlignment="Right"
-                       Margin="0,0,16,0"/>
-            <TextBox Grid.Row="5" Grid.Column="1"
-                     Height="28"
-                     CornerRadius="3"
-                     Text="{Binding ThemeOverrides, Mode=TwoWay}">
-              <TextBox.InnerRightContent>
-                <StackPanel Orientation="Horizontal">
-                  <Button Classes="icon_button" Width="28" Height="28" Click="SelectThemeOverrideFile">
-                    <Path Width="16" Height="16" Data="{StaticResource Icons.Folder.Open}" Margin="0,2,0,0" Fill="{DynamicResource Brush.FG1}"/>
-                  </Button>
-
-                  <Button Classes="icon_button" Width="28" Height="28" Click="OpenThemeRepository">
-                    <Path Width="14" Height="14" Data="{StaticResource Icons.Remotes}" Fill="{DynamicResource Brush.FG1}"/>
-                  </Button>
+                  <TextBlock Text="MyGIt Light" HorizontalAlignment="Center" FontWeight="SemiBold"/>
                 </StackPanel>
-              </TextBox.InnerRightContent>
-            </TextBox>
-
-            <CheckBox Grid.Row="6" Grid.Column="1"
-                      Height="32"
-                      Content="{DynamicResource Text.Preferences.Appearance.UseFixedTabWidth}"
-                      IsChecked="{Binding UseFixedTabWidth, Mode=TwoWay}"/>
-
-            <CheckBox Grid.Row="7" Grid.Column="1"
-                      Height="32"
-                      Content="{DynamicResource Text.Preferences.Appearance.UseAutoHideScrollBars}"
-                      IsChecked="{Binding UseAutoHideScrollBars, Mode=TwoWay}"/>
-
-            <CheckBox Grid.Row="8" Grid.Column="1"
-                      Height="32"
-                      Content="{DynamicResource Text.Preferences.Appearance.UseNativeWindowFrame}"
-                      IsChecked="{Binding UseSystemWindowFrame, Mode=OneTime}"
-                      IsVisible="{OnPlatform False, Linux=True}"
-                      IsCheckedChanged="OnUseNativeWindowFrameChanged"/>
-          </Grid>
+              </Button>
+              <Button Grid.Column="1" Click="OnSelectMyGItDark"
+                      Classes="flat mygit_action" Padding="9"
+                      CornerRadius="12" Height="122">
+                <StackPanel Spacing="8">
+                  <Border Background="#FF152031" CornerRadius="9" Height="64"
+                          BorderBrush="#FF334662" BorderThickness="1">
+                    <Grid Margin="8" ColumnDefinitions="36,*">
+                      <Border Background="#FF2C3F5C" CornerRadius="6"/>
+                      <StackPanel Grid.Column="1" Margin="7,5,0,0" Spacing="7">
+                        <Border Background="#FF8996FF" CornerRadius="3" Height="7" Width="63"
+                                HorizontalAlignment="Left"/>
+                        <Border Background="#FF536581" CornerRadius="3" Height="6" Width="84"
+                                HorizontalAlignment="Left"/>
+                        <Border Background="#FF536581" CornerRadius="3" Height="6" Width="56"
+                                HorizontalAlignment="Left"/>
+                      </StackPanel>
+                    </Grid>
+                  </Border>
+                  <TextBlock Text="MyGIt Dark" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                </StackPanel>
+              </Button>
+              <Button Grid.Column="2" Click="OnSelectSystemTheme"
+                      Classes="flat mygit_action" Padding="9"
+                      CornerRadius="12" Height="122">
+                <StackPanel Spacing="8">
+                  <Border CornerRadius="9" Height="64"
+                          BorderBrush="{DynamicResource Brush.Border2}" BorderThickness="1">
+                    <Grid ColumnDefinitions="*,*">
+                      <Border Grid.Column="0" Background="#FFF1F4FA" CornerRadius="8,0,0,8"/>
+                      <Border Grid.Column="1" Background="#FF27354D" CornerRadius="0,8,8,0"/>
+                      <Path Width="25" Height="25" Data="{StaticResource Icons.Settings}"
+                            Fill="{DynamicResource Brush.Accent}"/>
+                    </Grid>
+                  </Border>
+                  <TextBlock Text="System" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                </StackPanel>
+              </Button>
+            </Grid>
+            <Border Classes="mygit_card" Padding="18">
+              <Grid Margin="0" RowDefinitions="32,32,32,32,32,32,32,32,Auto" ColumnDefinitions="Auto,*">
+                          <TextBlock Grid.Row="0" Grid.Column="0"
+                                     Text="{DynamicResource Text.Preferences.Appearance.Theme}"
+                                     HorizontalAlignment="Right"
+                                     Margin="0,0,16,0"/>
+                          <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Theme}"
+                                     FontWeight="SemiBold" Foreground="{DynamicResource Brush.Accent}"/>
+              
+                          <TextBlock Grid.Row="1" Grid.Column="0"
+                                     Text="{DynamicResource Text.Preferences.Appearance.DefaultFont}"
+                                     HorizontalAlignment="Right"
+                                     Margin="0,0,16,0"/>
+                          <TextBox Grid.Row="1" Grid.Column="1"
+                                   Height="28"
+                                   CornerRadius="3"
+                                   Text="{Binding DefaultFontFamily, Mode=TwoWay}"/>
+              
+                          <TextBlock Grid.Row="2" Grid.Column="0"
+                                     Text="{DynamicResource Text.Preferences.Appearance.MonospaceFont}"
+                                     HorizontalAlignment="Right"
+                                     Margin="0,0,16,0"/>
+                          <TextBox Grid.Row="2" Grid.Column="1"
+                                   Height="28"
+                                   CornerRadius="3"
+                                   Text="{Binding MonospaceFontFamily, Mode=TwoWay}"/>
+              
+                          <TextBlock Grid.Row="3" Grid.Column="0"
+                                     Text="{DynamicResource Text.Preferences.Appearance.FontSize}"
+                                     HorizontalAlignment="Right"
+                                     Margin="0,0,16,0"/>
+                          <Grid Grid.Row="3" Grid.Column="1" ColumnDefinitions="*,8,*">
+                            <NumericUpDown Grid.Column="0"
+                                           Minimum="10" Maximum="18" Increment="0.5"
+                                           Height="28"
+                                           Padding="4"
+                                           BorderThickness="1" BorderBrush="{DynamicResource Brush.Border1}"
+                                           CornerRadius="3"
+                                           Value="{Binding DefaultFontSize, Mode=TwoWay}">
+                              <NumericUpDown.InnerLeftContent>
+                                <Border BorderThickness="0,0,1,0" BorderBrush="{DynamicResource Brush.Border1}">
+                                  <TextBlock Margin="4,0" Text="{DynamicResource Text.Preferences.Appearance.FontSize.Default}"/>
+                                </Border>
+                              </NumericUpDown.InnerLeftContent>
+                            </NumericUpDown>
+                            <NumericUpDown Grid.Column="2"
+                                           Minimum="10" Maximum="18" Increment="0.5"
+                                           Height="28"
+                                           Padding="4"
+                                           BorderThickness="1" BorderBrush="{DynamicResource Brush.Border1}"
+                                           CornerRadius="3"
+                                           Value="{Binding EditorFontSize, Mode=TwoWay}">
+                              <NumericUpDown.InnerLeftContent>
+                                <Border BorderThickness="0,0,1,0" BorderBrush="{DynamicResource Brush.Border1}">
+                                  <TextBlock Margin="4,0" Text="{DynamicResource Text.Preferences.Appearance.FontSize.Editor}"/>
+                                </Border>
+                              </NumericUpDown.InnerLeftContent>
+                            </NumericUpDown>
+                          </Grid>
+              
+                          <TextBlock Grid.Row="4" Grid.Column="0"
+                                     Text="{DynamicResource Text.Preferences.Appearance.EditorTabWidth}"
+                                     HorizontalAlignment="Right"
+                                     Margin="0,0,16,0"/>
+                          <Grid Grid.Row="4" Grid.Column="1">
+                            <NumericUpDown Minimum="1" Maximum="16" Increment="1"
+                                           Height="28"
+                                           Padding="4"
+                                           BorderThickness="1" BorderBrush="{DynamicResource Brush.Border1}"
+                                           CornerRadius="3"
+                                           Value="{Binding EditorTabWidth, Mode=TwoWay}"/>
+                          </Grid>
+              
+                          <TextBlock Grid.Row="5" Grid.Column="0"
+                                     Text="{DynamicResource Text.Preferences.Appearance.ThemeOverrides}"
+                                     HorizontalAlignment="Right"
+                                     Margin="0,0,16,0"/>
+                          <TextBox Grid.Row="5" Grid.Column="1"
+                                   Height="28"
+                                   CornerRadius="3"
+                                   Text="{Binding ThemeOverrides, Mode=TwoWay}">
+                            <TextBox.InnerRightContent>
+                              <StackPanel Orientation="Horizontal">
+                                <Button Classes="icon_button" Width="28" Height="28" Click="SelectThemeOverrideFile">
+                                  <Path Width="16" Height="16" Data="{StaticResource Icons.Folder.Open}" Margin="0,2,0,0" Fill="{DynamicResource Brush.FG1}"/>
+                                </Button>
+              
+                                <Button Classes="icon_button" Width="28" Height="28" Click="OpenThemeRepository">
+                                  <Path Width="14" Height="14" Data="{StaticResource Icons.Remotes}" Fill="{DynamicResource Brush.FG1}"/>
+                                </Button>
+                              </StackPanel>
+                            </TextBox.InnerRightContent>
+                          </TextBox>
+              
+                          <CheckBox Grid.Row="6" Grid.Column="1"
+                                    Height="32"
+                                    Content="{DynamicResource Text.Preferences.Appearance.UseFixedTabWidth}"
+                                    IsChecked="{Binding UseFixedTabWidth, Mode=TwoWay}"/>
+              
+                          <CheckBox Grid.Row="7" Grid.Column="1"
+                                    Height="32"
+                                    Content="{DynamicResource Text.Preferences.Appearance.UseAutoHideScrollBars}"
+                                    IsChecked="{Binding UseAutoHideScrollBars, Mode=TwoWay}"/>
+              
+                          <CheckBox Grid.Row="8" Grid.Column="1"
+                                    Height="32"
+                                    Content="{DynamicResource Text.Preferences.Appearance.UseNativeWindowFrame}"
+                                    IsChecked="{Binding UseSystemWindowFrame, Mode=OneTime}"
+                                    IsVisible="{OnPlatform False, Linux=True}"
+                                    IsCheckedChanged="OnUseNativeWindowFrameChanged"/>
+                        </Grid>
+            </Border>
+          </StackPanel>
         </TabItem>
 
         <TabItem>

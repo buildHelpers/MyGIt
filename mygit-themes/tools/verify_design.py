@@ -89,6 +89,9 @@ def check_completed_screens(root: Path) -> None:
     require('Click="OnOpenWorktree"' in branches and
             'void OnOpenWorktree(' in branch_code,
             'Worktree cards need an explicit Open action')
+    require('Click="OnCheckoutBranch"' in branches and
+            'void OnCheckoutBranch(' in branch_code,
+            'Eligible local branches need explicit checkout action')
 
     conflict = ET.fromstring(read(root, 'src/Views/MergeConflictEditor.axaml'))
     editors = [n for n in conflict.iter(A + 'Grid') if

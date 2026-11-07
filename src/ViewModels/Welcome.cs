@@ -63,7 +63,7 @@ namespace SourceGit.ViewModels
                         IsUnmanaged = true,
                     });
 
-                    if (recent.Count == 6)
+                    if (recent.Count == 8)
                         break;
                 }
 

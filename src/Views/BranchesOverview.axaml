@@ -23,6 +23,18 @@
           </StackPanel>
         </Grid>
 
+        <!-- Live search applies to both local and remote branches. -->
+        <TextBox Classes="mygit_search" Height="36"
+                 Padding="12,0" CornerRadius="9"
+                 Watermark="{DynamicResource Text.Repository.Filter}"
+                 Text="{Binding BranchSearchText, Mode=TwoWay}"
+                 VerticalContentAlignment="Center">
+          <TextBox.InnerLeftContent>
+            <Path Width="14" Height="14" Margin="6,0,8,0"
+                  Data="{StaticResource Icons.Search}" Fill="{DynamicResource Brush.FG2}"/>
+          </TextBox.InnerLeftContent>
+        </TextBox>
+
         <!-- A complete branch table; double-click a local branch to use SourceGit checkout. -->
         <Border Classes="mygit_surface" ClipToBounds="True">
           <Grid RowDefinitions="36,Auto">
@@ -38,7 +50,7 @@
                          Margin="4,0" Classes="mygit_section_label"/>
             </Grid>
             <ListBox Grid.Row="1" x:Name="BranchesList"
-                     ItemsSource="{Binding Branches, Mode=OneWay}"
+                     ItemsSource="{Binding FilteredBranches, Mode=OneWay}"
                      Background="Transparent" BorderThickness="0"
                      MaxHeight="360">
               <ListBox.Styles>
@@ -79,6 +91,10 @@
                 </DataTemplate>
               </ListBox.ItemTemplate>
             </ListBox>
+            <TextBlock Grid.Row="1" HorizontalAlignment="Center" Margin="12,20"
+                       Text="{DynamicResource Text.QuickRepo.NoResults}"
+                       Foreground="{DynamicResource Brush.Mygit.Muted}"
+                       IsVisible="{Binding !HasFilteredBranches}"/>
           </Grid>
         </Border>
 
@@ -115,6 +131,10 @@
                   <TextBlock Text="{Binding DisplayPath}" FontSize="11"
                              Foreground="{DynamicResource Brush.Mygit.Muted}"
                              TextTrimming="CharacterEllipsis"/>
+                  <Button Classes="flat mygit_action" Height="29"
+                          HorizontalAlignment="Left" Padding="11,0"
+                          Content="{DynamicResource Text.Worktree.Open}"
+                          Click="OnOpenWorktree"/>
                   <TextBlock Text="{DynamicResource Text.Worktree.Open}"
                              IsVisible="{Binding IsCurrent}" FontSize="11"
                              Foreground="{DynamicResource Brush.Mygit.Success}"/>

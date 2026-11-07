@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -167,8 +168,37 @@ namespace SourceGit.ViewModels
         public List<Models.Branch> Branches
         {
             get => _branches;
-            private set => SetProperty(ref _branches, value);
+            private set
+            {
+                if (SetProperty(ref _branches, value))
+                {
+                    OnPropertyChanged(nameof(FilteredBranches));
+                    OnPropertyChanged(nameof(HasFilteredBranches));
+                }
+            }
         }
+
+        /// <summary>Searches all local and remote branches without changing Git state.</summary>
+        public string BranchSearchText
+        {
+            get => _branchSearchText;
+            set
+            {
+                if (SetProperty(ref _branchSearchText, value))
+                {
+                    OnPropertyChanged(nameof(FilteredBranches));
+                    OnPropertyChanged(nameof(HasFilteredBranches));
+                }
+            }
+        }
+
+        public List<Models.Branch> FilteredBranches => string.IsNullOrWhiteSpace(_branchSearchText)
+            ? Branches
+            : Branches.Where(branch =>
+                branch.FriendlyName.Contains(_branchSearchText.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                (branch.Upstream?.Contains(_branchSearchText.Trim(), StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
+
+        public bool HasFilteredBranches => FilteredBranches.Count > 0;
 
         public Models.Branch CurrentBranch
         {
@@ -2013,6 +2043,7 @@ namespace SourceGit.ViewModels
         private string _filter = string.Empty;
         private List<Models.Remote> _remotes = [];
         private List<Models.Branch> _branches = [];
+        private string _branchSearchText = string.Empty;
         private Models.Branch _currentBranch = null;
         private List<BranchTreeNode> _localBranchTrees = [];
         private List<BranchTreeNode> _remoteBranchTrees = [];

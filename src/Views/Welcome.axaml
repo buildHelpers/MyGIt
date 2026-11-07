@@ -26,12 +26,11 @@
             <TextBlock Text="{DynamicResource Text.Launcher.Workspaces}" Foreground="{DynamicResource Brush.FG2}"/>
           </StackPanel>
         </StackPanel>
-        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Spacing="10">
-          <Button Classes="flat" Height="34" CornerRadius="8" Padding="14,0"
-                  Content="{DynamicResource Text.Welcome.OpenOrInit}" Click="OnOpenLocalRepository"/>
-          <Button Classes="flat primary" Height="34" CornerRadius="8" Padding="14,0"
-                  Content="{DynamicResource Text.Welcome.Clone}" Click="OnCloneRepository"/>
-        </StackPanel>
+        <Border Grid.Column="1" Width="54" Height="54" CornerRadius="16"
+                Background="{DynamicResource Brush.Mygit.Selected}" VerticalAlignment="Center">
+          <Path Data="{StaticResource Icons.Repositories}" Width="24" Height="24"
+                Fill="{DynamicResource Brush.Accent}"/>
+        </Border>
       </Grid>
     </Border>
 
@@ -49,15 +48,12 @@
         <TextBlock Text="{DynamicResource Text.Launcher.Workspaces}" FontWeight="SemiBold" Foreground="{DynamicResource Brush.FG2}"/>
         <TextBlock Text="{Binding ActiveWorkspace.Name}" FontSize="17" FontWeight="Bold" TextWrapping="Wrap"/>
         <Border Height="1" Margin="0,8" Background="{DynamicResource Brush.Border2}"/>
-        <Button Classes="flat" CornerRadius="8" Height="34" Padding="8,0"
-                HorizontalContentAlignment="Left"
-                Content="{DynamicResource Text.Welcome.Search}" Click="OnFocusRepositorySearch"/>
-        <Button Classes="flat" CornerRadius="8" Height="34" Padding="8,0"
-                HorizontalContentAlignment="Left"
-                Content="{DynamicResource Text.Welcome.OpenOrInit}" Click="OnOpenLocalRepository"/>
-        <Button Classes="flat" CornerRadius="8" Height="34" Padding="8,0"
-                HorizontalContentAlignment="Left"
-                Content="{DynamicResource Text.Welcome.Clone}" Click="OnCloneRepository"/>
+        <TextBlock Text="{DynamicResource Text.PageTabBar.Welcome.Title}"
+                   Classes="mygit_section_label" Margin="0,8,0,0"/>
+        <TextBlock Text="{Binding ManagedRepositoryCount}" FontSize="27" FontWeight="Bold"/>
+        <Border Height="1" Margin="0,6" Background="{DynamicResource Brush.Mygit.Hairline}"/>
+        <TextBlock Text="{DynamicResource Text.Welcome.DragDropTip}"
+                   Classes="mygit_section_label" TextWrapping="Wrap"/>
       </StackPanel>
     </Border>
 
@@ -75,7 +71,7 @@
     </Border>
 
     <!-- Managed Repositories -->
-    <Grid Grid.Row="0" Grid.Column="1" RowDefinitions="Auto,Auto,*">
+    <Grid Grid.Row="0" Grid.Column="1" RowDefinitions="Auto,Auto,Auto,*">
       <!-- Search Box -->
       <TextBox Grid.Row="0"
                x:Name="SearchBox"
@@ -116,23 +112,59 @@
         </TextBox.InnerRightContent>
       </TextBox>
 
+      <!-- Primary actions match the original home design and reuse SourceGit commands. -->
+      <Grid Grid.Row="1" ColumnDefinitions="*,*,*" ColumnSpacing="10" Margin="0,12,8,0">
+        <Button Grid.Column="0" Classes="flat" Height="88" CornerRadius="12"
+                Background="{DynamicResource Brush.Mygit.Card}"
+                Click="OnCloneRepository" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
+          <StackPanel Spacing="8" HorizontalAlignment="Center">
+            <Path Data="{StaticResource Icons.Clone}" Width="22" Height="22"
+                  Fill="{DynamicResource Brush.Accent}"/>
+            <TextBlock Text="{DynamicResource Text.Welcome.Clone}" HorizontalAlignment="Center"
+                       FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+          </StackPanel>
+        </Button>
+        <Button Grid.Column="1" Classes="flat" Height="88" CornerRadius="12"
+                Background="{DynamicResource Brush.Mygit.Card}"
+                Click="OnOpenLocalRepository" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
+          <StackPanel Spacing="8" HorizontalAlignment="Center">
+            <Path Data="{StaticResource Icons.Folder.Open}" Width="22" Height="22"
+                  Fill="{DynamicResource Brush.Accent}"/>
+            <TextBlock Text="{DynamicResource Text.Welcome.OpenOrInit}" HorizontalAlignment="Center"
+                       FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+          </StackPanel>
+        </Button>
+        <Button Grid.Column="2" Classes="flat" Height="88" CornerRadius="12"
+                Background="{DynamicResource Brush.Mygit.Card}"
+                Command="{Binding AddRootNode}" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
+          <StackPanel Spacing="8" HorizontalAlignment="Center">
+            <Path Data="{StaticResource Icons.Folder.Add}" Width="22" Height="22"
+                  Fill="{DynamicResource Brush.Accent}"/>
+            <TextBlock Text="{DynamicResource Text.Welcome.AddRootFolder}" HorizontalAlignment="Center"
+                       FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+          </StackPanel>
+        </Button>
+      </Grid>
+
       <!-- Most recently used repositories; same validated open action as the tree. -->
-      <StackPanel Grid.Row="1" Margin="0,16,0,12" Spacing="9">
+      <StackPanel Grid.Row="2" Margin="0,14,0,10" Spacing="9">
         <StackPanel Orientation="Horizontal" Spacing="10">
           <TextBlock Text="{DynamicResource Text.QuickRepo.Recent}" FontSize="15" FontWeight="SemiBold"/>
           <TextBlock Text="{DynamicResource Text.PageTabBar.Welcome.Title}"
                      Classes="mygit_section_label"/>
         </StackPanel>
-        <ItemsControl ItemsSource="{Binding RecentRepositories, Mode=OneWay}">
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"
+                      Height="126">
+          <ItemsControl ItemsSource="{Binding RecentRepositories, Mode=OneWay}">
           <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
-              <WrapPanel Orientation="Horizontal"/>
+              <StackPanel Orientation="Horizontal"/>
             </ItemsPanelTemplate>
           </ItemsControl.ItemsPanel>
           <ItemsControl.ItemTemplate>
             <DataTemplate DataType="vm:RepositoryNode">
               <Border Classes="mygit_card"
-                      Width="240" Margin="0,0,10,10"
+                      Width="206" Margin="0,0,10,10"
                       Tapped="OnRecentRepositoryTapped"
                       ToolTip.Tip="{Binding Id}">
                 <StackPanel Spacing="9">
@@ -153,11 +185,12 @@
               </Border>
             </DataTemplate>
           </ItemsControl.ItemTemplate>
-        </ItemsControl>
+          </ItemsControl>
+        </ScrollViewer>
       </StackPanel>
 
       <!-- Repository Tree -->
-      <v:RepositoryListBox Grid.Row="2"
+      <v:RepositoryListBox Grid.Row="3"
                            x:Name="TreeContainer"
                            Margin="0,12,8,0"
                            Focusable="True"

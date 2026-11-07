@@ -54,6 +54,15 @@ namespace SourceGit.Views
             }
         }
 
+        private void OnOpenWorktree(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button { DataContext: ViewModels.Worktree tree })
+            {
+                App.GetLauncher().OpenRepositoryInTab(tree.FullPath, null);
+                e.Handled = true;
+            }
+        }
+
         private void OnWorktreeDoubleTapped(object sender, TappedEventArgs e)
         {
             if (sender is Border { DataContext: ViewModels.Worktree tree })

@@ -330,7 +330,7 @@ diff --git a/src/Resources/Styles.axaml b/src/Resources/Styles.axaml
    <Style Selector="ListBox.repo_left_content_list">
      <Setter Property="Background" Value="Transparent"/>
      <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
-@@ -1545,5 +1561,75 @@
+@@ -1545,4 +1561,74 @@
        </ControlTemplate>
      </Setter>
    </Style>

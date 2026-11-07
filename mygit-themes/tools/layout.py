@@ -141,7 +141,12 @@ def prepare(profile_id: str, dest: Path, source: Path = ROOT, build: bool = Fals
             git(dest, "apply", "--whitespace=nowarn", str(patch))
             print(f"APPLIED {patch.relative_to(THEMES_DIR)}")
         if profile_id == "mygit-design":
-            subprocess.run([sys.executable, str(THEMES_DIR / "tools" / "verify_design.py"), str(dest)], check=True)
+            # Replace application resources only in the detached design worktree.
+            # Upstream src/App.ico, macOS App.icns and Linux icons stay untouched.
+            subprocess.run([sys.executable, str(THEMES_DIR / "tools" / "icons.py"),
+                            "--root", str(dest)], check=True)
+            subprocess.run([sys.executable, str(THEMES_DIR / "tools" / "verify_design.py"),
+                            str(dest)], check=True)
     except (OSError, subprocess.CalledProcessError):
         if created:
             # Only remove the detached worktree created by this invocation.

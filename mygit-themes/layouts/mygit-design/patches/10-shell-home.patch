@@ -285,7 +285,7 @@ diff --git a/src/Views/LauncherPage.axaml b/src/Views/LauncherPage.axaml
              PointerPressed="OnToolBarPointerPressed">
        <ContentControl Content="{Binding Data}">
          <ContentControl.DataTemplates>
-@@ -33,9 +35,9 @@
+@@ -33,8 +35,8 @@
          <ContentControl.DataTemplates>
            <DataTemplate DataType="vm:Welcome">
              <v:Welcome Margin="4,0,4,4"

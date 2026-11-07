@@ -63,6 +63,19 @@ namespace SourceGit.Views
             }
         }
 
+        private void OnCheckoutBranch(object sender, RoutedEventArgs e)
+        {
+            // Explicit action uses SourceGit's existing checkout confirmation.
+            if (sender is Button { DataContext: Models.Branch branch } &&
+                DataContext is ViewModels.Repository repository &&
+                repository.CanCreatePopup() &&
+                branch is { IsLocal: true, IsCurrent: false, HasWorktree: false })
+            {
+                repository.ShowPopup(new ViewModels.Checkout(repository, branch));
+                e.Handled = true;
+            }
+        }
+
         private void OnWorktreeDoubleTapped(object sender, TappedEventArgs e)
         {
             if (sender is Border { DataContext: ViewModels.Worktree tree })

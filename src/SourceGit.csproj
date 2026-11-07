@@ -4,6 +4,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <ApplicationManifest>App.manifest</ApplicationManifest>
     <ApplicationIcon>App.ico</ApplicationIcon>
+    <!-- Independent MyGIt builds must not show upstream SourceGit update prompts. -->
+    <DisableUpdateDetection>true</DisableUpdateDetection>
     <Version>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)\\..\\VERSION"))</Version>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
@@ -11,11 +13,11 @@
 
     <Product>MyGIt</Product>
     <Description>Cross-platform Git desktop client</Description>
-    <Company>sourcegit-scm</Company>
+    <Company>buildHelpers</Company>
     <Copyright>Copyright © $([System.DateTime]::Now.Year) sourcegit-scm.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/sourcegit-scm/sourcegit.git</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/sourcegit-scm/sourcegit.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/buildHelpers/MyGIt</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/buildHelpers/MyGIt</RepositoryUrl>
     <RepositoryType>Public</RepositoryType>
   </PropertyGroup>
 

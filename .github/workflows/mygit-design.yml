@@ -1,0 +1,60 @@
+name: MyGIt Design Theme Checks
+
+on:
+  push:
+    branches: [mygit]
+    paths:
+      - 'mygit-themes/**'
+      - '.github/workflows/mygit-design.yml'
+  pull_request:
+    branches: [mygit]
+    paths:
+      - 'mygit-themes/**'
+      - '.github/workflows/mygit-design.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  macos-design:
+    name: Mac build and layout compatibility
+    runs-on: macos-latest
+    timeout-minutes: 35
+    steps:
+      - name: Check out upstream-compatible product branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Configure Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run pure-Python design theme tests
+        run: python3 -m unittest discover -s mygit-themes/tools -p 'test_*.py'
+
+      - name: Validate original six-screen design against this upstream baseline
+        run: python3 mygit-themes/tools/theme.py check mygit-design
+
+      - name: Configure .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Prepare independent MyGIt UI and platform icons
+        run: python3 mygit-themes/tools/theme.py prepare mygit-design --output ../MyGIt-Design
+
+      - name: Initialize independent build worktree submodules
+        run: git -C ../MyGIt-Design submodule update --init --recursive
+
+      - name: Compile the actual Avalonia application
+        working-directory: ../MyGIt-Design
+        run: dotnet build src/SourceGit.csproj -c Debug -p:DisableAOT=true
+
+      - name: Keep the original upstream and product code untouched
+        run: |
+          test -z "$(git status --porcelain)"
+          echo "Product branch tree is clean. All UI changes remain in the isolated worktree."

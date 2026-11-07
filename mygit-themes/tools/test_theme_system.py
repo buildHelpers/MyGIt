@@ -65,7 +65,7 @@ class MyGItThemeTests(unittest.TestCase):
         self.assertEqual(struct.unpack(">II", png[16:24]), (32, 32))
         images = {size: icons.render_png(size) for size in (16, 32, 48, 64, 128, 256)}
         ico = icons.make_ico(images)
-        self.assertEqual(ico[:4], b"\\x00\\x00\\x01\\x00")
+        self.assertEqual(ico[:4], b"\x00\x00\x01\x00")
         self.assertEqual(struct.unpack("<H", ico[4:6])[0], 6)
         self.assertTrue((layout.THEMES_DIR / 'assets/MyGIt-icon.svg').is_file())
 

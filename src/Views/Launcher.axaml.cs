@@ -359,54 +359,74 @@ namespace SourceGit.Views
             }
         }
 
+        // The home button remains available regardless of the selected repository tab.
+        private void OnShowWorkspaceHome(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is ViewModels.Launcher launcher)
+                launcher.ShowWorkspaceHome();
+
+            e.Handled = true;
+        }
+
         private void OnOpenWorkspaceMenu(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && DataContext is ViewModels.Launcher launcher)
             {
-                if (launcher.CommandPalette != null)
-                    launcher.CommandPalette = null;
+                launcher.CommandPalette = null;
 
                 var pref = ViewModels.Preferences.Instance;
-                var menu = new ContextMenu();
-                menu.Placement = PlacementMode.BottomEdgeAlignedLeft;
-                menu.VerticalOffset = -6;
-
-                var groupHeader = new TextBlock()
+                var menu = new ContextMenu
                 {
-                    Text = App.Text("Launcher.Workspaces"),
-                    FontWeight = FontWeight.Bold,
+                    Placement = PlacementMode.BottomEdgeAlignedLeft,
+                    VerticalOffset = -6,
                 };
 
-                var workspaces = new MenuItem();
-                workspaces.Header = groupHeader;
-                workspaces.IsEnabled = false;
-                menu.Items.Add(workspaces);
-
-                for (var i = 0; i < pref.Workspaces.Count; i++)
+                // One click to return home, keeping every open repository tab intact.
+                var home = new MenuItem
                 {
-                    var workspace = pref.Workspaces[i];
+                    Header = App.Text("PageTabBar.Welcome.Title"),
+                    Icon = this.CreateMenuIcon("Icons.Workspace"),
+                };
+                home.Click += (_, ev) =>
+                {
+                    launcher.ShowWorkspaceHome();
+                    ev.Handled = true;
+                };
+                menu.Items.Add(home);
+                menu.Items.Add(new MenuItem { Header = "-" });
 
+                menu.Items.Add(new MenuItem
+                {
+                    Header = new TextBlock
+                    {
+                        Text = App.Text("Launcher.Workspaces"),
+                        FontWeight = FontWeight.Bold,
+                    },
+                    IsEnabled = false,
+                });
+
+                foreach (var workspace in pref.Workspaces)
+                {
                     var icon = this.CreateMenuIcon(workspace.IsActive ? "Icons.Check" : "Icons.Workspace");
                     icon.Fill = workspace.Brush;
 
-                    var item = new MenuItem();
-                    item.Header = workspace.Name;
-                    item.Icon = icon;
+                    var item = new MenuItem { Header = workspace.Name, Icon = icon };
                     item.Click += (_, ev) =>
                     {
                         if (!workspace.IsActive)
                             launcher.SwitchWorkspace(workspace);
+                        else
+                            launcher.ShowWorkspaceHome();
 
                         ev.Handled = true;
                     };
-
                     menu.Items.Add(item);
                 }
 
-                menu.Items.Add(new MenuItem() { Header = "-" });
+                // Repository search and recent lists live in the separate top-bar repository button.
+                menu.Items.Add(new MenuItem { Header = "-" });
 
-                var configure = new MenuItem();
-                configure.Header = App.Text("Workspace.Configure");
+                var configure = new MenuItem { Header = App.Text("Workspace.Configure") };
                 configure.Click += async (_, ev) =>
                 {
                     await this.ShowDialogAsync(new ViewModels.ConfigureWorkspace());
@@ -419,11 +439,45 @@ namespace SourceGit.Views
             e.Handled = true;
         }
 
+        // An anchored flyout places recent repositories and a search field one click away.
+        private void OnOpenRecentRepositories(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && DataContext is ViewModels.Launcher launcher)
+            {
+                launcher.CommandPalette = null;
+
+                if (_quickRepositoryFlyout is { IsOpen: true })
+                {
+                    _quickRepositoryFlyout.Hide();
+                }
+                else
+                {
+                    var switcher = new QuickRepositorySwitcher(launcher);
+                    var flyout = new Flyout
+                    {
+                        Placement = PlacementMode.BottomEdgeAlignedLeft,
+                        Content = switcher,
+                    };
+
+                    switcher.CloseRequested += (_, _) => flyout.Hide();
+                    flyout.Closed += (_, _) =>
+                    {
+                        if (ReferenceEquals(_quickRepositoryFlyout, flyout))
+                            _quickRepositoryFlyout = null;
+                    };
+
+                    _quickRepositoryFlyout = flyout;
+                    flyout.ShowAt(button);
+                }
+            }
+
+            e.Handled = true;
+        }
+
         private void OnOpenPagesCommandPalette(object sender, RoutedEventArgs e)
         {
-            if (DataContext is ViewModels.Launcher vm)
-                vm.CommandPalette = new ViewModels.LauncherPagesCommandPalette(vm);
-            e.Handled = true;
+            // Click and Ctrl/Cmd+P must reach the same repository picker.
+            OnOpenRecentRepositories(sender, e);
         }
 
         private void OnCloseCommandPalette(object sender, PointerPressedEventArgs e)
@@ -447,6 +501,7 @@ namespace SourceGit.Views
             e.Handled = true;
         }
 
+        private Flyout _quickRepositoryFlyout = null;
         private GridLength _captionHeight = new(32);
         private WindowState _lastWindowState = WindowState.Normal;
     }

@@ -9,15 +9,69 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SourceGit.Views.Welcome"
              x:DataType="vm:Welcome">
-  <Grid RowDefinitions="*,Auto" Margin="8">
+  <Grid RowDefinitions="Auto,*" Margin="24,18,24,16">
+    <!-- Home hero: real workspace data, not a static dashboard. -->
+    <Border Grid.Row="0" Background="{DynamicResource Brush.SubPanel}"
+            CornerRadius="14" BorderThickness="1" BorderBrush="{DynamicResource Brush.Border2}"
+            Padding="24,18">
+      <Grid ColumnDefinitions="*,Auto">
+        <StackPanel Grid.Column="0" Spacing="7">
+          <TextBlock Text="MYGIT  /  WORKSPACE" Foreground="{DynamicResource Brush.Accent}" FontSize="11" FontWeight="SemiBold"/>
+          <TextBlock Text="{Binding ActiveWorkspace.Name}" FontSize="25" FontWeight="Bold"/>
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Text="{Binding ManagedRepositoryCount}" Foreground="{DynamicResource Brush.FG2}" FontWeight="SemiBold"/>
+            <TextBlock Text="{DynamicResource Text.PageTabBar.Welcome.Title}" Foreground="{DynamicResource Brush.FG2}"/>
+            <TextBlock Text="·" Foreground="{DynamicResource Brush.FG2}"/>
+            <TextBlock Text="{Binding WorkspaceCount}" Foreground="{DynamicResource Brush.FG2}" FontWeight="SemiBold"/>
+            <TextBlock Text="{DynamicResource Text.Launcher.Workspaces}" Foreground="{DynamicResource Brush.FG2}"/>
+          </StackPanel>
+        </StackPanel>
+        <Border Grid.Column="1" Width="54" Height="54" CornerRadius="16"
+                Background="{DynamicResource Brush.Mygit.Selected}" VerticalAlignment="Center">
+          <Path Data="{StaticResource Icons.Repositories}" Width="24" Height="24"
+                Fill="{DynamicResource Brush.Accent}"/>
+        </Border>
+      </Grid>
+    </Border>
+
+    <Grid Grid.Row="1" RowDefinitions="*,Auto" Margin="0,16,0,0">
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="1*"/>
-      <ColumnDefinition Width="2*" MinWidth="600"/>
-      <ColumnDefinition Width="1*"/>
+      <ColumnDefinition Width="170"/>
+      <ColumnDefinition Width="*" MinWidth="480"/>
+      <ColumnDefinition Width="210"/>
     </Grid.ColumnDefinitions>
 
+    <!-- Stable left navigation; workspace/repository switching is also available in the title bar. -->
+    <Border Grid.Row="0" Grid.Column="0" Margin="0,0,16,0" Padding="14,20"
+            Background="{DynamicResource Brush.SubPanel}" CornerRadius="12">
+      <StackPanel Spacing="12">
+        <TextBlock Text="{DynamicResource Text.Launcher.Workspaces}" FontWeight="SemiBold" Foreground="{DynamicResource Brush.FG2}"/>
+        <TextBlock Text="{Binding ActiveWorkspace.Name}" FontSize="17" FontWeight="Bold" TextWrapping="Wrap"/>
+        <Border Height="1" Margin="0,8" Background="{DynamicResource Brush.Border2}"/>
+        <TextBlock Text="{DynamicResource Text.PageTabBar.Welcome.Title}"
+                   Classes="mygit_section_label" Margin="0,8,0,0"/>
+        <TextBlock Text="{Binding ManagedRepositoryCount}" FontSize="27" FontWeight="Bold"/>
+        <Border Height="1" Margin="0,6" Background="{DynamicResource Brush.Mygit.Hairline}"/>
+        <TextBlock Text="{DynamicResource Text.Welcome.DragDropTip}"
+                   Classes="mygit_section_label" TextWrapping="Wrap"/>
+      </StackPanel>
+    </Border>
+
+    <!-- Read-only counts obtained from the existing repository/workspace model. -->
+    <Border Grid.Row="0" Grid.Column="2" Margin="16,0,0,0" Padding="16,20"
+            Background="{DynamicResource Brush.SubPanel}" CornerRadius="12">
+      <StackPanel Spacing="12">
+        <TextBlock Text="OVERVIEW" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Brush.FG2}"/>
+        <TextBlock Text="{Binding ManagedRepositoryCount}" FontSize="27" FontWeight="Bold"/>
+        <TextBlock Text="{DynamicResource Text.PageTabBar.Welcome.Title}" Foreground="{DynamicResource Brush.FG2}"/>
+        <Border Height="1" Margin="0,8" Background="{DynamicResource Brush.Border2}"/>
+        <TextBlock Text="{Binding WorkspaceCount}" FontSize="27" FontWeight="Bold"/>
+        <TextBlock Text="{DynamicResource Text.Launcher.Workspaces}" Foreground="{DynamicResource Brush.FG2}"/>
+      </StackPanel>
+    </Border>
+
     <!-- Managed Repositories -->
-    <Grid Grid.Row="0" Grid.Column="1" RowDefinitions="Auto,*">
+    <Grid Grid.Row="0" Grid.Column="1" RowDefinitions="Auto,Auto,Auto,*">
       <!-- Search Box -->
       <TextBox Grid.Row="0"
                x:Name="SearchBox"
@@ -58,10 +112,87 @@
         </TextBox.InnerRightContent>
       </TextBox>
 
+      <!-- Primary actions match the original home design and reuse SourceGit commands. -->
+      <Grid Grid.Row="1" ColumnDefinitions="*,*,*" ColumnSpacing="10" Margin="0,12,8,0">
+        <Button Grid.Column="0" Classes="flat" Height="88" CornerRadius="12"
+                Background="{DynamicResource Brush.Mygit.Card}"
+                Click="OnCloneRepository" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
+          <StackPanel Spacing="8" HorizontalAlignment="Center">
+            <Path Data="{StaticResource Icons.Clone}" Width="22" Height="22"
+                  Fill="{DynamicResource Brush.Accent}"/>
+            <TextBlock Text="{DynamicResource Text.Welcome.Clone}" HorizontalAlignment="Center"
+                       FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+          </StackPanel>
+        </Button>
+        <Button Grid.Column="1" Classes="flat" Height="88" CornerRadius="12"
+                Background="{DynamicResource Brush.Mygit.Card}"
+                Click="OnOpenLocalRepository" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
+          <StackPanel Spacing="8" HorizontalAlignment="Center">
+            <Path Data="{StaticResource Icons.Folder.Open}" Width="22" Height="22"
+                  Fill="{DynamicResource Brush.Accent}"/>
+            <TextBlock Text="{DynamicResource Text.Welcome.OpenOrInit}" HorizontalAlignment="Center"
+                       FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+          </StackPanel>
+        </Button>
+        <Button Grid.Column="2" Classes="flat" Height="88" CornerRadius="12"
+                Background="{DynamicResource Brush.Mygit.Card}"
+                Command="{Binding AddRootNode}" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
+          <StackPanel Spacing="8" HorizontalAlignment="Center">
+            <Path Data="{StaticResource Icons.Folder.Add}" Width="22" Height="22"
+                  Fill="{DynamicResource Brush.Accent}"/>
+            <TextBlock Text="{DynamicResource Text.Welcome.AddRootFolder}" HorizontalAlignment="Center"
+                       FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+          </StackPanel>
+        </Button>
+      </Grid>
+
+      <!-- Most recently used repositories; same validated open action as the tree. -->
+      <StackPanel Grid.Row="2" Margin="0,14,0,10" Spacing="9">
+        <StackPanel Orientation="Horizontal" Spacing="10">
+          <TextBlock Text="{DynamicResource Text.QuickRepo.Recent}" FontSize="15" FontWeight="SemiBold"/>
+          <TextBlock Text="{DynamicResource Text.PageTabBar.Welcome.Title}"
+                     Classes="mygit_section_label"/>
+        </StackPanel>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"
+                      Height="126">
+          <ItemsControl ItemsSource="{Binding RecentRepositories, Mode=OneWay}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <StackPanel Orientation="Horizontal"/>
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="vm:RepositoryNode">
+              <Border Classes="mygit_card"
+                      Width="206" Margin="0,0,10,10"
+                      Tapped="OnRecentRepositoryTapped"
+                      ToolTip.Tip="{Binding Id}">
+                <StackPanel Spacing="9">
+                  <StackPanel Orientation="Horizontal" Spacing="9">
+                    <Border Width="32" Height="32" CornerRadius="9"
+                            Background="{DynamicResource Brush.Mygit.Selected}">
+                      <Path Width="16" Height="16"
+                            Data="{StaticResource Icons.Repositories}"
+                            Fill="{DynamicResource Brush.Accent}"/>
+                    </Border>
+                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold"
+                               FontSize="14" TextTrimming="CharacterEllipsis"/>
+                  </StackPanel>
+                  <TextBlock Text="{Binding Id}" FontSize="11"
+                             Foreground="{DynamicResource Brush.Mygit.Muted}"
+                             TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </StackPanel>
+
       <!-- Repository Tree -->
-      <v:RepositoryListBox Grid.Row="1"
+      <v:RepositoryListBox Grid.Row="3"
                            x:Name="TreeContainer"
-                           Margin="0,8,8,0"
+                           Margin="0,12,8,0"
                            Focusable="True"
                            Background="Transparent"
                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -84,8 +215,8 @@
           <Style Selector="ListBoxItem" x:DataType="vm:RepositoryNode">
             <Setter Property="Margin" Value="0"/>
             <Setter Property="Padding" Value="0"/>
-            <Setter Property="Height" Value="30"/>
-            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="CornerRadius" Value="8"/>
             <Setter Property="FocusAdorner">
               <FocusAdornerTemplate>
                 <Border Background="Transparent" BorderThickness="0"/>
@@ -113,7 +244,7 @@
         <ListBox.ItemTemplate>
           <DataTemplate DataType="vm:RepositoryNode">
             <Grid Background="Transparent"
-                  Height="30"
+                  Height="36"
                   ColumnDefinitions="16,18,*,Auto,8"
                   Margin="{Binding Depth, Converter={x:Static c:IntConverters.ToTreeMargin}}"
                   ClipToBounds="True"
@@ -221,5 +352,6 @@
                  Text="{DynamicResource Text.Welcome.DragDropTip}"
                  Opacity=".5"/>
     </Border>
+    </Grid>
   </Grid>
 </UserControl>

@@ -24,10 +24,21 @@ namespace SourceGit.Views
                 return;
 
             var layout = ViewModels.Preferences.Instance.Layout;
-            var width = grid.Bounds.Width;
-            var leftWidth = Math.Max(width - 304, 300);
+            // Reserve the diff, both splitters and the right-side commit composer.
+            // The upstream two-pane formula does not include the composer width.
+            var columns = grid.ColumnDefinitions;
+            if (columns.Count != 5)
+                return;
 
-            if (layout.WorkingCopyLeftWidth.Value - leftWidth > 1.0)
+            var reserved = columns[1].Width.Value + columns[2].MinWidth +
+                           columns[3].Width.Value + Math.Max(columns[4].Width.Value, columns[4].MinWidth);
+            var maximum = Math.Max(columns[0].MinWidth, grid.Bounds.Width - reserved);
+            var requested = layout.WorkingCopyLeftWidth.IsAbsolute
+                ? layout.WorkingCopyLeftWidth.Value : columns[0].MinWidth;
+            var leftWidth = Math.Clamp(requested, columns[0].MinWidth, maximum);
+
+            if (!layout.WorkingCopyLeftWidth.IsAbsolute ||
+                Math.Abs(layout.WorkingCopyLeftWidth.Value - leftWidth) > 1.0)
                 layout.WorkingCopyLeftWidth = new GridLength(leftWidth, GridUnitType.Pixel);
         }
 

@@ -13,7 +13,7 @@
                     Icon="/App.ico"
                     Title="{DynamicResource Text.MergeConflictEditor.Title}"
                     MinWidth="1024" MinHeight="600">
-  <Grid RowDefinitions="Auto,32,*,32">
+  <Grid RowDefinitions="Auto,42,*,42" Background="{DynamicResource Brush.Mygit.Surface}">
     <!-- TitleBar -->
     <Grid Grid.Row="0" Height="28" IsVisible="{Binding !#ThisControl.UseSystemWindowFrame}">
       <Border Background="{DynamicResource Brush.TitleBar}"
@@ -36,7 +36,7 @@
     </Grid>
 
     <!-- Toolbar -->
-    <Border Grid.Row="1" Padding="8,0" Background="{DynamicResource Brush.ToolBar}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Border2}">
+    <Border Grid.Row="1" Padding="16,0" Background="{DynamicResource Brush.Mygit.Surface}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
       <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto">
         <Path Grid.Column="0" Width="14" Height="14" Data="{StaticResource Icons.File}"/>
 
@@ -74,13 +74,12 @@
     </Border>
 
     <!-- Main Content -->
-    <Grid Grid.Row="2" RowDefinitions="*,*" ColumnDefinitions="*,20">
-      <!-- Mine and Theirs Panels (Side-by-Side) -->
-      <Grid Grid.Row="0" Grid.Column="0" ColumnDefinitions="*,*" Margin="4,4,4,2">
+    <Grid Grid.Row="2" RowDefinitions="*" ColumnDefinitions="*,*,*,22" Margin="12,10,12,8">
+      <!-- Three balanced columns: ours | merged result | theirs. -->
         <!-- Mine (Ours) Panel -->
-        <Border Grid.Column="0" Margin="0,0,2,0">
-          <Grid RowDefinitions="26,*">
-            <Border Grid.Row="0" Padding="8,0" Background="{DynamicResource Brush.Popup}" BorderThickness="1,1,1,0" BorderBrush="{DynamicResource Brush.Border2}">
+        <Border Grid.Row="0" Grid.Column="0" Classes="mygit_surface" ClipToBounds="True" Margin="0,0,4,0">
+          <Grid RowDefinitions="36,*">
+            <Border Grid.Row="0" Padding="8,0" Background="{DynamicResource Brush.Mygit.Sidebar}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
               <Grid ColumnDefinitions="Auto,*">
                 <TextBlock Grid.Column="0"
                            Text="{DynamicResource Text.MergeConflictEditor.Mine}"
@@ -144,78 +143,10 @@
           </Grid>
         </Border>
 
-        <!-- Theirs Panel -->
-        <Border Grid.Column="1" Margin="2,0,0,0">
-          <Grid RowDefinitions="26,*">
-            <Border Grid.Row="0" Padding="8,0" Background="{DynamicResource Brush.Popup}" BorderThickness="1,1,1,0" BorderBrush="{DynamicResource Brush.Border2}">
-              <Grid ColumnDefinitions="Auto,*">
-                <TextBlock Grid.Column="0"
-                           Text="{DynamicResource Text.MergeConflictEditor.Theirs}"
-                           FontWeight="Bold"
-                           VerticalAlignment="Center"/>
-                <ContentControl Grid.Column="1" Margin="8,0,0,0" Content="{Binding Theirs, Mode=OneWay}">
-                  <ContentControl.DataTemplates>
-                    <DataTemplate DataType="m:Commit">
-                      <StackPanel Orientation="Horizontal">
-                        <v:CommitRefsPresenter Foreground="{DynamicResource Brush.FG1}"
-                                               FontSize="12"
-                                               VerticalAlignment="Center"
-                                               UseGraphColor="False"/>
-                        <TextBlock Margin="4,0,0,0"
-                                   FontFamily="{DynamicResource Fonts.Monospace}"
-                                   Text="{Binding SHA, Converter={x:Static c:StringConverters.ToShortSHA}}"
-                                   Foreground="DarkOrange"
-                                   TextDecorations="Underline"
-                                   Cursor="Hand"/>
-                        <TextBlock Margin="4,0,0,0" Text="{Binding Subject}"/>
-                      </StackPanel>
-                    </DataTemplate>
-                    <DataTemplate DataType="x:String">
-                      <StackPanel Orientation="Horizontal">
-                        <Path Width="12" Height="12" Data="{StaticResource Icons.Changes}"/>
-                        <TextBlock Margin="4,0,0,0" Text="{Binding}"/>
-                      </StackPanel>
-                    </DataTemplate>
-                  </ContentControl.DataTemplates>
-                </ContentControl>
-              </Grid>
-            </Border>
-            <Grid Grid.Row="1" Background="{DynamicResource Brush.Contents}">
-              <v:MergeConflictTextPresenter x:Name="TheirsPresenter"
-                                            PanelType="Theirs"
-                                            Lines="{Binding TheirsLines, Mode=OneWay}"
-                                            MaxLineNumber="{Binding MaxLineNumber}"
-                                            FileName="{Binding FilePath}"
-                                            SelectedChunk="{Binding SelectedChunk}"
-                                            FontFamily="{DynamicResource Fonts.Monospace}"
-                                            TheirsContentBackground="{DynamicResource Brush.Conflict.TheirsBG}"
-                                            OursContentBackground="{DynamicResource Brush.Conflict.MineBG}"
-                                            BorderThickness="1"
-                                            BorderBrush="{DynamicResource Brush.Border2}"/>
-              <Border x:Name="TheirsPopup"
-                      IsVisible="False"
-                      VerticalAlignment="Top"
-                      HorizontalAlignment="Right"
-                      Background="{DynamicResource Brush.ToolBar}"
-                      BorderBrush="{DynamicResource Brush.Border2}"
-                      BorderThickness="1"
-                      CornerRadius="4"
-                      Padding="4,2"
-                      BoxShadow="0 2 8 0 #40000000">
-                <Button Classes="flat primary"
-                        Content="{DynamicResource Text.MergeConflictEditor.UseTheirs}"
-                        Command="{Binding Resolve}"
-                        CommandParameter="{x:Static m:ConflictResolution.UseTheirs}"/>
-              </Border>
-            </Grid>
-          </Grid>
-        </Border>
-      </Grid>
-
       <!-- Result Panel -->
-      <Border Grid.Row="1" Grid.Column="0" Margin="4,2,4,4">
-        <Grid RowDefinitions="26,*">
-          <Border Grid.Row="0" Padding="8,0" Background="{DynamicResource Brush.Popup}" BorderThickness="1,1,1,0" BorderBrush="{DynamicResource Brush.Border2}">
+      <Border Grid.Row="0" Grid.Column="1" Classes="mygit_surface" ClipToBounds="True" Margin="4,0,4,0">
+        <Grid RowDefinitions="36,*">
+          <Border Grid.Row="0" Padding="8,0" Background="{DynamicResource Brush.Mygit.Sidebar}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
             <TextBlock Text="{DynamicResource Text.MergeConflictEditor.Result}" FontWeight="Bold" VerticalAlignment="Center"/>
           </Border>
           <Grid Grid.Row="1" Background="{DynamicResource Brush.Contents}">
@@ -290,9 +221,76 @@
         </Grid>
       </Border>
 
+        <!-- Theirs Panel -->
+        <Border Grid.Row="0" Grid.Column="2" Classes="mygit_surface" ClipToBounds="True" Margin="4,0,0,0">
+          <Grid RowDefinitions="36,*">
+            <Border Grid.Row="0" Padding="8,0" Background="{DynamicResource Brush.Mygit.Sidebar}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Mygit.Hairline}">
+              <Grid ColumnDefinitions="Auto,*">
+                <TextBlock Grid.Column="0"
+                           Text="{DynamicResource Text.MergeConflictEditor.Theirs}"
+                           FontWeight="Bold"
+                           VerticalAlignment="Center"/>
+                <ContentControl Grid.Column="1" Margin="8,0,0,0" Content="{Binding Theirs, Mode=OneWay}">
+                  <ContentControl.DataTemplates>
+                    <DataTemplate DataType="m:Commit">
+                      <StackPanel Orientation="Horizontal">
+                        <v:CommitRefsPresenter Foreground="{DynamicResource Brush.FG1}"
+                                               FontSize="12"
+                                               VerticalAlignment="Center"
+                                               UseGraphColor="False"/>
+                        <TextBlock Margin="4,0,0,0"
+                                   FontFamily="{DynamicResource Fonts.Monospace}"
+                                   Text="{Binding SHA, Converter={x:Static c:StringConverters.ToShortSHA}}"
+                                   Foreground="DarkOrange"
+                                   TextDecorations="Underline"
+                                   Cursor="Hand"/>
+                        <TextBlock Margin="4,0,0,0" Text="{Binding Subject}"/>
+                      </StackPanel>
+                    </DataTemplate>
+                    <DataTemplate DataType="x:String">
+                      <StackPanel Orientation="Horizontal">
+                        <Path Width="12" Height="12" Data="{StaticResource Icons.Changes}"/>
+                        <TextBlock Margin="4,0,0,0" Text="{Binding}"/>
+                      </StackPanel>
+                    </DataTemplate>
+                  </ContentControl.DataTemplates>
+                </ContentControl>
+              </Grid>
+            </Border>
+            <Grid Grid.Row="1" Background="{DynamicResource Brush.Contents}">
+              <v:MergeConflictTextPresenter x:Name="TheirsPresenter"
+                                            PanelType="Theirs"
+                                            Lines="{Binding TheirsLines, Mode=OneWay}"
+                                            MaxLineNumber="{Binding MaxLineNumber}"
+                                            FileName="{Binding FilePath}"
+                                            SelectedChunk="{Binding SelectedChunk}"
+                                            FontFamily="{DynamicResource Fonts.Monospace}"
+                                            TheirsContentBackground="{DynamicResource Brush.Conflict.TheirsBG}"
+                                            OursContentBackground="{DynamicResource Brush.Conflict.MineBG}"
+                                            BorderThickness="1"
+                                            BorderBrush="{DynamicResource Brush.Border2}"/>
+              <Border x:Name="TheirsPopup"
+                      IsVisible="False"
+                      VerticalAlignment="Top"
+                      HorizontalAlignment="Right"
+                      Background="{DynamicResource Brush.ToolBar}"
+                      BorderBrush="{DynamicResource Brush.Border2}"
+                      BorderThickness="1"
+                      CornerRadius="4"
+                      Padding="4,2"
+                      BoxShadow="0 2 8 0 #40000000">
+                <Button Classes="flat primary"
+                        Content="{DynamicResource Text.MergeConflictEditor.UseTheirs}"
+                        Command="{Binding Resolve}"
+                        CommandParameter="{x:Static m:ConflictResolution.UseTheirs}"/>
+              </Border>
+            </Grid>
+          </Grid>
+        </Border>
+
       <!-- Minimap -->
-      <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
-              Margin="0,4,4,4"
+      <Border Grid.Row="0" Grid.Column="3"
+              Margin="4,0,0,0"
               BorderThickness="1" BorderBrush="{DynamicResource Brush.Border2}">
         <v:MergeConflictMinimap DisplayRange="{Binding #ResultPresenter.DisplayRange, Mode=OneWay}"
                                 UnsolvedCount="{Binding UnsolvedCount, Mode=OneWay}"/>

@@ -456,6 +456,45 @@ namespace SourceGit.ViewModels
             set;
         } = [];
 
+        /// <summary>
+        /// Most recently selected repositories, across all workspaces.
+        /// Only local paths are saved; no Git credentials or repository contents.
+        /// </summary>
+        public List<string> RecentRepositories
+        {
+            get;
+            set;
+        } = [];
+
+        /// <summary>
+        /// Records a successful repository activation. A bounded list is used to
+        /// avoid unbounded growth; normal settings persistence keeps it across restarts.
+        /// </summary>
+        public void RememberRepository(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return;
+
+            var normalized = path.Replace('\\', '/').TrimEnd('/');
+            if (string.IsNullOrEmpty(normalized))
+                return;
+
+            RecentRepositories ??= [];
+            var comparer = OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal;
+
+            if (RecentRepositories.Count > 0 && comparer.Equals(RecentRepositories[0], normalized))
+                return;
+
+            RecentRepositories.RemoveAll(item => comparer.Equals(item, normalized));
+            RecentRepositories.Insert(0, normalized);
+
+            const int maxRecent = 16;
+            if (RecentRepositories.Count > maxRecent)
+                RecentRepositories.RemoveRange(maxRecent, RecentRepositories.Count - maxRecent);
+
+            Save();
+        }
+
         public AvaloniaList<Models.CustomAction> CustomActions
         {
             get;
@@ -629,7 +668,14 @@ namespace SourceGit.ViewModels
         {
             var path = Path.Combine(Native.OS.BasicDirectories.ConfigDir, "preference.json");
             if (!File.Exists(path))
-                return new Preferences();
+            {
+                // New MyGIt installations start with the approved indigo palette.
+                // Existing preferences are never replaced or imported from SourceGit.
+                var created = new Preferences();
+                if (Views.MyGItThemePresets.TryInstall("MyGIt-Light.json", out var preset))
+                    created._themeOverrides = preset;
+                return created;
+            }
 
             try
             {
@@ -790,7 +836,7 @@ namespace SourceGit.ViewModels
         private bool _isLoading = true;
         private bool _isReadonly = true;
         private string _locale = "en_US";
-        private string _theme = "Default";
+        private string _theme = "Light";
         private string _themeOverrides = string.Empty;
         private string _defaultFontFamily = string.Empty;
         private string _monospaceFontFamily = string.Empty;
@@ -812,7 +858,7 @@ namespace SourceGit.ViewModels
         private string _ignoreUpdateTag = string.Empty;
 
         private bool _showTagsInGraph = true;
-        private bool _useTwoColumnsLayoutInHistories = false;
+        private bool _useTwoColumnsLayoutInHistories = true;
         private bool _displayTimeAsPeriodInHistories = false;
         private bool _useSideBySideDiff = false;
         private bool _ignoreWhitespaceChangesInDiff = false;

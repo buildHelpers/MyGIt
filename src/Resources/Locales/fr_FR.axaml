@@ -710,6 +710,14 @@
   <x:String x:Key="Text.PushToNewBranch" xml:space="preserve">Pousser vers une NOUVELLE branche</x:String>
   <x:String x:Key="Text.PushToNewBranch.Title" xml:space="preserve">Saisir le nom de la nouvelle branche distante :</x:String>
   <x:String x:Key="Text.Quit" xml:space="preserve">Quitter</x:String>
+  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">Dépôts</x:String>
+  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">Récents en premier</x:String>
+  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ Choisir · Entrée Ouvrir · Échap Fermer</x:String>
+  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">Aucun dépôt correspondant</x:String>
+  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">Ouvert</x:String>
+  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">Récent</x:String>
+  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">Rechercher par nom ou chemin...</x:String>
+  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">Changer rapidement de dépôt</x:String>
   <x:String x:Key="Text.Rebase" xml:space="preserve">Rebase la branche actuelle</x:String>
   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">Stash &amp; réappliquer changements locaux</x:String>
   <x:String x:Key="Text.Rebase.NoVerify" xml:space="preserve">Contourner le hook de pre-rebase</x:String>

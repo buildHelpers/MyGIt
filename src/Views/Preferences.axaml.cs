@@ -406,6 +406,38 @@ namespace SourceGit.Views
                 await new Commands.Config(null).SetAsync(key, value);
         }
 
+        private void OnSelectMyGItLight(object sender, RoutedEventArgs e)
+        {
+            if (MyGItThemePresets.TryInstall("MyGIt-Light.json", out var path))
+            {
+                var preferences = ViewModels.Preferences.Instance;
+                preferences.Theme = "Light";
+                preferences.ThemeOverrides = path;
+            }
+
+            e.Handled = true;
+        }
+
+        private void OnSelectMyGItDark(object sender, RoutedEventArgs e)
+        {
+            if (MyGItThemePresets.TryInstall("MyGIt-Dark.json", out var path))
+            {
+                var preferences = ViewModels.Preferences.Instance;
+                preferences.Theme = "Dark";
+                preferences.ThemeOverrides = path;
+            }
+
+            e.Handled = true;
+        }
+
+        private void OnSelectSystemTheme(object sender, RoutedEventArgs e)
+        {
+            var preferences = ViewModels.Preferences.Instance;
+            preferences.ThemeOverrides = string.Empty;
+            preferences.Theme = "Default";
+            e.Handled = true;
+        }
+
         private async void OnUseNativeWindowFrameChanged(object sender, RoutedEventArgs e)
         {
             if (sender is CheckBox box)

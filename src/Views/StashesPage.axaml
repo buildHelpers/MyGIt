@@ -9,15 +9,15 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SourceGit.Views.StashesPage"
              x:DataType="vm:StashesPage">
-  <Grid SizeChanged="OnMainLayoutSizeChanged" Background="{DynamicResource Brush.SubPanel}">
+  <Grid SizeChanged="OnMainLayoutSizeChanged" Background="{DynamicResource Brush.Mygit.Surface}">
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="{Binding Source={x:Static vm:Preferences.Instance}, Path=Layout.StashesLeftWidth, Mode=TwoWay}" MinWidth="300"/>
+      <ColumnDefinition Width="{Binding Source={x:Static vm:Preferences.Instance}, Path=Layout.StashesLeftWidth, Mode=TwoWay}" MinWidth="250"/>
       <ColumnDefinition Width="4"/>
       <ColumnDefinition Width="*" MinWidth="300"/>
     </Grid.ColumnDefinitions>
 
     <!-- Left -->
-    <Grid Grid.Column="0" RowDefinitions="28,36,*,28,*" Background="{DynamicResource Brush.Window}">
+    <Grid Grid.Column="0" RowDefinitions="36,42,*,32,*" Background="{DynamicResource Brush.Mygit.Sidebar}">
       <!-- Stash Bar -->
       <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto">
         <Path Grid.Column="0" Margin="8,0,0,0" Width="14" Height="14" Fill="{DynamicResource Brush.FG2}" Data="{StaticResource Icons.Stashes}"/>
@@ -36,10 +36,10 @@
 
       <!-- Search Bar -->
       <Border Grid.Row="1" BorderThickness="0,1" BorderBrush="{DynamicResource Brush.Border0}">
-        <TextBox Height="24"
-                 Margin="4,0"
+        <TextBox Classes="mygit_search" Height="30"
+                 Margin="8,0"
                  BorderThickness="1"
-                 CornerRadius="12"
+                 CornerRadius="9"
                  Text="{Binding SearchFilter, Mode=TwoWay}"
                  BorderBrush="{DynamicResource Brush.Border2}"
                  VerticalContentAlignment="Center">

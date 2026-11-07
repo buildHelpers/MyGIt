@@ -469,6 +469,14 @@
   <x:String x:Key="Text.PushTag.Remote" xml:space="preserve">Віддалене сховище:</x:String>
   <x:String x:Key="Text.PushTag.Tag" xml:space="preserve">Тег:</x:String>
   <x:String x:Key="Text.Quit" xml:space="preserve">Вийти</x:String>
+  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">Репозиторії</x:String>
+  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">Нещодавні спочатку</x:String>
+  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ Вибір · Enter Відкрити · Esc Закрити</x:String>
+  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">Репозиторії не знайдено</x:String>
+  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">Відкритий</x:String>
+  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">Нещодавній</x:String>
+  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">Пошук за назвою або шляхом...</x:String>
+  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">Швидке перемикання репозиторіїв</x:String>
   <x:String x:Key="Text.Rebase" xml:space="preserve">Перебазувати поточну гілку</x:String>
   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">Сховати та застосувати локальні зміни</x:String>
   <x:String x:Key="Text.Rebase.On" xml:space="preserve">На:</x:String>

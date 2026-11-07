@@ -2,27 +2,37 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <ResourceDictionary.ThemeDictionaries>
     <ResourceDictionary x:Key="Light">
-      <Color x:Key="Color.Window">#FFF4F4F4</Color>
-      <Color x:Key="Color.WindowBorder">#FF999999</Color>
-      <Color x:Key="Color.TitleBar">#FFF2F0F0</Color>
-      <Color x:Key="Color.ToolBar">#FFF0F3F5</Color>
-      <Color x:Key="Color.Popup">#FFFAFAFA</Color>
+      <!-- MyGIt design system: understated macOS surfaces -->
+      <Color x:Key="Color.Mygit.Sidebar">#FFF5F7FC</Color>
+      <Color x:Key="Color.Mygit.Surface">#FFFFFFFF</Color>
+      <Color x:Key="Color.Mygit.Card">#FFFFFFFF</Color>
+      <Color x:Key="Color.Mygit.Selected">#FFE9EEFF</Color>
+      <Color x:Key="Color.Mygit.Hairline">#FFE1E7F1</Color>
+      <Color x:Key="Color.Mygit.Muted">#FF7583A0</Color>
+      <Color x:Key="Color.Mygit.Success">#FF1A9B74</Color>
+      <Color x:Key="Color.Mygit.Warning">#FFDD9735</Color>
+
+      <Color x:Key="Color.Window">#FFF8FAFD</Color>
+      <Color x:Key="Color.WindowBorder">#FFCFD7E6</Color>
+      <Color x:Key="Color.TitleBar">#FFF9FBFE</Color>
+      <Color x:Key="Color.ToolBar">#FFF5F7FC</Color>
+      <Color x:Key="Color.Popup">#FFFFFFFF</Color>
       <Color x:Key="Color.PopupBorder">#FFFFFFFF</Color>
       <Color x:Key="Color.Contents">#FFFFFFFF</Color>
-      <Color x:Key="Color.Badge">#FFB0CEE8</Color>
-      <Color x:Key="Color.BadgeFG">#FF1F1F1F</Color>
+      <Color x:Key="Color.Badge">#FFE9EEFF</Color>
+      <Color x:Key="Color.BadgeFG">#FF202E4A</Color>
       <Color x:Key="Color.Conflict">#FF836C2E</Color>
       <Color x:Key="Color.Conflict.Foreground">#FFFFFFFF</Color>
       <Color x:Key="Color.Conflict.MineBG">#400078D7</Color>
       <Color x:Key="Color.Conflict.TheirsBG">#40FF8C00</Color>
-      <Color x:Key="Color.Border0">#FFCFCFCF</Color>
-      <Color x:Key="Color.Border1">#FF898989</Color>
-      <Color x:Key="Color.Border2">#FFCFCFCF</Color>
-      <Color x:Key="Color.FlatButton.Background">#FFF8F8F8</Color>
+      <Color x:Key="Color.Border0">#FFE0E6F1</Color>
+      <Color x:Key="Color.Border1">#FFB5C2D5</Color>
+      <Color x:Key="Color.Border2">#FFE0E6F1</Color>
+      <Color x:Key="Color.FlatButton.Background">#FFF7F9FE</Color>
       <Color x:Key="Color.FlatButton.BackgroundHovered">White</Color>
-      <Color x:Key="Color.FlatButton.FloatingBorder">#FF898989</Color>
-      <Color x:Key="Color.FG1">#FF1F1F1F</Color>
-      <Color x:Key="Color.FG2">#FF6F6F6F</Color>
+      <Color x:Key="Color.FlatButton.FloatingBorder">#FFB5C2D5</Color>
+      <Color x:Key="Color.FG1">#FF202E4A</Color>
+      <Color x:Key="Color.FG2">#FF71809A</Color>
       <Color x:Key="Color.Diff.EmptyBG">#10000000</Color>
       <Color x:Key="Color.Diff.AddedBG">#80BFE6C1</Color>
       <Color x:Key="Color.Diff.DeletedBG">#80FF9797</Color>
@@ -32,31 +42,40 @@
       <Color x:Key="Color.Link">#0000EE</Color>
       <Color x:Key="Color.InlineCode">#FFE4E4E4</Color>
       <Color x:Key="Color.InlineCodeFG">Black</Color>
-      <Color x:Key="Color.SubPanel">#FFFBFBFB</Color>
+      <Color x:Key="Color.SubPanel">#FFF2F5FA</Color>
     </ResourceDictionary>
 
     <ResourceDictionary x:Key="Dark">
-      <Color x:Key="Color.Window">#FF252525</Color>
-      <Color x:Key="Color.WindowBorder">#FF606060</Color>
-      <Color x:Key="Color.TitleBar">#FF1F1F1F</Color>
-      <Color x:Key="Color.ToolBar">#FF2F2F2F</Color>
-      <Color x:Key="Color.Popup">#FF2B2B2B</Color>
-      <Color x:Key="Color.PopupBorder">#FF393939</Color>
-      <Color x:Key="Color.Contents">#FF1C1C1C</Color>
-      <Color x:Key="Color.Badge">#FF8F8F8F</Color>
-      <Color x:Key="Color.BadgeFG">#FFE0E0E0</Color>
+      <Color x:Key="Color.Mygit.Sidebar">#FF151F30</Color>
+      <Color x:Key="Color.Mygit.Surface">#FF192537</Color>
+      <Color x:Key="Color.Mygit.Card">#FF202E44</Color>
+      <Color x:Key="Color.Mygit.Selected">#FF313F67</Color>
+      <Color x:Key="Color.Mygit.Hairline">#FF344359</Color>
+      <Color x:Key="Color.Mygit.Muted">#FF9BA9C2</Color>
+      <Color x:Key="Color.Mygit.Success">#FF50C9A2</Color>
+      <Color x:Key="Color.Mygit.Warning">#FFF3B96B</Color>
+
+      <Color x:Key="Color.Window">#FF182234</Color>
+      <Color x:Key="Color.WindowBorder">#FF33435C</Color>
+      <Color x:Key="Color.TitleBar">#FF202E4A</Color>
+      <Color x:Key="Color.ToolBar">#FF1B2940</Color>
+      <Color x:Key="Color.Popup">#FF202D44</Color>
+      <Color x:Key="Color.PopupBorder">#FF34445C</Color>
+      <Color x:Key="Color.Contents">#FF111B2B</Color>
+      <Color x:Key="Color.Badge">#FF3B4B68</Color>
+      <Color x:Key="Color.BadgeFG">#FFE4EBFA</Color>
       <Color x:Key="Color.Conflict">#FFFAFAD2</Color>
-      <Color x:Key="Color.Conflict.Foreground">#FF252525</Color>
+      <Color x:Key="Color.Conflict.Foreground">#FF182234</Color>
       <Color x:Key="Color.Conflict.MineBG">#400078D7</Color>
       <Color x:Key="Color.Conflict.TheirsBG">#40FF8C00</Color>
-      <Color x:Key="Color.Border0">#FF181818</Color>
-      <Color x:Key="Color.Border1">#FF7C7C7C</Color>
-      <Color x:Key="Color.Border2">#FF404040</Color>
-      <Color x:Key="Color.FlatButton.Background">#FF303030</Color>
-      <Color x:Key="Color.FlatButton.BackgroundHovered">#FF333333</Color>
-      <Color x:Key="Color.FlatButton.FloatingBorder">#FF4F4F4F</Color>
-      <Color x:Key="Color.FG1">#FFDFDFDF</Color>
-      <Color x:Key="Color.FG2">#FF9F9F9F</Color>
+      <Color x:Key="Color.Border0">#FF0F192A</Color>
+      <Color x:Key="Color.Border1">#FF52617A</Color>
+      <Color x:Key="Color.Border2">#FF35455D</Color>
+      <Color x:Key="Color.FlatButton.Background">#FF22314A</Color>
+      <Color x:Key="Color.FlatButton.BackgroundHovered">#FF2A3A55</Color>
+      <Color x:Key="Color.FlatButton.FloatingBorder">#FF465874</Color>
+      <Color x:Key="Color.FG1">#FFE5ECFA</Color>
+      <Color x:Key="Color.FG2">#FF9DAAC3</Color>
       <Color x:Key="Color.Diff.EmptyBG">#3C000000</Color>
       <Color x:Key="Color.Diff.AddedBG">#C03A5C3F</Color>
       <Color x:Key="Color.Diff.DeletedBG">#C0633F3E</Color>
@@ -66,10 +85,22 @@
       <Color x:Key="Color.Link">#4DAAFC</Color>
       <Color x:Key="Color.InlineCode">#FF383838</Color>
       <Color x:Key="Color.InlineCodeFG">#FFF0F0F0</Color>
-      <Color x:Key="Color.SubPanel">#FF272727</Color>
+      <Color x:Key="Color.SubPanel">#FF1B2940</Color>
     </ResourceDictionary>
   </ResourceDictionary.ThemeDictionaries>
 
+  <!-- Default MyGIt accent; user theme overrides still take precedence. -->
+  <Color x:Key="SystemAccentColor">#FF606FF0</Color>
+
+
+  <SolidColorBrush x:Key="Brush.Mygit.Sidebar" Color="{DynamicResource Color.Mygit.Sidebar}"/>
+  <SolidColorBrush x:Key="Brush.Mygit.Surface" Color="{DynamicResource Color.Mygit.Surface}"/>
+  <SolidColorBrush x:Key="Brush.Mygit.Card" Color="{DynamicResource Color.Mygit.Card}"/>
+  <SolidColorBrush x:Key="Brush.Mygit.Selected" Color="{DynamicResource Color.Mygit.Selected}"/>
+  <SolidColorBrush x:Key="Brush.Mygit.Hairline" Color="{DynamicResource Color.Mygit.Hairline}"/>
+  <SolidColorBrush x:Key="Brush.Mygit.Muted" Color="{DynamicResource Color.Mygit.Muted}"/>
+  <SolidColorBrush x:Key="Brush.Mygit.Success" Color="{DynamicResource Color.Mygit.Success}"/>
+  <SolidColorBrush x:Key="Brush.Mygit.Warning" Color="{DynamicResource Color.Mygit.Warning}"/>
   <SolidColorBrush x:Key="Brush.Window" Color="{DynamicResource Color.Window}"/>
   <SolidColorBrush x:Key="Brush.WindowBorder" Color="{DynamicResource Color.WindowBorder}"/>
   <SolidColorBrush x:Key="Brush.TitleBar" Color="{DynamicResource Color.TitleBar}"/>

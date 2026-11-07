@@ -466,6 +466,14 @@
   <x:String x:Key="Text.PushTag.Remote" xml:space="preserve">Remoto:</x:String>
   <x:String x:Key="Text.PushTag.Tag" xml:space="preserve">Tag:</x:String>
   <x:String x:Key="Text.Quit" xml:space="preserve">Sair</x:String>
+  <x:String x:Key="Text.QuickRepo.Button" xml:space="preserve">Repositórios</x:String>
+  <x:String x:Key="Text.QuickRepo.Hint" xml:space="preserve">Recentes primeiro</x:String>
+  <x:String x:Key="Text.QuickRepo.Keyboard" xml:space="preserve">↑↓ Selecionar · Enter Abrir · Esc Fechar</x:String>
+  <x:String x:Key="Text.QuickRepo.NoResults" xml:space="preserve">Nenhum repositório encontrado</x:String>
+  <x:String x:Key="Text.QuickRepo.Open" xml:space="preserve">Aberto</x:String>
+  <x:String x:Key="Text.QuickRepo.Recent" xml:space="preserve">Recente</x:String>
+  <x:String x:Key="Text.QuickRepo.Search" xml:space="preserve">Buscar por nome ou caminho...</x:String>
+  <x:String x:Key="Text.QuickRepo.Title" xml:space="preserve">Alternar repositório rapidamente</x:String>
   <x:String x:Key="Text.Rebase" xml:space="preserve">Rebase da Branch Atual</x:String>
   <x:String x:Key="Text.Rebase.AutoStash" xml:space="preserve">Guardar &amp; reaplicar alterações locais</x:String>
   <x:String x:Key="Text.Rebase.On" xml:space="preserve">Em:</x:String>

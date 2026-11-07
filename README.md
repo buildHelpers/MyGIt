@@ -1,3 +1,15 @@
+# MyGIt · Your Git workspace, redesigned
+
+> [中文：**唯一构建命令与使用说明**](docs/MyGIt-Direct-UI.zh.md) · [SourceGit upstream](https://github.com/sourcegit-scm/sourcegit)
+
+MyGIt directly customizes the SourceGit Avalonia **application source**. Run `bash tools/build-mygit.sh` on macOS to build a uniquely identified **MyGIt.app**. There is **no layout-patch installation step**, and upstream Git operations remain intact. The product branch is `mygit`; `develop` tracks unmodified upstream SourceGit.
+
+The original six-screen design remains the UI target. Source checks are available via `python3 tools/check-mygit.py`; macOS visual and functional acceptance must be performed against the actual app. GitHub-hosted Actions remain disabled.
+
+---
+
+## SourceGit upstream documentation
+
 # SourceGit - Opensource Git GUI client.
 
 [![stars](https://img.shields.io/github/stars/sourcegit-scm/sourcegit.svg)](https://github.com/sourcegit-scm/sourcegit/stargazers)

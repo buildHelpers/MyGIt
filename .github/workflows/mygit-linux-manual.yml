@@ -53,12 +53,13 @@ jobs:
           fetch-depth: 1
           submodules: false
 
-      - name: Verify the exact requested commit and theme package
+      - name: Verify the exact requested MyGIt source commit
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
-          test -f mygit-themes/manifest.json
-          test -f mygit-themes/tools/theme.py
+          test -f src/Views/Launcher.axaml
+          test -f tools/check-mygit.py
+          test -f tools/build-mygit.sh
           git diff --check
 
       - name: MyGIt Python regression tests
@@ -66,20 +67,15 @@ jobs:
           set -euo pipefail
           python3 -m unittest discover -s mygit-themes/tools -p 'test_*.py'
 
-      - name: Validate color themes and UI patch manifest
+      - name: Verify directly implemented MyGIt UI, navigation and app identity
         run: |
           set -euo pipefail
-          python3 mygit-themes/tools/theme.py validate
-
-      - name: Apply full UI layout in a disposable isolated worktree
-        run: |
-          set -euo pipefail
-          python3 mygit-themes/tools/theme.py check mygit-design
+          python3 tools/check-mygit.py
 
       - name: Confirm no tracked files changed
         run: |
           set -euo pipefail
           git diff --exit-code
           git diff --cached --exit-code
-          echo "PASS: Manual Linux self-hosted static/overlay checks."
-          echo "NOT_RUN: .NET compile, macOS GUI, packaging, or release."
+          echo "PASS: Direct-source MyGIt static checks on organization Linux Runner."
+          echo "NOT_RUN: .NET compile, macOS GUI, packaging, or release; use local Mac for these."

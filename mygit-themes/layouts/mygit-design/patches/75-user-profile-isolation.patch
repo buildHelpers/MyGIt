@@ -1,0 +1,49 @@
+diff --git a/src/Native/MacOS.cs b/src/Native/MacOS.cs
+--- a/src/Native/MacOS.cs
++++ b/src/Native/MacOS.cs
+@@ -61,7 +61,7 @@
+             var dirs = new OS.Directories();
+             var appDataDir = Path.Combine(
+                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
++                "MyGIt");
+-                "SourceGit");
+ 
+             if (!Directory.Exists(appDataDir))
+                 Directory.CreateDirectory(appDataDir);
+diff --git a/src/Native/Windows.cs b/src/Native/Windows.cs
+--- a/src/Native/Windows.cs
++++ b/src/Native/Windows.cs
+@@ -68,7 +68,7 @@
+             {
+                 var appDataDir = Path.Combine(
+                     Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
++                    "MyGIt");
+-                    "SourceGit");
+ 
+                 if (!Directory.Exists(appDataDir))
+                     Directory.CreateDirectory(appDataDir);
+diff --git a/src/Native/Linux.cs b/src/Native/Linux.cs
+--- a/src/Native/Linux.cs
++++ b/src/Native/Linux.cs
+@@ -58,8 +58,8 @@
+             }
+ 
+             // XDG Base Directory Specification: https://specifications.freedesktop.org/basedir/latest/
++            dirs.ConfigDir = GetXdgDirectory("XDG_CONFIG_HOME", Path.Combine(home, ".config"), "MyGIt");
++            dirs.CacheDir = GetXdgDirectory("XDG_CACHE_HOME", Path.Combine(home, ".cache"), "MyGIt");
+-            dirs.ConfigDir = GetXdgDirectory("XDG_CONFIG_HOME", Path.Combine(home, ".config"), "SourceGit");
+-            dirs.CacheDir = GetXdgDirectory("XDG_CACHE_HOME", Path.Combine(home, ".cache"), "SourceGit");
+ 
+             // If the app basic dirs already exist, we can skip the migration step
+             if (Directory.Exists(dirs.ConfigDir) && Directory.Exists(dirs.CacheDir))
+@@ -73,7 +73,9 @@
+ 
+             // Migrate legacy data dir: ~/.sourcegit to XDG standard directories
+             var legacyDir = Path.Combine(home, ".sourcegit");
++            // MyGIt must not import or move the unrelated legacy SourceGit data.
++            if (Directory.Exists(legacyDir) &&
++                !Path.GetFileName(dirs.ConfigDir).Equals("MyGIt", StringComparison.Ordinal))
+-            if (Directory.Exists(legacyDir))
+             {
+                 try
+                 {

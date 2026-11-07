@@ -1,0 +1,130 @@
+diff --git a/src/ViewModels/Repository.cs b/src/ViewModels/Repository.cs
+--- a/src/ViewModels/Repository.cs
++++ b/src/ViewModels/Repository.cs
+@@ -1,5 +1,6 @@
+ ﻿using System;
+ using System.Collections.Generic;
++using System.Linq;
+ using System.IO;
+ using System.Text;
+ using System.Threading;
+@@ -167,9 +168,38 @@
+         public List<Models.Branch> Branches
+         {
+             get => _branches;
++            private set
++            {
++                if (SetProperty(ref _branches, value))
++                {
++                    OnPropertyChanged(nameof(FilteredBranches));
++                    OnPropertyChanged(nameof(HasFilteredBranches));
++                }
++            }
++        }
++
++        /// <summary>Searches all local and remote branches without changing Git state.</summary>
++        public string BranchSearchText
++        {
++            get => _branchSearchText;
++            set
++            {
++                if (SetProperty(ref _branchSearchText, value))
++                {
++                    OnPropertyChanged(nameof(FilteredBranches));
++                    OnPropertyChanged(nameof(HasFilteredBranches));
++                }
++            }
+-            private set => SetProperty(ref _branches, value);
+         }
+ 
++        public List<Models.Branch> FilteredBranches => string.IsNullOrWhiteSpace(_branchSearchText)
++            ? Branches
++            : Branches.Where(branch =>
++                branch.FriendlyName.Contains(_branchSearchText.Trim(), StringComparison.OrdinalIgnoreCase) ||
++                (branch.Upstream?.Contains(_branchSearchText.Trim(), StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
++
++        public bool HasFilteredBranches => FilteredBranches.Count > 0;
++
+         public Models.Branch CurrentBranch
+         {
+             get => _currentBranch;
+@@ -2013,6 +2043,7 @@
+         private string _filter = string.Empty;
+         private List<Models.Remote> _remotes = [];
+         private List<Models.Branch> _branches = [];
++        private string _branchSearchText = string.Empty;
+         private Models.Branch _currentBranch = null;
+         private List<BranchTreeNode> _localBranchTrees = [];
+         private List<BranchTreeNode> _remoteBranchTrees = [];
+diff --git a/src/Views/BranchesOverview.axaml b/src/Views/BranchesOverview.axaml
+--- a/src/Views/BranchesOverview.axaml
++++ b/src/Views/BranchesOverview.axaml
+@@ -23,6 +23,18 @@
+           </StackPanel>
+         </Grid>
+ 
++        <!-- Live search applies to both local and remote branches. -->
++        <TextBox Classes="mygit_search" Height="36"
++                 Padding="12,0" CornerRadius="9"
++                 Watermark="{DynamicResource Text.Repository.Filter}"
++                 Text="{Binding BranchSearchText, Mode=TwoWay}"
++                 VerticalContentAlignment="Center">
++          <TextBox.InnerLeftContent>
++            <Path Width="14" Height="14" Margin="6,0,8,0"
++                  Data="{StaticResource Icons.Search}" Fill="{DynamicResource Brush.FG2}"/>
++          </TextBox.InnerLeftContent>
++        </TextBox>
++
+         <!-- A complete branch table; double-click a local branch to use SourceGit checkout. -->
+         <Border Classes="mygit_surface" ClipToBounds="True">
+           <Grid RowDefinitions="36,Auto">
+@@ -38,7 +50,7 @@
+                          Margin="4,0" Classes="mygit_section_label"/>
+             </Grid>
+             <ListBox Grid.Row="1" x:Name="BranchesList"
++                     ItemsSource="{Binding FilteredBranches, Mode=OneWay}"
+-                     ItemsSource="{Binding Branches, Mode=OneWay}"
+                      Background="Transparent" BorderThickness="0"
+                      MaxHeight="360">
+               <ListBox.Styles>
+@@ -79,6 +91,10 @@
+                 </DataTemplate>
+               </ListBox.ItemTemplate>
+             </ListBox>
++            <TextBlock Grid.Row="1" HorizontalAlignment="Center" Margin="12,20"
++                       Text="{DynamicResource Text.QuickRepo.NoResults}"
++                       Foreground="{DynamicResource Brush.Mygit.Muted}"
++                       IsVisible="{Binding !HasFilteredBranches}"/>
+           </Grid>
+         </Border>
+ 
+@@ -115,6 +131,10 @@
+                   <TextBlock Text="{Binding DisplayPath}" FontSize="11"
+                              Foreground="{DynamicResource Brush.Mygit.Muted}"
+                              TextTrimming="CharacterEllipsis"/>
++                  <Button Classes="flat mygit_action" Height="29"
++                          HorizontalAlignment="Left" Padding="11,0"
++                          Content="{DynamicResource Text.Worktree.Open}"
++                          Click="OnOpenWorktree"/>
+                   <TextBlock Text="{DynamicResource Text.Worktree.Open}"
+                              IsVisible="{Binding IsCurrent}" FontSize="11"
+                              Foreground="{DynamicResource Brush.Mygit.Success}"/>
+diff --git a/src/Views/BranchesOverview.axaml.cs b/src/Views/BranchesOverview.axaml.cs
+--- a/src/Views/BranchesOverview.axaml.cs
++++ b/src/Views/BranchesOverview.axaml.cs
+@@ -54,6 +54,15 @@
+             }
+         }
+ 
++        private void OnOpenWorktree(object sender, RoutedEventArgs e)
++        {
++            if (sender is Button { DataContext: ViewModels.Worktree tree })
++            {
++                App.GetLauncher().OpenRepositoryInTab(tree.FullPath, null);
++                e.Handled = true;
++            }
++        }
++
+         private void OnWorktreeDoubleTapped(object sender, TappedEventArgs e)
+         {
+             if (sender is Border { DataContext: ViewModels.Worktree tree })

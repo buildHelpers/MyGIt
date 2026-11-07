@@ -1,0 +1,135 @@
+diff --git a/src/ViewModels/Preferences.cs b/src/ViewModels/Preferences.cs
+--- a/src/ViewModels/Preferences.cs
++++ b/src/ViewModels/Preferences.cs
+@@ -668,7 +668,14 @@
+         {
+             var path = Path.Combine(Native.OS.BasicDirectories.ConfigDir, "preference.json");
+             if (!File.Exists(path))
++            {
++                // New MyGIt installations start with the approved indigo palette.
++                // Existing preferences are never replaced or imported from SourceGit.
++                var created = new Preferences();
++                if (Views.MyGItThemePresets.TryInstall("MyGIt-Light.json", out var preset))
++                    created._themeOverrides = preset;
++                return created;
++            }
+-                return new Preferences();
+ 
+             try
+             {
+diff --git a/src/Views/Preferences.axaml.cs b/src/Views/Preferences.axaml.cs
+--- a/src/Views/Preferences.axaml.cs
++++ b/src/Views/Preferences.axaml.cs
+@@ -408,19 +408,33 @@
+ 
+         private void OnSelectMyGItLight(object sender, RoutedEventArgs e)
+         {
++            if (MyGItThemePresets.TryInstall("MyGIt-Light.json", out var path))
++            {
++                var preferences = ViewModels.Preferences.Instance;
++                preferences.Theme = "Light";
++                preferences.ThemeOverrides = path;
++            }
++
+-            ViewModels.Preferences.Instance.Theme = "Light";
+             e.Handled = true;
+         }
+ 
+         private void OnSelectMyGItDark(object sender, RoutedEventArgs e)
+         {
++            if (MyGItThemePresets.TryInstall("MyGIt-Dark.json", out var path))
++            {
++                var preferences = ViewModels.Preferences.Instance;
++                preferences.Theme = "Dark";
++                preferences.ThemeOverrides = path;
++            }
++
+-            ViewModels.Preferences.Instance.Theme = "Dark";
+             e.Handled = true;
+         }
+ 
+         private void OnSelectSystemTheme(object sender, RoutedEventArgs e)
+         {
++            var preferences = ViewModels.Preferences.Instance;
++            preferences.ThemeOverrides = string.Empty;
++            preferences.Theme = "Default";
+-            ViewModels.Preferences.Instance.Theme = "Default";
+             e.Handled = true;
+         }
+ 
+diff --git a/src/SourceGit.csproj b/src/SourceGit.csproj
+--- a/src/SourceGit.csproj
++++ b/src/SourceGit.csproj
+@@ -38,6 +38,14 @@
+   </ItemGroup>
+ 
+   <ItemGroup>
++    <!-- MyGIt bundled appearance presets; not an upstream SourceGit modification. -->
++    <EmbeddedResource Include="../mygit-themes/presets/MyGIt-Light.json"
++                      LogicalName="MyGIt.Themes.MyGIt-Light.json" />
++    <EmbeddedResource Include="../mygit-themes/presets/MyGIt-Dark.json"
++                      LogicalName="MyGIt.Themes.MyGIt-Dark.json" />
++  </ItemGroup>
++
++  <ItemGroup>
+     <AvaloniaResource Include="App.ico" />
+     <AvaloniaResource Include="Resources/Fonts/*" />
+     <AvaloniaResource Include="Resources/Grammars/*" />
+diff --git a/src/Views/MyGItThemePresets.cs b/src/Views/MyGItThemePresets.cs
+new file mode 100644
+--- /dev/null
++++ b/src/Views/MyGItThemePresets.cs
+@@ -0,0 +1,53 @@
++using System;
++using System.IO;
++
++namespace SourceGit.Views
++{
++    /// <summary>
++    /// Copies the bundled MyGIt color preset to this application's private
++    /// configuration directory. Does not edit the upstream SourceGit settings.
++    /// </summary>
++    internal static class MyGItThemePresets
++    {
++        internal static bool TryInstall(string filename, out string targetPath)
++        {
++            targetPath = null;
++            if (filename != "MyGIt-Light.json" && filename != "MyGIt-Dark.json")
++                return false;
++
++            try
++            {
++                using var source = typeof(MyGItThemePresets).Assembly.GetManifestResourceStream(
++                    "MyGIt.Themes." + filename);
++                if (source == null)
++                    throw new FileNotFoundException("Bundled theme resource is missing", filename);
++
++                var directory = Path.Combine(Native.OS.BasicDirectories.ConfigDir, "MyGItThemes");
++                Directory.CreateDirectory(directory);
++
++                var output = Path.Combine(directory, filename);
++                var temporary = Path.Combine(directory, filename + "." + Guid.NewGuid().ToString("N") + ".tmp");
++                try
++                {
++                    using (var stream = File.Create(temporary))
++                        source.CopyTo(stream);
++
++                    File.Move(temporary, output, true);
++                }
++                finally
++                {
++                    if (File.Exists(temporary))
++                        File.Delete(temporary);
++                }
++
++                targetPath = output;
++                return true;
++            }
++            catch (Exception ex)
++            {
++                Console.Error.WriteLine("Unable to install MyGIt appearance preset: " + ex.Message);
++                return false;
++            }
++        }
++    }
++}

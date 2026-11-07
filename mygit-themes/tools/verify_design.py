@@ -124,6 +124,14 @@ def check_completed_screens(root: Path) -> None:
         image = (root / path).read_bytes()
         require(image.startswith(signature), f'Generated icon has invalid signature: {path}')
         require(len(image) > 1024, f'Generated icon unexpectedly small: {path}')
+    # SourceGit and MyGIt should not share user profiles or overwrite each other's settings.
+    mac = read(root, 'src/Native/MacOS.cs')
+    windows = read(root, 'src/Native/Windows.cs')
+    linux = read(root, 'src/Native/Linux.cs')
+    require('"MyGIt"' in mac and '"MyGIt"' in windows,
+            'Expected standalone MyGIt settings on macOS and Windows')
+    require('"MyGIt"' in linux and 'StringComparison.Ordinal' in linux,
+            'Expected separate Linux XDG profile without migrating SourceGit settings')
     print('PASS completed-screen structure and platform icon signatures')
 
 

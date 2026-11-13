@@ -302,3 +302,7 @@ The script will read the base language file (`en_US.axaml`) and the target langu
 ## Third-Party Components
 
 For detailed license information, see [THIRD-PARTY-LICENSES.md](THIRD-PARTY-LICENSES.md).
+
+## 使用 CI
+
+本组织的项目维护者在配置 GitHub Actions 前，请先阅读[组织 CI 使用指南](https://github.com/buildHelpers/README/blob/main/docs/ci-servers.zh.md)（需组织文档访问权限）。

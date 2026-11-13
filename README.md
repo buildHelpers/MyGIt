@@ -306,3 +306,7 @@ For detailed license information, see [THIRD-PARTY-LICENSES.md](THIRD-PARTY-LICE
 ## 使用 CI
 
 本组织的项目维护者在配置 GitHub Actions 前，请先阅读[组织 CI 使用指南](https://github.com/buildHelpers/README/blob/main/docs/ci-servers.zh.md)（需组织文档访问权限）。
+
+[Linux 手动验证](.github/workflows/mygit-linux-manual.yml)只由维护者发起，目标必须是 `buildHelpers/MyGIt` 中已审阅的分支，且不能是 `master` 或 `develop`。Agent 可核对提交、准备发起参数并跟进结果，不能代替维护者触发。不得增加推送、PR 或定时触发，不使用 GitHub 托管 Runner、sudo、Docker 或密钥。
+
+该入口只做 Python 回归、主题及界面补丁验证。报告实际提交和运行链接，不作为 .NET 编译、macOS 界面、打包或发布的验收。
